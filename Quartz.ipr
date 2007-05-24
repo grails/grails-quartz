@@ -2,6 +2,13 @@
 <project relativePaths="false" version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
+    <buildFile url="file://$PROJECT_DIR$/build.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <properties />
+    </buildFile>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -20,8 +27,6 @@
     <option name="USE_USER_FILTER" value="false" />
     <option name="USER" value="" />
   </component>
-  <component name="CheckinPanelState" />
-  <component name="ClearCase" />
   <component name="CodeStyleProjectProfileManger">
     <option name="PROJECT_PROFILE" />
     <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
@@ -96,11 +101,9 @@
     <option name="TAG_AFTER_PROJECT_COMMIT_NAME" value="" />
     <option name="CLEAN_COPY" value="false" />
   </component>
-  <component name="DataSourceManagerImpl" />
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
-  <component name="DependencyValidationManager" />
   <component name="EclipseCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
@@ -128,7 +131,6 @@
     <option name="OPEN_IN_BROWSER" value="false" />
     <option name="OUTPUT_DIRECTORY" />
   </component>
-  <component name="GUI Designer component loader factory" />
   <component name="IdProvider" IDEtalkID="851E3CD14471CA6502F46E5650A70087" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
@@ -351,6 +353,7 @@
     <option name="INTEGRATE_REVERT_UNCHANGED" value="true" />
     <option name="SERVER_TIMEOUT" value="20000" />
   </component>
+  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Quartz.iml" filepath="$PROJECT_DIR$/Quartz.iml" />
@@ -364,7 +367,6 @@
   <component name="ProjectRootManager" version="2" assert-keyword="false" jdk-15="false" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
-  <component name="ProjectRunConfigurationManager" />
   <component name="ResourceManagerContainer">
     <option name="myResourceBundles">
       <value>
@@ -384,8 +386,6 @@
       <SplitterProportionsDataImpl />
     </option>
   </component>
-  <component name="SelectInManager" />
-  <component name="StarteamVcsAdapter" />
   <component name="Struts Assistant">
     <option name="showInputs" value="true" />
     <option name="resources">
@@ -401,7 +401,6 @@
     <option name="myValidatorValidationEnabled" value="true" />
     <option name="myReportErrorsAsWarnings" value="true" />
   </component>
-  <component name="SvnBranchConfigurationManager" />
   <component name="SvnChangesBrowserSettings">
     <option name="USE_AUTHOR_FIELD" value="true" />
     <option name="AUTHOR" value="" />
@@ -419,7 +418,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="svn" />
   </component>
-  <component name="VssVcs" />
   <component name="com.intellij.ide.util.scopeChooser.ScopeChooserConfigurable" proportions="" version="1">
     <option name="myLastEditedConfigurable" />
   </component>
@@ -437,7 +435,15 @@
   <component name="com.intellij.profile.ui.ErrorOptionsConfigurable" proportions="" version="1">
     <option name="myLastEditedConfigurable" />
   </component>
-  <component name="libraryTable" />
+  <component name="libraryTable">
+    <library name="Quartz">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/quartz-1.6.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="true" />
     <option name="COPY_FORMS_RUNTIME_TO_OUTPUT" value="true" />

@@ -39,8 +39,19 @@ import org.quartz.JobListener
  */
 class QuartzGrailsPlugin {
 
-	def version = "0.1"
-	def loadAfter = ['core','hibernate']
+	def version = "0.2-SNAPSHOT"
+    def author = "Sergey Nebolsin"
+    def authorEmail = "nebolsin@gmail.com"
+    def title = "This plugin adds Quartz job scheduling features to Grails application."
+    def description = '''\
+Quartz plugin allows your Grails application to schedule jobs to be
+executed using a specified interval or cron expression. The underlying
+system uses the Quartz Enterprise Job Scheduler configured via Spring,
+but is made simpler by the coding by convention paradigm.
+'''
+    def documentation = "http://grails.org/Quartz+plugin"
+
+    def loadAfter = ['core','hibernate']
 	def watchedResources = "file:./grails-app/jobs/*Job.groovy"
     def artefacts = [new TaskArtefactHandler()]
 

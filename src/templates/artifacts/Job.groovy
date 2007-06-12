@@ -1,7 +1,7 @@
 class @artifact.name@ {
-	long timeout = 1000
+	def timeout = 5000     // execute job once in 5 seconds
 
-	def execute() {	
+    def execute() {
 	    // execute task
 	}
 }

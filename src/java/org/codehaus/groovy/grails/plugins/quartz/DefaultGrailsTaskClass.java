@@ -29,7 +29,7 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 	public static final String JOB = "Job";
 	
 	public static final long DEFAULT_TIMEOUT = 60000l;	// one minute
-	public static final long DEFAULT_START_DELAY = 30000l; // let grails application to startup	
+	public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
 	public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
 	public static final String DEFAULT_GROUP = "GRAILS_JOBS";
 	public static final boolean DEFAULT_CONCURRENT = true;
@@ -72,26 +72,23 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 
 	public String getGroup() {
 		String group = (String)getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
-		if( group == null || "".equals(group) ) return DEFAULT_GROUP;
+        if( group == null || "".equals(group) ) return DEFAULT_GROUP;
 		return group;	
 	}
 
 	// not certain about this... feels messy
 	public boolean isCronExpressionConfigured() {
 		String cronExpression = (String)getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
-		if( cronExpression == null ) return false;
-		return true;
-	}
+        return cronExpression != null;
+    }
 
 	public boolean isConcurrent() {
 		Boolean concurrent = (Boolean)getPropertyValue(CONCURRENT, Boolean.class);
-		if ( concurrent == null ) return DEFAULT_CONCURRENT;
-		return concurrent.booleanValue();
+		return concurrent == null ? DEFAULT_CONCURRENT : concurrent.booleanValue();
 	}	
 
 	public boolean isSessionRequired() {
-		Boolean concurrent = (Boolean)getPropertyValue(SESSION_REQUIRED, Boolean.class);
-		if ( concurrent == null ) return DEFAULT_SESSION_REQUIRED;
-		return concurrent.booleanValue();
-	}	
+		Boolean sessionRequired = (Boolean)getPropertyValue(SESSION_REQUIRED, Boolean.class);
+        return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired.booleanValue();
+	}
 }

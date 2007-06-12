@@ -66,13 +66,23 @@ but is made simpler by the coding by convention paradigm.
 		"${SessionBinderJobListener.NAME}"(SessionBinderJobListener) { bean ->
 			bean.autowire = "byName"
 		}
+        // register ExecutionControlTriggerListener to prevent execution of jobs until application
+        // will be fully started up
+        "${ExecutionControlTriggerListener.NAME}"(ExecutionControlTriggerListener)
+
         quartzScheduler(SchedulerFactoryBean) {
             triggers = schedulerReferences
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            globalTriggerListeners = [ref("${ExecutionControlTriggerListener.NAME}")]
         }
 	}
+    
+    def doWithApplicationContext = { applicationContext ->
+        // allow execution of jobs
+        applicationContext.getBean("${ExecutionControlTriggerListener.NAME}").executionAllowed = true
+	}
 
-	def onChange = { event ->
+    def onChange = { event ->
         if(application.isArtefactOfType(TaskArtefactHandler.TYPE, event.source)) {
 			log.debug("Job ${event.source} changed. Reloading...")
 			def context = event.ctx
@@ -81,7 +91,7 @@ but is made simpler by the coding by convention paradigm.
 				return
 			}
 
-			// get quartz scheduler
+            // get quartz scheduler
 			def scheduler = context.getBean("quartzScheduler")
 			if(scheduler) {
 
@@ -143,6 +153,7 @@ but is made simpler by the coding by convention paradigm.
 		}
 		else {
 			"${fullName}Trigger"(CronTriggerBean) {
+                startTime = new Date(System.currentTimeMillis() + jobClass.startDelay)
 				jobDetail = ref("${fullName}JobDetail")
 				cronExpression = jobClass.cronExpression
 			}

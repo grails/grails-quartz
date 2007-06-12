@@ -438,7 +438,7 @@
   <component name="libraryTable">
     <library name="Quartz">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/quartz-1.6.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/quartz-1.5.2.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

@@ -15,6 +15,7 @@
  */
 
 import org.codehaus.groovy.grails.plugins.quartz.*
+import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.*
 import org.codehaus.groovy.grails.plugins.support.GrailsPluginUtils
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
@@ -62,17 +63,24 @@ but is made simpler by the coding by convention paradigm.
 			configureJobBeans(jobClass)
 			schedulerReferences << ref("${jobClass.fullName}Trigger")
 		}
-		// register SessionBinderJobListener to bind Hibernate Session to each Job's thread
+        
+        // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
 		"${SessionBinderJobListener.NAME}"(SessionBinderJobListener) { bean ->
 			bean.autowire = "byName"
 		}
-        // register ExecutionControlTriggerListener to prevent execution of jobs until application
+
+        // register global ExceptionPrinterJobListener which will log exceptions occured
+        // during job's execution
+        "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
+
+        // register global ExecutionControlTriggerListener to prevent execution of jobs until application
         // will be fully started up
         "${ExecutionControlTriggerListener.NAME}"(ExecutionControlTriggerListener)
 
         quartzScheduler(SchedulerFactoryBean) {
             triggers = schedulerReferences
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
             globalTriggerListeners = [ref("${ExecutionControlTriggerListener.NAME}")]
         }
 	}

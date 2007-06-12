@@ -42,10 +42,16 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 		if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
 			throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " must be Integer or Long");
 		}
-		obj = getPropertyValue(START_DELAY);
+        if( obj != null && ((Number) obj).longValue() < 0 ) {
+            throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
+        }
+        obj = getPropertyValue(START_DELAY);
 		if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
 			throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " must be Integer or Long");
 		}
+        if( obj != null && ((Number) obj).longValue() < 0 ) {
+            throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
+        }
 	}
 
 	public void execute() {

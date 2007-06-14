@@ -14,7 +14,6 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
-import groovy.lang.Closure;
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 
 /** 
@@ -55,7 +54,7 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 	}
 
 	public void execute() {
-		((Closure)getPropertyOrStaticPropertyOrFieldValue(EXECUTE, Closure.class)).call();
+        getMetaClass().invokeMethod( getReference().getWrappedInstance(), EXECUTE, new Object[] {} );
 	}
 
 	public long getTimeout() {

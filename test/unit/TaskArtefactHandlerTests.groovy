@@ -12,26 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.codehaus.groovy.grails.plugins.quartz;
 
 import groovy.lang.GroovyClassLoader;
-import junit.framework.TestCase;
-import org.codehaus.groovy.grails.commons.ArtefactHandler;
+import org.codehaus.groovy.grails.commons.ArtefactHandler
+import org.codehaus.groovy.grails.plugins.quartz.TaskArtefactHandler;
 
 /**
- * @author Marc Palmer
- * @since 22-Feb-2007
+ * Test case for Task artefact handler.
+ *
+ * @author Sergey Nebolsin
+ * @since 0.2
  */
-public class TaskArtefactHandlerTests extends TestCase {
+class TaskArtefactHandlerTests extends GroovyTestCase {
+    protected GroovyClassLoader gcl = new GroovyClassLoader();
 
-    public void testIsTaskClass() throws Exception
-    {
-        GroovyClassLoader gcl = new GroovyClassLoader();
-
+    void testIsTaskClass() {
         Class c = gcl.parseClass("class TestJob { def execute() { }}\n");
-
         ArtefactHandler handler = new TaskArtefactHandler();
-        assertTrue(handler.isArtefact(c));
+        assertTrue handler.isArtefact(c);
     }
 
+    void testIsNotATaskClass() {
+        // wrong method name
+        Class c = gcl.parseClass("class TestJob { def execute1() { }}\n");
+        ArtefactHandler handler = new TaskArtefactHandler();
+        assertFalse handler.isArtefact(c);
+        // wrong class name
+        c = gcl.parseClass("class TestController { def execute() { }}\n");
+        assertFalse handler.isArtefact(c);
+    }
 }

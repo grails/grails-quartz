@@ -23,8 +23,6 @@ package org.codehaus.groovy.grails.plugins.quartz;
  * @author Marcel Overdijk
  * 
  * @since 0.2
- * 
- * Created: 20-Apr-2006
  */
 public interface GrailsTaskClassProperty {
 

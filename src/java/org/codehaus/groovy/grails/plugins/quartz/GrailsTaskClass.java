@@ -22,6 +22,7 @@ import org.codehaus.groovy.grails.commons.InjectableGrailsClass;
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
  * @author Marcel Overdijk
+ * @author Sergey Nebolsin
  * 
  * @since 0.2
  * 20-Apr-2006
@@ -32,7 +33,7 @@ public interface GrailsTaskClass extends InjectableGrailsClass {
 	 * <p>Method which is executed by the task scheduler</p>
 	 */
 	public void execute();
-	
+
 	/**
 	 * @return task timeout between executions
 	 */

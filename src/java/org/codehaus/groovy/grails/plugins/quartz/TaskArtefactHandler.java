@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.commons.ArtefactHandlerAdapter;
 
 /**
  * @author Marc Palmer (marc@anyware.co.uk)
-*/
+ */
 public class TaskArtefactHandler extends ArtefactHandlerAdapter {
 
     public static final String TYPE = "Task";

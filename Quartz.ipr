@@ -104,6 +104,9 @@
   <component name="DependenciesAnalyzeManager">
     <option name="myForwardDirection" value="false" />
   </component>
+  <component name="DependencyValidationManager">
+    <option name="SKIP_IMPORT_STATEMENTS" value="false" />
+  </component>
   <component name="EclipseCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
@@ -140,27 +143,10 @@
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <used_levels>
-          <error>
-            <option name="myName" value="ERROR" />
-            <option name="myVal" value="400" />
-          </error>
-          <warning>
-            <option name="myName" value="WARNING" />
-            <option name="myVal" value="300" />
-          </warning>
-          <information>
-            <option name="myName" value="INFO" />
-            <option name="myVal" value="200" />
-          </information>
-          <server>
-            <option name="myName" value="SERVER PROBLEM" />
-            <option name="myVal" value="100" />
-          </server>
-        </used_levels>
         <inspection_tool class="WebProperties" level="INFO" enabled="true" />
       </profile>
     </profiles>
+    <list size="0" />
   </component>
   <component name="JavacSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -330,28 +316,6 @@
   <component name="PerforceChangeBrowserSettings">
     <option name="USE_CLIENT_FILTER" value="true" />
     <option name="CLIENT" value="" />
-  </component>
-  <component name="PerforceDirect.Settings">
-    <option name="useP4CONFIG" value="true" />
-    <option name="port" value="&lt;perforce_server&gt;:1666" />
-    <option name="client" value="" />
-    <option name="user" value="" />
-    <option name="passwd" value="" />
-    <option name="showCmds" value="false" />
-    <option name="useNativeApi" value="true" />
-    <option name="pathToExec" value="p4" />
-    <option name="useCustomPathToExec" value="false" />
-    <option name="SYNC_FORCE" value="false" />
-    <option name="SYNC_RUN_RESOLVE" value="true" />
-    <option name="REVERT_UNCHANGED_FILES" value="true" />
-    <option name="CHARSET" value="none" />
-    <option name="SHOW_BRANCHES_HISTORY" value="true" />
-    <option name="ENABLED" value="true" />
-    <option name="USE_LOGIN" value="false" />
-    <option name="LOGIN_SILENTLY" value="false" />
-    <option name="INTEGRATE_RUN_RESOLVE" value="true" />
-    <option name="INTEGRATE_REVERT_UNCHANGED" value="true" />
-    <option name="SERVER_TIMEOUT" value="20000" />
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">

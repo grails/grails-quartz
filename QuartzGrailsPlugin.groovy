@@ -40,7 +40,7 @@ import org.quartz.JobListener
  */
 class QuartzGrailsPlugin {
 
-	def version = "0.2-SNAPSHOT"
+	def version = "0.2"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."

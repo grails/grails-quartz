@@ -34,6 +34,7 @@ import org.quartz.JobListener
 /**
  * A plug-in that configures Quartz job support for Grails. 
  *
+ *
  * @author Graeme Rocher
  * @author Marcel Overdijk
  * @author Sergey Nebolsin

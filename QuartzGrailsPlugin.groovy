@@ -54,7 +54,8 @@ but is made simpler by the coding by convention paradigm.
     def documentation = "http://grails.org/Quartz+plugin"
 
     def loadAfter = ['core', 'hibernate']
-    def watchedResources = "file:./grails-app/jobs/*Job.groovy"
+    def watchedResources = ["file:./grails-app/jobs/**/*Job.groovy",
+							"file:./plugins/*/grails-app/jobs/**/*Job.groovy"]
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {

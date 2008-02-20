@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
+import org.quartz.listeners.TriggerListenerSupport;
 
 /**
  * TriggerListener implementation which prevents execution of jobs until

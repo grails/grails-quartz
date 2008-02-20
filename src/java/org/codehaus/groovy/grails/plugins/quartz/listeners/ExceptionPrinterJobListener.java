@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.listeners.JobListenerSupport;
 
 /**
  * JobListener implementation which logs an exceptions occured during job's execution.

@@ -18,7 +18,6 @@ class QuartzPluginTests extends GroovyTestCase {
         assertTrue ctx.containsBean('quartzScheduler')
         assertTrue ctx.containsBean("${SessionBinderJobListener.NAME}")
         assertTrue ctx.containsBean("${ExceptionPrinterJobListener.NAME}")
-        assertTrue ctx.containsBean("${ExecutionControlTriggerListener.NAME}")
     }
 
     void testArtefactHandlerRegistering() {

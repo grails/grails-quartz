@@ -55,7 +55,7 @@ but is made simpler by the coding by convention paradigm.
 
     def loadAfter = ['core', 'hibernate']
     def watchedResources = ["file:./grails-app/jobs/**/*Job.groovy",
-							"file:./plugins/*/grails-app/jobs/**/*Job.groovy"]
+            "file:./plugins/*/grails-app/jobs/**/*Job.groovy"]
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {
@@ -73,23 +73,15 @@ but is made simpler by the coding by convention paradigm.
         // during job's execution
         "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
 
-        // register global ExecutionControlTriggerListener to prevent execution of jobs until application
-        // will be fully started up
-        "${ExecutionControlTriggerListener.NAME}"(ExecutionControlTriggerListener)
-
         quartzScheduler(SchedulerFactoryBean) {
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
-            globalTriggerListeners = [ref("${ExecutionControlTriggerListener.NAME}")]
         }
     }
 
     def doWithApplicationContext = {applicationContext ->
-        // allow execution of jobs
-        applicationContext.getBean("${ExecutionControlTriggerListener.NAME}").executionAllowed = true
-
         def scheduler = applicationContext.getBean("quartzScheduler")
-        if (scheduler) {
+        if(scheduler) {
             application.taskClasses.each {jobClass ->
                 def fullName = jobClass.fullName
                 // add job to scheduler, and associate trigger with it
@@ -102,20 +94,20 @@ but is made simpler by the coding by convention paradigm.
     }
 
     def onChange = {event ->
-        if (application.isArtefactOfType(TaskArtefactHandler.TYPE, event.source)) {
+        if(application.isArtefactOfType(TaskArtefactHandler.TYPE, event.source)) {
             log.debug("Job ${event.source} changed. Reloading...")
             def context = event.ctx
-            if (!context) {
+            if(!context) {
                 log.debug("Application context not found. Can't reload")
                 return
             }
 
             // get quartz scheduler
             def scheduler = context.getBean("quartzScheduler")
-            if (scheduler) {
+            if(scheduler) {
                 // if job already exists, delete it from scheduler
                 def jobClass = application.getTaskClass(event.source?.name)
-                if (jobClass) {
+                if(jobClass) {
                     scheduler.deleteJob(jobClass.fullName, jobClass.group)
                     log.debug("Job ${jobClass.fullName} deleted from scheduler")
                 }
@@ -143,33 +135,36 @@ but is made simpler by the coding by convention paradigm.
 
     def configureJobBeans = {jobClass ->
         def fullName = jobClass.fullName
+
         "${fullName}JobClass"(MethodInvokingFactoryBean) {
             targetObject = ref("grailsApplication", true)
             targetMethod = "getArtefact"
             arguments = [TaskArtefactHandler.TYPE, fullName]
         }
+
         "${fullName}"(ref("${fullName}JobClass")) {bean ->
             bean.factoryMethod = "newInstance"
             bean.autowire = "byName"
         }
+
         "${fullName}JobDetail"(MethodInvokingJobDetailFactoryBean) {
             targetObject = ref(fullName)
             targetMethod = GrailsTaskClassProperty.EXECUTE
             concurrent = jobClass.concurrent
             group = jobClass.group
             name = fullName
-            if (jobClass.sessionRequired) {
+            if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }
-        if (!jobClass.cronExpressionConfigured) {
+
+        if(!jobClass.cronExpressionConfigured) {
             "${fullName}Trigger"(SimpleTriggerBean) {
                 jobDetail = ref("${fullName}JobDetail")
                 startDelay = jobClass.startDelay
                 repeatInterval = jobClass.timeout
             }
-        }
-        else {
+        } else {
             "${fullName}Trigger"(CronTriggerBean) {
                 startTime = new Date(System.currentTimeMillis() + jobClass.startDelay)
                 jobDetail = ref("${fullName}JobDetail")

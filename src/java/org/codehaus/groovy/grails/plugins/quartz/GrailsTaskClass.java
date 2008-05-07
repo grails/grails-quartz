@@ -30,45 +30,47 @@ import org.codehaus.groovy.grails.commons.InjectableGrailsClass;
 public interface GrailsTaskClass extends InjectableGrailsClass {
 	
 	/**
-	 * <p>Method which is executed by the task scheduler</p>
+	 * Method which is executed by the task scheduler.
 	 */
 	public void execute();
 
 	/**
-	 * @return task timeout between executions
+	 * Get task timeout between executions.
 	 */
 	public long getTimeout();
 	
 	/**
-	 * @return start delay before first execution after starting scheduler
+	 * Get start delay before first execution after starting scheduler.
 	 */
 	public long getStartDelay();
-	
-	/** 
-	 * @return cron expression used for configuring scheduler
+
+    /**
+     * Get the number of times the job should repeat, after which it will be automatically deleted
+     */
+    public int getRepeatCount();
+
+    /**
+	 * Get cron expression used for configuring scheduler.
 	 */
 	public String getCronExpression();
 	
 	/**
-	 * @return group name used for configuring scheduler
+	 * Get group name used for configuring scheduler.
 	 */
 	public String getGroup();
 	
 	/**
-	 * <p>If cronExpression property is set returns true</p>
-	 * @return should scheduler configure task using cron expression or timeout and startDelay properties.
+	 * If cronExpression property is set returns true.
 	 */
 	public boolean isCronExpressionConfigured();
 	
 	/**
-	 * Return whether jobs can be executed concurrently or not
-	 * 
-	 * @return True if they can be executed concurrently
+	 * If jobs can be executed concurrently returns true.
 	 */
 	public boolean isConcurrent();
 
 	/**
-	 * @return True task requires Hibernate Session bounded to thread
+	 * If task requires Hibernate Session bounded to thread returns true.
 	 */
 	public boolean isSessionRequired();
 }

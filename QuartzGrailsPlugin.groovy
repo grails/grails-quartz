@@ -163,6 +163,7 @@ but is made simpler by the coding by convention paradigm.
                 jobDetail = ref("${fullName}JobDetail")
                 startDelay = jobClass.startDelay
                 repeatInterval = jobClass.timeout
+                repeatCount = jobClass.repeatCount
             }
         } else {
             "${fullName}Trigger"(CronTriggerBean) {

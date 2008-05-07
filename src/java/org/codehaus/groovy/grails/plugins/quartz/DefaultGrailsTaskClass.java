@@ -15,6 +15,7 @@
 package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
+import org.quartz.SimpleTrigger;
 
 /** 
  * @author Micha?? K??ujszo
@@ -29,7 +30,8 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 	
 	public static final long DEFAULT_TIMEOUT = 60000l;	// one minute
 	public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
-	public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
+    public static final int DEFAULT_REPEAT_COUNT = SimpleTrigger.REPEAT_INDEFINITELY;
+    public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
 	public static final String DEFAULT_GROUP = "GRAILS_JOBS";
 	public static final boolean DEFAULT_CONCURRENT = true;
 	public static final boolean	DEFAULT_SESSION_REQUIRED = true;
@@ -51,6 +53,13 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         if( obj != null && ((Number) obj).longValue() < 0 ) {
             throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
         }
+        obj = getPropertyValue(REPEAT_COUNT);
+		if( obj != null && !(obj instanceof Integer)) {
+			throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " must be Integer");
+		}
+        if( obj != null && ((Number) obj).intValue() < 0 ) {
+            throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
+        }
 	}
 
 	public void execute() {
@@ -69,7 +78,13 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 		return ((Number)obj).longValue();
 	}
 
-	public String getCronExpression() {
+    public int getRepeatCount() {
+        Object obj = getPropertyValue(REPEAT_COUNT);
+        if(obj == null) return DEFAULT_REPEAT_COUNT;
+        return ((Number)obj).intValue();
+    }
+
+    public String getCronExpression() {
 		String cronExpression = (String)getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
 		if( cronExpression == null || "".equals(cronExpression) ) return DEFAULT_CRON_EXPRESSION;
 		return cronExpression;	

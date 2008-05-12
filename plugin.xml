@@ -8,5 +8,8 @@ system uses the Quartz Enterprise Job Scheduler configured via Spring,
 but is made simpler by the coding by convention paradigm.
 </description>
   <documentation>http://grails.org/Quartz+plugin</documentation>
-  <resources />
+  <resources>
+    <resource>DefaultQuartzConfig</resource>
+    <resource>QuartzBootStrap</resource>
+  </resources>
 </plugin>

@@ -17,17 +17,8 @@
 import org.codehaus.groovy.grails.plugins.quartz.*
 import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.*
-import org.codehaus.groovy.grails.plugins.support.GrailsPluginUtils
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
-import org.springframework.util.MethodInvoker
-import org.hibernate.Session
-import org.hibernate.SessionFactory
-import org.springframework.orm.hibernate3.SessionFactoryUtils
-import org.springframework.orm.hibernate3.SessionHolder
-import org.springframework.transaction.support.TransactionSynchronizationManager
-import org.quartz.JobListener
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -75,7 +66,8 @@ but is made simpler by the coding by convention paradigm.
         "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
 
         quartzScheduler(SchedulerFactoryBean) {
-            autoStartup = config.autoStartup
+            // delay scheduler startup to after-bootstrap stage
+            autoStartup = false
             if(config.jdbcStore) {
                 dataSource = ref('dataSource')
                 transactionManager = ref('transactionManager')
@@ -98,7 +90,6 @@ but is made simpler by the coding by convention paradigm.
         } else {
             log.warn("failed to register job triggers: scheduler not found")
         }
-        ConfigurationHolder.get
     }
 
     def onChange = {event ->
@@ -182,15 +173,18 @@ but is made simpler by the coding by convention paradigm.
     }
 
     private ConfigObject loadQuartzConfig() {
+        def config = ConfigurationHolder.config
         GroovyClassLoader classLoader = new GroovyClassLoader(getClass().classLoader)
-        ConfigObject defaultConfig = new ConfigSlurper().parse(classLoader.loadClass('DefaultQuartzConfig'))
 
-        ConfigObject config
+
+        // merging default Quartz config into main application config
+        config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig')))
+
+        // merging user-defined Quartz config into main application config if provided
         try {
-            config = new ConfigSlurper().parse(classLoader.loadClass('QuartzConfig'))
-            config = defaultConfig.merge(config)
+            config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('QuartzConfig')))
         } catch (Exception ignored) {
-            config = defaultConfig
+            // ignore, just use the defaults
         }
 
         return config.quartz

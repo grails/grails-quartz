@@ -38,6 +38,7 @@ target(installQuartzConfig: "The implementation task") {
                 overwrite: true
         )
         event("CreatedFile", [configFile])
+        event("StatusFinal", ["Quartz configuration file was installed into /grails-app/conf/QuartzConfig.groovy"])
     }
 }
 

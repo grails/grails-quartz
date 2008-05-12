@@ -15,7 +15,7 @@
  */
 
 /**
- * Gant script that creates a Grails Quartz job
+ * Gant script that creates a Grails Quartz jobs directory
  *
  * @author Sergey Nebolsin
  */

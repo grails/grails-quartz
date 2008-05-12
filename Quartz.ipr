@@ -413,7 +413,16 @@
         <root url="file://$GRAILS_HOME$/dist" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="file:///Developer/Java/grails/src/grails" />
+        <root url="file:///Developer/Java/grails/src/persistence" />
+        <root url="file:///Developer/Java/grails/src/war" />
+        <root url="file:///Developer/Java/grails/src/commons" />
+        <root url="file:///Developer/Java/grails/src/scaffolding" />
+        <root url="file:///Developer/Java/grails/src/tiger" />
+        <root url="file:///Developer/Java/grails/src/groovy" />
+        <root url="file:///Developer/Java/grails/src/web" />
+      </SOURCES>
       <jarDirectory url="file://$GRAILS_HOME$/dist" recursive="false" />
     </library>
     <library name="Grails Dependencies">
@@ -421,7 +430,10 @@
         <root url="file://$GRAILS_HOME$/lib" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="file:///Developer/Java/hibernate-3.2/src" />
+        <root url="file:///Developer/Java/spring-framework-2.5.1/src" />
+      </SOURCES>
       <jarDirectory url="file://$GRAILS_HOME$/lib" recursive="false" />
     </library>
   </component>

@@ -19,10 +19,8 @@ import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.*
 import org.codehaus.groovy.grails.plugins.support.GrailsPluginUtils
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
-import org.springframework.scheduling.quartz.CronTriggerBean
 import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
-import org.springframework.scheduling.quartz.SimpleTriggerBean
 import org.springframework.util.MethodInvoker
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -32,7 +30,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.quartz.JobListener
 
 /**
- * A plug-in that configures Quartz job support for Grails. 
+ * A plug-in that configures Quartz job support for Grails.
  *
  *
  * @author Graeme Rocher
@@ -59,6 +57,9 @@ but is made simpler by the coding by convention paradigm.
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {
+
+        def config = loadQuartzConfig()
+
         application.taskClasses.each {jobClass ->
             configureJobBeans.delegate = delegate
             configureJobBeans(jobClass)
@@ -74,6 +75,12 @@ but is made simpler by the coding by convention paradigm.
         "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
 
         quartzScheduler(SchedulerFactoryBean) {
+            autoStartup = config.autoStartup
+            if(config.jdbcStore) {
+                dataSource = ref('dataSource')
+                transactionManager = ref('transactionManager')
+            }
+
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
         }
@@ -91,6 +98,7 @@ but is made simpler by the coding by convention paradigm.
         } else {
             log.warn("failed to register job triggers: scheduler not found")
         }
+        ConfigurationHolder.get
     }
 
     def onChange = {event ->
@@ -147,9 +155,8 @@ but is made simpler by the coding by convention paradigm.
             bean.autowire = "byName"
         }
 
-        "${fullName}JobDetail"(MethodInvokingJobDetailFactoryBean) {
-            targetObject = ref(fullName)
-            targetMethod = GrailsTaskClassProperty.EXECUTE
+        "${fullName}JobDetail"(JobDetailFactoryBean) {
+            grailsJobName = fullName
             concurrent = jobClass.concurrent
             group = jobClass.group
             name = fullName
@@ -159,18 +166,33 @@ but is made simpler by the coding by convention paradigm.
         }
 
         if(!jobClass.cronExpressionConfigured) {
-            "${fullName}Trigger"(SimpleTriggerBean) {
+            "${fullName}Trigger"(GrailsSimpleTriggerBean) {
                 jobDetail = ref("${fullName}JobDetail")
                 startDelay = jobClass.startDelay
                 repeatInterval = jobClass.timeout
                 repeatCount = jobClass.repeatCount
             }
         } else {
-            "${fullName}Trigger"(CronTriggerBean) {
+            "${fullName}Trigger"(GrailsCronTriggerBean) {
                 startTime = new Date(System.currentTimeMillis() + jobClass.startDelay)
                 jobDetail = ref("${fullName}JobDetail")
                 cronExpression = jobClass.cronExpression
             }
         }
+    }
+
+    private ConfigObject loadQuartzConfig() {
+        GroovyClassLoader classLoader = new GroovyClassLoader(getClass().classLoader)
+        ConfigObject defaultConfig = new ConfigSlurper().parse(classLoader.loadClass('DefaultQuartzConfig'))
+
+        ConfigObject config
+        try {
+            config = new ConfigSlurper().parse(classLoader.loadClass('QuartzConfig'))
+            config = defaultConfig.merge(config)
+        } catch (Exception ignored) {
+            config = defaultConfig
+        }
+
+        return config.quartz
     }
 }

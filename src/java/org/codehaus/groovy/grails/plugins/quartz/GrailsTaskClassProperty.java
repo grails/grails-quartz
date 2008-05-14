@@ -14,6 +14,8 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
+import org.quartz.SimpleTrigger;
+
 /**
  * <p>Holds properties names from <code>GrailsTaskClass</code></p> 
  * 
@@ -21,6 +23,7 @@ package org.codehaus.groovy.grails.plugins.quartz;
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
  * @author Marcel Overdijk
+ * @author Sergey Nebolsin
  * 
  * @since 0.2
  */
@@ -41,4 +44,22 @@ public interface GrailsTaskClassProperty {
 	public static final String SESSION_REQUIRED = "sessionRequired";
 
     public static final String REPEAT_COUNT = "repeatCount";
+
+
+    // Default values for Job's properties
+
+    public static final long DEFAULT_TIMEOUT = 60000l;	// one minute
+
+    public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
+
+    public static final int DEFAULT_REPEAT_COUNT = SimpleTrigger.REPEAT_INDEFINITELY;
+
+    public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
+
+    public static final String DEFAULT_GROUP = "GRAILS_JOBS";
+
+    public static final boolean DEFAULT_CONCURRENT = true;
+
+    public static final boolean	DEFAULT_SESSION_REQUIRED = true;
+    
 }

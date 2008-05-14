@@ -29,14 +29,6 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 	
 	public static final String JOB = "Job";
 	
-	public static final long DEFAULT_TIMEOUT = 60000l;	// one minute
-	public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
-    public static final int DEFAULT_REPEAT_COUNT = SimpleTrigger.REPEAT_INDEFINITELY;
-    public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
-	public static final String DEFAULT_GROUP = "GRAILS_JOBS";
-	public static final boolean DEFAULT_CONCURRENT = true;
-	public static final boolean	DEFAULT_SESSION_REQUIRED = true;
-	
 	public DefaultGrailsTaskClass(Class clazz) {
 		super(clazz, JOB);
 		// Validate startDelay and timeout property types

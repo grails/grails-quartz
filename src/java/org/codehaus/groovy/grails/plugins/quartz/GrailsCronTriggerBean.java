@@ -62,7 +62,10 @@ public class GrailsCronTriggerBean
 	 * non-global TriggerListeners registered with the Scheduler.
 	 * <p>A TriggerListener name always refers to the name returned
 	 * by the TriggerListener implementation.
-	 * @see SchedulerFactoryBean#setTriggerListeners
+	 *
+     * @param names array of trigger listener names
+     *
+     * @see SchedulerFactoryBean#setTriggerListeners
 	 * @see org.quartz.TriggerListener#getName
 	 */
 	public void setTriggerListenerNames(String[] names) {
@@ -76,7 +79,10 @@ public class GrailsCronTriggerBean
 	 * <p>This is typically used with a bean reference if the JobDetail
 	 * is a Spring-managed bean. Alternatively, the trigger can also
 	 * be associated with a job by name and group.
-	 * @see #setJobName
+     *
+	 * @param jobDetail job details
+     *
+     * @see #setJobName
 	 * @see #setJobGroup
 	 */
 	public void setJobDetail(JobDetail jobDetail) {

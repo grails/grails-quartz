@@ -52,7 +52,10 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Set the name of the job.
 	 * <p>Default is the bean name of this FactoryBean.
-	 * @see org.quartz.JobDetail#setName
+     *
+	 * @param name name of the job
+     *
+     * @see org.quartz.JobDetail#setName
 	 */
 	public void setName(final String name) {
 		this.name = name;
@@ -61,7 +64,10 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	/**
 	 * Set the group of the job.
 	 * <p>Default is the default group of the Scheduler.
-	 * @see org.quartz.JobDetail#setGroup
+     *
+	 * @param group group name of the job
+     *
+     * @see org.quartz.JobDetail#setGroup
 	 * @see org.quartz.Scheduler#DEFAULT_GROUP
 	 */
 	public void setGroup(final String group) {
@@ -75,7 +81,9 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	 * More information on stateful versus stateless jobs can be found
 	 * <a href="http://www.opensymphony.com/quartz/tutorial.html#jobsMore">here</a>.
 	 * <p>The default setting is to run jobs concurrently.
-	 */
+     *
+     * @param concurrent true for concurrent runs
+     */
 	public void setConcurrent(final boolean concurrent) {
 		this.concurrent = concurrent;
 	}
@@ -85,7 +93,10 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	 * non-global JobListeners registered with the Scheduler.
 	 * <p>A JobListener name always refers to the name returned
 	 * by the JobListener implementation.
-	 * @see SchedulerFactoryBean#setJobListeners
+     *
+	 * @param names array of job listener names which should be applied to the job
+     *
+     * @see SchedulerFactoryBean#setJobListeners
 	 * @see org.quartz.JobListener#getName
 	 */
 	public void setJobListenerNames(final String[] names) {
@@ -111,7 +122,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		}
 
 		// Consider the concurrent flag to choose between stateful and stateless job.
-		Class jobClass = (concurrent ? (Class)GrailsTaskClassJob.class : StatefulGrailsTaskClassJob.class);
+		Class jobClass = (concurrent ? GrailsTaskClassJob.class : StatefulGrailsTaskClassJob.class);
 
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);

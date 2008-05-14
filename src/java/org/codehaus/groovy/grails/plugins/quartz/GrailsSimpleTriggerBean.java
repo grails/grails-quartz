@@ -71,7 +71,9 @@ public class GrailsSimpleTriggerBean
 	 * A TriggerListener name always refers to the name returned by the
 	 * TriggerListener implementation.
 	 * 
-	 * @see SchedulerFactoryBean#setTriggerListeners
+     * @param names array of trigger listener names
+     *
+     * @see SchedulerFactoryBean#setTriggerListeners
 	 * @see org.quartz.TriggerListener#getName
 	 */
 	public void setTriggerListenerNames(final String[] names) {
@@ -90,7 +92,9 @@ public class GrailsSimpleTriggerBean
 	 * the container startup time anyway. Specifying a relative delay is
 	 * appropriate in that case.
 	 * 
-	 * @see #setStartTime
+	 * @param startDelay job's start delay in milliseconds
+     *
+     * @see #setStartTime
 	 */
 	public void setStartDelay(final long startDelay) {
 		this.startDelay = startDelay;
@@ -103,7 +107,9 @@ public class GrailsSimpleTriggerBean
 	 * Spring-managed bean. Alternatively, the trigger can also be associated
 	 * with a job by name and group.
 	 * 
-	 * @see #setJobName
+	 * @param jobDetail job details
+     *
+     * @see #setJobName
 	 * @see #setJobGroup
 	 */
 	public void setJobDetail(final JobDetail jobDetail) {

@@ -15,7 +15,6 @@
 package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
-import org.quartz.SimpleTrigger;
 import org.quartz.CronExpression;
 
 /** 

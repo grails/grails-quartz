@@ -16,6 +16,7 @@ package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 import org.quartz.SimpleTrigger;
+import org.quartz.CronExpression;
 
 /** 
  * @author Micha?? K??ujszo
@@ -60,7 +61,11 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         if( obj != null && ((Number) obj).intValue() < 0 ) {
             throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
         }
-	}
+        obj = getPropertyValue(CRON_EXPRESSION);
+        if(obj != null && !CronExpression.isValidExpression(obj.toString())) {
+            throw new IllegalArgumentException("Cron expression '" + obj.toString() + "' for job class " + getClazz().getName() + " is not a valid cron expression");
+        }
+    }
 
 	public void execute() {
         getMetaClass().invokeMethod( getReference().getWrappedInstance(), EXECUTE, new Object[] {} );

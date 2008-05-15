@@ -16,6 +16,8 @@ package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.InjectableGrailsClass;
 
+import java.util.Map;
+
 /**
  * <p>Represents a task class in Grails</p> 
  * 
@@ -89,4 +91,6 @@ public interface GrailsTaskClass extends InjectableGrailsClass {
      * @return true if this job require a Hibernate Session bounded to thread
      */
 	public boolean isSessionRequired();
+
+    public Map getTriggers();
 }

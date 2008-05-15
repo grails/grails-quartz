@@ -42,6 +42,7 @@ public class GrailsCronTriggerBean
 
 	private static final long serialVersionUID = 3593970242587603203L;
 
+    private long startDelay;
 	private JobDetail jobDetail;
 	private String beanName;
 
@@ -105,7 +106,25 @@ public class GrailsCronTriggerBean
 		this.beanName = beanName;
 	}
 
-	/**
+    /**
+     * Set the delay before starting the job for the first time. The given number
+     * of milliseconds will be added to the current time to calculate the start
+     * time. Default is 0.
+     * <p>
+     * This delay will just be applied if no custom start time was specified.
+     * However, in typical usage within a Spring context, the start time will be
+     * the container startup time anyway. Specifying a relative delay is
+     * appropriate in that case.
+     *
+     * @param startDelay job's start delay in milliseconds
+     *
+     * @see #setStartTime
+     */
+    public void setStartDelay(final long startDelay) {
+        this.startDelay = startDelay;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
@@ -116,10 +135,12 @@ public class GrailsCronTriggerBean
 		if (getGroup() == null) {
 			setGroup(Scheduler.DEFAULT_GROUP);
 		}
-		if (getStartTime() == null) {
-			setStartTime(new Date());
-		}
-		if (getTimeZone() == null) {
+
+        if (getStartTime() == null) {
+            setStartTime(new Date(System.currentTimeMillis() + startDelay));
+        }
+
+        if (getTimeZone() == null) {
 			setTimeZone(TimeZone.getDefault());
 		}
 		if (jobDetail != null) {

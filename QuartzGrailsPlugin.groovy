@@ -20,6 +20,7 @@ import org.codehaus.groovy.grails.commons.*
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.util.GrailsUtil
+import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -44,8 +45,10 @@ but is made simpler by the coding by convention paradigm.
     def documentation = "http://grails.org/Quartz+plugin"
 
     def loadAfter = ['core', 'hibernate']
-    def watchedResources = ["file:./grails-app/jobs/**/*Job.groovy",
-            "file:./plugins/*/grails-app/jobs/**/*Job.groovy"]
+    def watchedResources = [
+            "file:./grails-app/jobs/**/*Job.groovy",
+            "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
+    ]
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {
@@ -80,16 +83,9 @@ but is made simpler by the coding by convention paradigm.
     }
 
     def doWithApplicationContext = {applicationContext ->
-        def scheduler = applicationContext.getBean("quartzScheduler")
-        if(scheduler) {
-            application.taskClasses.each {jobClass ->
-                def fullName = jobClass.fullName
-                // add job to scheduler, and associate trigger with it
-                scheduler.scheduleJob(applicationContext.getBean("${fullName}JobDetail"), applicationContext.getBean("${fullName}Trigger"))
-                log.debug("Job ${jobClass.fullName} scheduled")
-            }
-        } else {
-            log.warn("failed to register job triggers: scheduler not found")
+        application.taskClasses.each {jobClass ->
+            scheduleJob.delegate = delegate
+            scheduleJob(jobClass, applicationContext)
         }
     }
 
@@ -124,16 +120,31 @@ but is made simpler by the coding by convention paradigm.
                 event.ctx.registerBeanDefinition("${fullName}JobClass", beans.getBeanDefinition("${fullName}JobClass"))
                 event.ctx.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
                 event.ctx.registerBeanDefinition("${fullName}JobDetail", beans.getBeanDefinition("${fullName}JobDetail"))
-                event.ctx.registerBeanDefinition("${fullName}Trigger", beans.getBeanDefinition("${fullName}Trigger"))
+                jobClass.triggers.each {name, trigger ->
+                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
+                }
 
-                // add job to scheduler, and associate trigger with it
-                scheduler.scheduleJob(event.ctx.getBean("${fullName}JobDetail"), event.ctx.getBean("${fullName}Trigger"))
-                log.debug("Job ${jobClass.fullName} scheduled")
+                scheduleJob(jobClass, event.ctx)
             }
         }
     }
 
-    def configureJobBeans = {jobClass ->
+    def scheduleJob = {GrailsTaskClass jobClass, ctx ->
+        def scheduler = ctx.getBean("quartzScheduler")
+        if(scheduler) {
+            def fullName = jobClass.fullName
+            // add job to scheduler, and associate triggers with it
+            scheduler.addJob(ctx.getBean("${fullName}JobDetail"), true)
+            jobClass.triggers.each {key, value ->
+                scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
+            }
+            log.debug("Job ${jobClass.fullName} scheduled")
+        } else {
+            log.warn("failed to register job triggers: scheduler not found")
+        }
+    }
+
+    def configureJobBeans = {GrailsTaskClass jobClass ->
         def fullName = jobClass.fullName
 
         "${fullName}JobClass"(MethodInvokingFactoryBean) {
@@ -157,18 +168,13 @@ but is made simpler by the coding by convention paradigm.
             }
         }
 
-        if(!jobClass.cronExpressionConfigured) {
-            "${fullName}Trigger"(GrailsSimpleTriggerBean) {
+        // registering triggers
+        jobClass.triggers.each {name, trigger ->
+            "${name}Trigger"(trigger.clazz) {
                 jobDetail = ref("${fullName}JobDetail")
-                startDelay = jobClass.startDelay
-                repeatInterval = jobClass.timeout
-                repeatCount = jobClass.repeatCount
-            }
-        } else {
-            "${fullName}Trigger"(GrailsCronTriggerBean) {
-                startTime = new Date(System.currentTimeMillis() + jobClass.startDelay)
-                jobDetail = ref("${fullName}JobDetail")
-                cronExpression = jobClass.cronExpression
+                trigger.properties.findAll {it.key != 'clazz'}.each {
+                    this["${it.key}"] = it.value
+                }
             }
         }
     }
@@ -176,7 +182,6 @@ but is made simpler by the coding by convention paradigm.
     private ConfigObject loadQuartzConfig() {
         def config = ConfigurationHolder.config
         GroovyClassLoader classLoader = new GroovyClassLoader(getClass().classLoader)
-
 
         // merging default Quartz config into main application config
         config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig')))

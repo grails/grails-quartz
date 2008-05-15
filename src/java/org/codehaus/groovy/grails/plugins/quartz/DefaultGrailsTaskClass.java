@@ -15,7 +15,15 @@
 package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
+import org.codehaus.groovy.grails.commons.GrailsClassUtils;
+import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder;
 import org.quartz.CronExpression;
+
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import groovy.lang.Closure;
 
 /** 
  * @author Micha?? K??ujszo
@@ -27,28 +35,53 @@ import org.quartz.CronExpression;
 public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implements GrailsTaskClass, GrailsTaskClassProperty {
 	
 	public static final String JOB = "Job";
-	
-	public DefaultGrailsTaskClass(Class clazz) {
+    private Map triggers = new HashMap();
+
+
+    public DefaultGrailsTaskClass(Class clazz) {
 		super(clazz, JOB);
-		// Validate startDelay and timeout property types
-		Object obj = getPropertyValue(TIMEOUT);
-		if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
-			throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " must be Integer or Long");
-		}
+        validateProperties();
+        evaluateTriggers();
+    }
+
+    private void evaluateTriggers() {
+        // registering additional triggersClosure from 'triggersClosure' closure if present
+        Closure triggersClosure = (Closure) GrailsClassUtils.getStaticPropertyValue(getClazz(), "triggers");
+
+        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName());
+
+        if(triggersClosure != null) {
+            builder.build(triggersClosure);
+            triggers = (Map) builder.getTriggers();
+        } else {
+            // backward compatibility
+            if(isCronExpressionConfigured()) {
+                triggers = builder.createEmbeddedCronTrigger(getStartDelay(), getCronExpression());
+            } else {
+                triggers = builder.createEmbeddedSimpleTrigger(getStartDelay(), getTimeout(), getRepeatCount());
+            }
+        }
+    }
+
+    private void validateProperties() {
+        Object obj = getPropertyValue(TIMEOUT);
+        if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
+            throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " must be Integer or Long");
+        }
         if( obj != null && ((Number) obj).longValue() < 0 ) {
             throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
         }
         obj = getPropertyValue(START_DELAY);
-		if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
-			throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " must be Integer or Long");
-		}
+        if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
+            throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " must be Integer or Long");
+        }
         if( obj != null && ((Number) obj).longValue() < 0 ) {
             throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
         }
         obj = getPropertyValue(REPEAT_COUNT);
-		if( obj != null && !(obj instanceof Integer)) {
-			throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " must be Integer");
-		}
+        if( obj != null && !(obj instanceof Integer)) {
+            throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " must be Integer");
+        }
         if( obj != null && ((Number) obj).intValue() < 0 ) {
             throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
         }
@@ -58,7 +91,7 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         }
     }
 
-	public void execute() {
+    public void execute() {
         getMetaClass().invokeMethod( getReference().getWrappedInstance(), EXECUTE, new Object[] {} );
 	}
 
@@ -107,4 +140,8 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 		Boolean sessionRequired = (Boolean)getPropertyValue(SESSION_REQUIRED, Boolean.class);
         return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired.booleanValue();
 	}
+
+    public Map getTriggers() {
+        return triggers;
+    }
 }

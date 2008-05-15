@@ -32,7 +32,7 @@ import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3"
+    def version = "0.4-SNAPSHOT"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."

@@ -3,10 +3,19 @@ import org.codehaus.groovy.grails.plugins.DefaultGrailsPlugin
 import org.codehaus.groovy.grails.plugins.quartz.*
 import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.spring.DefaultRuntimeSpringConfiguration
+import org.codehaus.groovy.grails.plugins.PluginManagerHolder
+import org.springframework.context.ApplicationContextAware
+import org.springframework.context.ApplicationContext
 
-class QuartzPluginTests extends GroovyTestCase {
+class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAware {
+    def transactional = false
     def grailsApplication
     def pluginManager
+    def applicationContext
+
+    void setUp() {
+        pluginManager = PluginManagerHolder.pluginManager
+    }
 
     void testLoading() {
         assertNotNull 'Plugin manager is null', pluginManager
@@ -14,10 +23,9 @@ class QuartzPluginTests extends GroovyTestCase {
         assertTrue 'Hibernate plugin is not loaded', pluginManager.hasGrailsPlugin('hibernate')
         assertTrue 'Quartz plugin is not loaded', pluginManager.hasGrailsPlugin('quartz')
 
-        def ctx = grailsApplication.parentContext
-        assertTrue ctx.containsBean('quartzScheduler')
-        assertTrue ctx.containsBean("${SessionBinderJobListener.NAME}")
-        assertTrue ctx.containsBean("${ExceptionPrinterJobListener.NAME}")
+        assertTrue "Bean 'quartzScheduler' is not registered in application context", applicationContext.containsBean('quartzScheduler')
+        assertTrue "Bean '${SessionBinderJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${SessionBinderJobListener.NAME}")
+        assertTrue "Bean '${ExceptionPrinterJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${ExceptionPrinterJobListener.NAME}")
     }
 
     void testArtefactHandlerRegistering() {
@@ -35,9 +43,13 @@ class QuartzPluginTests extends GroovyTestCase {
         plugin.doWithRuntimeConfiguration(springConfig)
 
         def ctx = springConfig.applicationContext
-        assertTrue ctx.containsBean('TestJob')
-        assertTrue ctx.containsBean('TestJobJobClass')
-        assertTrue ctx.containsBean('TestJobJobDetail')
-        assertTrue ctx.containsBean('TestJobTrigger')
+        assertTrue "Bean 'TestJob' is not registered in application context", ctx.containsBean('TestJob')
+        assertTrue "Bean 'TestJobJobClass' is not registered in application context", ctx.containsBean('TestJobJobClass')
+        assertTrue "Bean 'TestJobJobDetail' is not registered in application context", ctx.containsBean('TestJobJobDetail')
+        assertTrue "Bean 'TestJobTrigger' is not registered in application context", ctx.containsBean('TestJobTrigger')
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext
     }
 }

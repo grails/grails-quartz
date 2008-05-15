@@ -32,7 +32,7 @@ import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3-SNAPSHOT"
+    def version = "0.3"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."
@@ -49,6 +49,7 @@ but is made simpler by the coding by convention paradigm.
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
     ]
+    
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {
@@ -135,7 +136,8 @@ but is made simpler by the coding by convention paradigm.
             def fullName = jobClass.fullName
             // add job to scheduler, and associate triggers with it
             scheduler.addJob(ctx.getBean("${fullName}JobDetail"), true)
-            jobClass.triggers.each {key, value ->
+            jobClass.triggers.each {key, trigger ->
+                log.debug("Scheduling $fullName with trigger $key: ${trigger}")
                 scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
             }
             log.debug("Job ${jobClass.fullName} scheduled")

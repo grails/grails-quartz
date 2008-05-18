@@ -21,6 +21,7 @@ import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.util.GrailsUtil
 import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
+import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -32,7 +33,7 @@ import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3.1-SNAPSHOT"
+    def version = "0.3.1"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."
@@ -160,12 +161,13 @@ but is made simpler by the coding by convention paradigm.
             bean.autowire = "byName"
         }
 
-        "${fullName}JobDetail"(JobDetailFactoryBean) {
-            grailsJobName = fullName
+        "${fullName}JobDetail"(MethodInvokingJobDetailFactoryBean) {
+            targetObject = ref(fullName)
+            targetMethod = GrailsTaskClassProperty.EXECUTE
             concurrent = jobClass.concurrent
             group = jobClass.group
             name = fullName
-            if(jobClass.sessionRequired) {
+            if (jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }

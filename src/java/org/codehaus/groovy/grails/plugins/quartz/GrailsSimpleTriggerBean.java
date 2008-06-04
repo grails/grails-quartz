@@ -15,10 +15,6 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
@@ -27,6 +23,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.quartz.JobDetailAwareTrigger;
 import org.springframework.scheduling.quartz.JobDetailBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/SimpleTriggerBean.html'>SimpleTriggerBean</a>

@@ -14,17 +14,15 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
+import groovy.lang.Closure;
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
 import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder;
 import org.quartz.CronExpression;
 import org.quartz.JobExecutionContext;
 
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-
-import groovy.lang.Closure;
 
 /** 
  * @author Micha?? K??ujszo

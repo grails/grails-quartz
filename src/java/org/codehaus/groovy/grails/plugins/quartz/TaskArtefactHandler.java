@@ -17,7 +17,6 @@ package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.ArtefactHandlerAdapter;
 import org.springframework.util.ReflectionUtils;
-import org.quartz.JobExecutionContext;
 
 import java.lang.reflect.Method;
 

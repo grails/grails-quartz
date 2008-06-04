@@ -20,8 +20,6 @@ import org.codehaus.groovy.grails.commons.*
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.util.GrailsUtil
-import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean
 
 /**
  * A plug-in that configures Quartz job support for Grails.

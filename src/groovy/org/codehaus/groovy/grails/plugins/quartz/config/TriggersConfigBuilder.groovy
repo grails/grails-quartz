@@ -14,10 +14,10 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz.config
 
-import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty
 import org.codehaus.groovy.grails.plugins.quartz.GrailsCronTriggerBean
 import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerBean
-import org.quartz.Trigger;
+import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty
+import org.quartz.Trigger
 
 /**
  * Groovy Builder for parsing triggers configuration info.

@@ -1,8 +1,10 @@
 package org.codehaus.groovy.grails.plugins.quartz.config
 
 import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
-import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerBean
-import org.codehaus.groovy.grails.plugins.quartz.GrailsCronTriggerBean
+import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.GrailsCronTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.GrailsCronTriggerFactoryBean
 
 /**
  * TODO: write javadoc
@@ -29,7 +31,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
 
         assertPropertiesEquals(new Expando(
                 name:'TestJob0',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: GTCP.DEFAULT_START_DELAY,
                 repeatInterval: GTCP.DEFAULT_TIMEOUT,
                 repeatCount: GTCP.DEFAULT_REPEAT_COUNT
@@ -37,7 +39,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob1',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: GTCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
                 repeatCount: GTCP.DEFAULT_REPEAT_COUNT
@@ -45,7 +47,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob2',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: GTCP.DEFAULT_TIMEOUT,
                 repeatCount: GTCP.DEFAULT_REPEAT_COUNT
@@ -53,7 +55,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob3',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: GTCP.DEFAULT_REPEAT_COUNT
@@ -61,7 +63,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob4',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: 3
@@ -70,7 +72,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
 
         assertPropertiesEquals(new Expando(
                 name:'TestJobEverySecond',
-                clazz:GrailsSimpleTriggerBean,
+                clazz:GrailsSimpleTriggerFactoryBean,
                 startDelay: GTCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
                 repeatCount: GTCP.DEFAULT_REPEAT_COUNT
@@ -78,21 +80,21 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob5',
-                clazz:GrailsCronTriggerBean,
+                clazz:GrailsCronTriggerFactoryBean,
                 startDelay:GTCP.DEFAULT_START_DELAY,
                 cronExpression: GTCP.DEFAULT_CRON_EXPRESSION
             ), builder.triggers['TestJob5']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob6',
-                clazz:GrailsCronTriggerBean,
+                clazz:GrailsCronTriggerFactoryBean,
                 cronExpression: '0 15 6 * * ?',
                 startDelay: GTCP.DEFAULT_START_DELAY
             ), builder.triggers['TestJob6']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJobMyTrigger',
-                clazz:GrailsCronTriggerBean,
+                clazz:GrailsCronTriggerFactoryBean,
                 startDelay: GTCP.DEFAULT_START_DELAY,
                 cronExpression: '0 15 6 * * ?'
             ), builder.triggers['TestJobMyTrigger']

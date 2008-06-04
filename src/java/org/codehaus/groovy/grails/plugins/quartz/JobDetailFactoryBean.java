@@ -16,15 +16,9 @@
 package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.quartz.*;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.util.ReflectionUtils;
-
-import java.lang.reflect.Method;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
@@ -32,25 +26,14 @@ import java.lang.reflect.Method;
  *
  * @author <a href='mailto:beckwithb@studentsonly.com'>Burt Beckwith</a>
  */
-public class JobDetailFactoryBean implements FactoryBean, InitializingBean, ApplicationContextAware {
+public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
+    public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName"; 
 
-    private ApplicationContext applicationContext;
-
-	private String name;
+    private String name;
 	private String group;
 	private boolean concurrent = true;
 	private String[] jobListenerNames;
 	private JobDetail jobDetail;
-	private String grailsJobName;
-
-    /**
-	 * Set the full name of the Job artifact.
-	 *
-	 * @param grailsJobName  the name
-	 */
-	public void setGrailsJobName(final String grailsJobName) {
-		this.grailsJobName = grailsJobName;
-	}
 
 	/**
 	 * Set the name of the job.
@@ -120,17 +103,12 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean, Appl
 			throw new IllegalStateException("group is required");
 		}
 
-		if (grailsJobName == null) {
-			throw new IllegalStateException("grailsJobName is required");
-		}
-
 		// Consider the concurrent flag to choose between stateful and stateless job.
-		Class jobClass = (concurrent ? GrailsTaskClassJob.class : StatefulGrailsTaskClassJob.class);
+		Class jobClass = (concurrent ? GrailsJobFactory.GrailsTaskClassJob.class : GrailsJobFactory.StatefulGrailsTaskClassJob.class);
 
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);
-        jobDetail.getJobDataMap().put("applicationContext", applicationContext);
-        jobDetail.getJobDataMap().put("grailsJobName", grailsJobName);
+        jobDetail.getJobDataMap().put(JOB_NAME_PARAMETER, name);
 		jobDetail.setVolatility(true);
 		jobDetail.setDurability(true);
 
@@ -164,43 +142,5 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean, Appl
 	 */
 	public boolean isSingleton() {
 		return true;
-	}
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    /**
-	 * Quartz Job implementation that invokes execute() on the GrailsTaskClass instance.
-	 */
-	public static class GrailsTaskClassJob implements Job {
-		public void execute(final JobExecutionContext context) throws JobExecutionException {
-			try {
-				String grailsJobName = (String) context.getMergedJobDataMap().get("grailsJobName");
-                ApplicationContext ctx = (ApplicationContext) context.getMergedJobDataMap().get("applicationContext");
-                Object job = ctx.getBean(grailsJobName);
-                // trying to invoke execute(context) method
-                Method method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class});
-                if(method != null) {
-                    ReflectionUtils.invokeMethod(method, job, new Object[] {context});
-                } else {
-                    // falling back to execute() method
-                    ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
-                }
-			}
-			catch (Exception e) {
-				throw new JobExecutionException(e.getMessage(), e);
-			}
-		}
-	}
-
-	/**
-	 * Extension of the GrailsTaskClassJob, implementing the StatefulJob interface.
-	 * Quartz checks whether or not jobs are stateful and if so,
-	 * won't let jobs interfere with each other.
-	 */
-	public static class StatefulGrailsTaskClassJob extends GrailsTaskClassJob implements StatefulJob {
-		// No implementation, just an addition of the tag interface StatefulJob
-		// in order to allow stateful jobs.
 	}
 }

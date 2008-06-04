@@ -69,6 +69,8 @@ but is made simpler by the coding by convention paradigm.
         // during job's execution
         "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
 
+        quartzJobFactory(GrailsJobFactory)
+
         quartzScheduler(SchedulerFactoryBean) {
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
@@ -77,6 +79,7 @@ but is made simpler by the coding by convention paradigm.
                 transactionManager = ref('transactionManager')
             }
 
+            jobFactory = quartzJobFactory
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
         }
@@ -161,10 +164,9 @@ but is made simpler by the coding by convention paradigm.
         }
 
         "${fullName}JobDetail"(JobDetailFactoryBean) {
-            grailsJobName = fullName
-            concurrent = jobClass.concurrent
-            group = jobClass.group
             name = fullName
+            group = jobClass.group
+            concurrent = jobClass.concurrent
             if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }

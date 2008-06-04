@@ -405,8 +405,12 @@
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/quartz-1.6.0.jar!/" />
       </CLASSES>
-      <JAVADOC />
-      <SOURCES />
+      <JAVADOC>
+        <root url="file:///Developer/Java/quartz-1.6.0/docs/api" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="file:///Developer/Java/quartz-1.6.0/src/java" />
+      </SOURCES>
     </library>
     <library name="Grails">
       <CLASSES>
@@ -414,14 +418,14 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="file:///Developer/Java/grails/src/grails" />
-        <root url="file:///Developer/Java/grails/src/persistence" />
-        <root url="file:///Developer/Java/grails/src/war" />
-        <root url="file:///Developer/Java/grails/src/commons" />
-        <root url="file:///Developer/Java/grails/src/scaffolding" />
-        <root url="file:///Developer/Java/grails/src/tiger" />
-        <root url="file:///Developer/Java/grails/src/groovy" />
-        <root url="file:///Developer/Java/grails/src/web" />
+        <root url="file://$GRAILS_HOME$/src/grails" />
+        <root url="file://$GRAILS_HOME$/src/persistence" />
+        <root url="file://$GRAILS_HOME$/src/war" />
+        <root url="file://$GRAILS_HOME$/src/commons" />
+        <root url="file://$GRAILS_HOME$/src/scaffolding" />
+        <root url="file://$GRAILS_HOME$/src/tiger" />
+        <root url="file://$GRAILS_HOME$/src/groovy" />
+        <root url="file://$GRAILS_HOME$/src/web" />
       </SOURCES>
       <jarDirectory url="file://$GRAILS_HOME$/dist" recursive="false" />
     </library>
@@ -432,7 +436,7 @@
       <JAVADOC />
       <SOURCES>
         <root url="file:///Developer/Java/hibernate-3.2/src" />
-        <root url="file:///Developer/Java/spring-framework-2.5.1/src" />
+        <root url="file:///Developer/Java/spring-framework-2.5.4/src" />
       </SOURCES>
       <jarDirectory url="file://$GRAILS_HOME$/lib" recursive="false" />
     </library>

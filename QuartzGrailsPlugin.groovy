@@ -33,7 +33,7 @@ import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3.1"
+    def version = "0.3.2-SNAPSHOT"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."
@@ -123,7 +123,7 @@ but is made simpler by the coding by convention paradigm.
                 event.ctx.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
                 event.ctx.registerBeanDefinition("${fullName}JobDetail", beans.getBeanDefinition("${fullName}JobDetail"))
                 jobClass.triggers.each {name, trigger ->
-                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
+                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger")) 
                 }
 
                 scheduleJob(jobClass, event.ctx)
@@ -159,15 +159,15 @@ but is made simpler by the coding by convention paradigm.
         "${fullName}"(ref("${fullName}JobClass")) {bean ->
             bean.factoryMethod = "newInstance"
             bean.autowire = "byName"
+            bean.scope = "prototype"
         }
 
-        "${fullName}JobDetail"(MethodInvokingJobDetailFactoryBean) {
-            targetObject = ref(fullName)
-            targetMethod = GrailsTaskClassProperty.EXECUTE
+        "${fullName}JobDetail"(JobDetailFactoryBean) {
+            grailsJobName = fullName
             concurrent = jobClass.concurrent
             group = jobClass.group
             name = fullName
-            if (jobClass.sessionRequired) {
+            if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }

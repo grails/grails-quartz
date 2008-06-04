@@ -15,7 +15,8 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.codehaus.groovy.grails.commons.ApplicationAttributes;
+import org.codehaus.groovy.grails.web.context.ServletContextHolder;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -23,15 +24,21 @@ import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
- * that is serializable (for JDBC storage).
+ * that avoids issues with non-serializable classes (for JDBC storage).
  *
  * @author <a href='mailto:beckwithb@studentsonly.com'>Burt Beckwith</a>
  */
-public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
+public class JobDetailFactoryBean implements FactoryBean, InitializingBean, ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
 
 	private String name;
 	private String group;
@@ -40,7 +47,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	private JobDetail jobDetail;
 	private String grailsJobName;
 
-	/**
+    /**
 	 * Set the full name of the Job artifact.
 	 *
 	 * @param grailsJobName  the name
@@ -126,7 +133,8 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);
-		jobDetail.getJobDataMap().put("grailsJobName", grailsJobName);
+        jobDetail.getJobDataMap().put("applicationContext", applicationContext);
+        jobDetail.getJobDataMap().put("grailsJobName", grailsJobName);
 		jobDetail.setVolatility(true);
 		jobDetail.setDurability(true);
 
@@ -162,16 +170,20 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		return true;
 	}
 
-	/**
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
 	 * Quartz Job implementation that invokes execute() on the GrailsTaskClass instance.
 	 */
 	public static class GrailsTaskClassJob implements Job {
 		public void execute(final JobExecutionContext context) throws JobExecutionException {
 			try {
-				String grailsJobName = (String)context.getJobDetail().getJobDataMap().get("grailsJobName");
-				GrailsTaskClass grailsTaskClass = (GrailsTaskClass)ApplicationHolder.getApplication().getArtefact(
-						TaskArtefactHandler.TYPE, grailsJobName);
-				grailsTaskClass.execute();
+				String grailsJobName = (String)context.getMergedJobDataMap().get("grailsJobName");
+                ApplicationContext ctx = (ApplicationContext) context.getMergedJobDataMap().get("applicationContext");
+                Object job = ctx.getBean(grailsJobName);
+				ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
 			}
 			catch (Exception e) {
 				throw new JobExecutionException(e.getMessage(), e);

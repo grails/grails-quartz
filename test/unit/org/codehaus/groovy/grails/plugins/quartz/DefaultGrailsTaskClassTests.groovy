@@ -52,7 +52,7 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
         assertEquals 1, taskClass.triggers.size()
         def trigger = taskClass.triggers['TestJob']
         assertTrue "Trigger with name TestJob should be registered", trigger != null
-        assertEquals GrailsSimpleTriggerFactoryBean, trigger.clazz
+        assertEquals SimpleTriggerFactoryBean, trigger.clazz
         assertEquals 1000, trigger.repeatInterval
         assertEquals 5000, trigger.startDelay
     }
@@ -66,7 +66,7 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
         assertEquals 1, taskClass.triggers.size()
         def trigger = taskClass.triggers['TestJob']
         assertTrue "Trigger with name TestJob should be registered", trigger != null
-        assertEquals GrailsCronTriggerFactoryBean, trigger.clazz
+        assertEquals CronTriggerFactoryBean, trigger.clazz
         assertEquals '0 1 6 * * ?', trigger.cronExpression
     }
 

@@ -14,11 +14,12 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz.config
 
-import org.codehaus.groovy.grails.plugins.quartz.GrailsCronTriggerFactoryBean
-import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
 import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty
 import org.quartz.Trigger
-import org.codehaus.groovy.grails.plugins.quartz.GrailsSimpleTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
+import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -66,14 +67,14 @@ public class TriggersConfigBuilder extends BuilderSupport {
         def trigger
         if(name == 'simpleTrigger') {
             trigger = new Expando(
-                    clazz: GrailsSimpleTriggerFactoryBean,
+                    clazz: SimpleTriggerFactoryBean,
                     startDelay: attributes?.startDelay ?: GrailsTaskClassProperty.DEFAULT_START_DELAY,
                     repeatInterval: attributes?.timeout ?: GrailsTaskClassProperty.DEFAULT_TIMEOUT,
                     repeatCount: attributes?.repeatCount ?: GrailsTaskClassProperty.DEFAULT_REPEAT_COUNT
             )
         } else if(name == 'cronTrigger') {
             trigger = new Expando(
-                    clazz: GrailsCronTriggerFactoryBean,
+                    clazz: CronTriggerFactoryBean,
                     startDelay: attributes?.startDelay ?: GrailsTaskClassProperty.DEFAULT_START_DELAY,
                     cronExpression: attributes?.cronExpression ?: GrailsTaskClassProperty.DEFAULT_CRON_EXPRESSION
             )

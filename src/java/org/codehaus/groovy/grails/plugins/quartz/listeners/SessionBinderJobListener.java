@@ -1,4 +1,4 @@
-/* Copyright 2004-2005 the original author or authors.
+/* Copyright 2006-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * before execution of job and flushes it after job execution.
  * 
  * @author Sergey Nebolsin (nebolsin@gmail.com)
+ * 
+ * @since 0.2
  */
 public class SessionBinderJobListener extends JobListenerSupport {
 	private static final transient Log LOG = LogFactory.getLog(SessionBinderJobListener.class);
@@ -66,6 +68,4 @@ public class SessionBinderJobListener extends JobListenerSupport {
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
-	
 }

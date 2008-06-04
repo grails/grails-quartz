@@ -27,7 +27,8 @@ import java.util.Date;
 /**
  * Factory bean which configures SimpleTrigger.
  *
- * @author Sergey Nebolsin
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
+ * 
  * @since 0.3.2
  */
 public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, BeanNameAware {
@@ -44,6 +45,10 @@ public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, 
     private Long repeatInterval;
     private Integer repeatCount;
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
     public void afterPropertiesSet() {
         simpleTrigger = new SimpleTrigger();
 	    simpleTrigger.setName(name != null ? name : beanName);
@@ -59,18 +64,34 @@ public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, 
 		simpleTrigger.setVolatility(true);
 	}
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#getObject()
+     */
     public Object getObject() throws Exception {
         return simpleTrigger;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+     */
     public Class getObjectType() {
         return SimpleTrigger.class;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+     */
     public boolean isSingleton() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.BeanNameAware#setBeanName(String)
+     */
     public void setBeanName(String name) {
         this.beanName = name;
     }

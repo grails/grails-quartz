@@ -1,4 +1,4 @@
-/* Copyright 2004-2005 the original author or authors.
+/* Copyright 2006-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import org.quartz.SimpleTrigger;
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
  * @author Marcel Overdijk
- * @author Sergey Nebolsin
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
  * 
- * @since 0.2
+ * @since 0.1
  */
 public interface GrailsTaskClassProperty {
 

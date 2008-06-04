@@ -25,6 +25,8 @@ import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
  * Groovy Builder for parsing triggers configuration info.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
+ *
+ * @since 0.3
  */
 public class TriggersConfigBuilder extends BuilderSupport {
     private triggerNumber = 0

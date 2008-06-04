@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2006-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import org.springframework.beans.factory.FactoryBean;
 import java.util.Date;
 import java.text.ParseException;
 
-
 /**
  * Factory bean which configures CronTrigger.
  *
- * @author Sergey Nebolsin
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
+ * 
  * @since 0.3.2
  */
 public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, BeanNameAware {
@@ -60,18 +60,34 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
         cronTrigger.setVolatility(true);
 	}
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#getObject()
+     */
     public Object getObject() throws Exception {
         return cronTrigger;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+     */
     public Class getObjectType() {
         return SimpleTrigger.class;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+     */
     public boolean isSingleton() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see org.springframework.beans.factory.BeanNameAware#setBeanName(String)
+     */
     public void setBeanName(String name) {
         this.beanName = name;
     }

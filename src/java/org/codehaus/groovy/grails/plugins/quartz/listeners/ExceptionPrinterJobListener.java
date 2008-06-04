@@ -1,4 +1,4 @@
-/* Copyright 2004-2005 the original author or authors.
+/* Copyright 2006-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import org.quartz.listeners.JobListenerSupport;
  * JobListener implementation which logs an exceptions occured during job's execution.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
+ * 
+ * @since 0.2
  */
 public class ExceptionPrinterJobListener extends JobListenerSupport {
 	private static final transient Log LOG = LogFactory.getLog(ExceptionPrinterJobListener.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2006-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * that avoids issues with non-serializable classes (for JDBC storage).
  *
  * @author <a href='mailto:beckwithb@studentsonly.com'>Burt Beckwith</a>
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
+ * 
+ * @since 0.3.2
  */
 public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
     public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName"; 

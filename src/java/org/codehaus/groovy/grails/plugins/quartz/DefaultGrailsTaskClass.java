@@ -18,6 +18,7 @@ import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
 import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder;
 import org.quartz.CronExpression;
+import org.quartz.JobExecutionContext;
 
 import java.util.List;
 import java.util.HashMap;
@@ -95,7 +96,11 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         getMetaClass().invokeMethod( getReference().getWrappedInstance(), EXECUTE, new Object[] {} );
 	}
 
-	public long getTimeout() {
+    public void execute(JobExecutionContext context) {
+        getMetaClass().invokeMethod(getReference().getWrappedInstance(), EXECUTE, new Object[] {context});
+    }
+
+    public long getTimeout() {
 		Object obj = getPropertyValue( TIMEOUT );
 		if( obj == null ) return DEFAULT_TIMEOUT;
 		return ((Number)obj).longValue();

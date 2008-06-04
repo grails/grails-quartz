@@ -27,19 +27,27 @@ import org.codehaus.groovy.grails.plugins.quartz.TaskArtefactHandler;
 class TaskArtefactHandlerTests extends GroovyTestCase {
     protected GroovyClassLoader gcl = new GroovyClassLoader();
 
-    void testIsTaskClass() {
+    void testJobClassWithExecuteMethod() {
         Class c = gcl.parseClass("class TestJob { def execute() { }}\n");
         ArtefactHandler handler = new TaskArtefactHandler();
-        assertTrue handler.isArtefact(c);
+        assertTrue "Class *Job which defines execute() method should be recognized as a Task class", handler.isArtefact(c);
     }
 
-    void testIsNotATaskClass() {
-        // wrong method name
+    void testJobClassWithExecuteMethodWithParam() {
+        Class c = gcl.parseClass("class TestJob { def execute(param) { }}\n");
+        ArtefactHandler handler = new TaskArtefactHandler();
+        assertTrue "Class *Job which defines execute(param) method should be recognized as a Task class", handler.isArtefact(c);
+    }
+
+    void testJobClassWithWrongName() {
+        Class c = gcl.parseClass("class TestController { def execute() { }}\n");
+        ArtefactHandler handler = new TaskArtefactHandler();
+        assertFalse "Class which name doesn't end with 'Job' shouldn't be recognized as a Task class", handler.isArtefact(c);
+    }
+
+    void testJobClassWithoutExecuteMethod() {
         Class c = gcl.parseClass("class TestJob { def execute1() { }}\n");
         ArtefactHandler handler = new TaskArtefactHandler();
-        assertFalse handler.isArtefact(c);
-        // wrong class name
-        c = gcl.parseClass("class TestController { def execute() { }}\n");
-        assertFalse handler.isArtefact(c);
+        assertFalse "Class which doesn't declare 'execute' method shouldn't be recognized as a Task class", handler.isArtefact(c);
     }
 }

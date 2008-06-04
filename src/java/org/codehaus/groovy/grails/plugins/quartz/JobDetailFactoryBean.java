@@ -30,6 +30,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Method;
+
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
  * that avoids issues with non-serializable classes (for JDBC storage).
@@ -180,10 +182,17 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean, Appl
 	public static class GrailsTaskClassJob implements Job {
 		public void execute(final JobExecutionContext context) throws JobExecutionException {
 			try {
-				String grailsJobName = (String)context.getMergedJobDataMap().get("grailsJobName");
+				String grailsJobName = (String) context.getMergedJobDataMap().get("grailsJobName");
                 ApplicationContext ctx = (ApplicationContext) context.getMergedJobDataMap().get("applicationContext");
                 Object job = ctx.getBean(grailsJobName);
-				ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
+                // trying to invoke execute(context) method
+                Method method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class});
+                if(method != null) {
+                    ReflectionUtils.invokeMethod(method, job, new Object[] {context});
+                } else {
+                    // falling back to execute() method
+                    ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
+                }
 			}
 			catch (Exception e) {
 				throw new JobExecutionException(e.getMessage(), e);

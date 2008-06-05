@@ -31,7 +31,7 @@ import grails.util.GrailsUtil
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3.2-SNAPSHOT"
+    def version = "0.3.2"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."

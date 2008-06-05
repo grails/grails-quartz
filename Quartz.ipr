@@ -426,6 +426,7 @@
         <root url="file://$GRAILS_HOME$/src/tiger" />
         <root url="file://$GRAILS_HOME$/src/groovy" />
         <root url="file://$GRAILS_HOME$/src/web" />
+        <root url="file://$GRAILS_HOME$/scripts" />
       </SOURCES>
       <jarDirectory url="file://$GRAILS_HOME$/dist" recursive="false" />
     </library>

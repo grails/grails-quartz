@@ -91,6 +91,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
             throw new Exception("Invalid format")
         }
 
+        trigger.group = attributes?.group ?: GrailsTaskClassProperty.DEFAULT_TRIGGERS_GROUP
         trigger.name = value ? "${jobName}${value.size() == 0 ? '' : value[0].toUpperCase()}${value[1..-1]}" : "${jobName}${triggerNumber++}"
         trigger
     }

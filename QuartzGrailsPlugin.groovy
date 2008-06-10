@@ -20,6 +20,7 @@ import org.codehaus.groovy.grails.commons.*
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.util.GrailsUtil
+import org.springframework.context.ApplicationContext
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -92,23 +93,30 @@ but is made simpler by the coding by convention paradigm.
         }
     }
 
+    def onShutdown = {event ->
+        def ctx = event.ctx
+        if(!ctx) {
+            log.error("Application context not found. Cannot execute shutdown code.")
+            return
+        }
+        def scheduler = ctx.getBean("quartzScheduler")
+        if(scheduler) {
+            scheduler.shutdown()
+        }
+    }
+
     def onChange = {event ->
         if(application.isArtefactOfType(TaskArtefactHandler.TYPE, event.source)) {
             log.debug("Job ${event.source} changed. Reloading...")
             def context = event.ctx
-            if(!context) {
-                log.debug("Application context not found. Can't reload")
-                return
-            }
-
+            def scheduler = context?.getBean("quartzScheduler")
             // get quartz scheduler
-            def scheduler = context.getBean("quartzScheduler")
-            if(scheduler) {
+            if(context && scheduler) {
                 // if job already exists, delete it from scheduler
                 def jobClass = application.getTaskClass(event.source?.name)
                 if(jobClass) {
                     scheduler.deleteJob(jobClass.fullName, jobClass.group)
-                    log.debug("Job ${jobClass.fullName} deleted from scheduler")
+                    log.debug("Job ${jobClass.fullName} deleted from the scheduler")
                 }
 
                 // add job artefact to application
@@ -120,19 +128,23 @@ but is made simpler by the coding by convention paradigm.
                     configureJobBeans.delegate = delegate
                     configureJobBeans(jobClass)
                 }
-                event.ctx.registerBeanDefinition("${fullName}JobClass", beans.getBeanDefinition("${fullName}JobClass"))
-                event.ctx.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
-                event.ctx.registerBeanDefinition("${fullName}JobDetail", beans.getBeanDefinition("${fullName}JobDetail"))
+
+                context.registerBeanDefinition("${fullName}JobClass", beans.getBeanDefinition("${fullName}JobClass"))
+                context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
+                context.registerBeanDefinition("${fullName}JobDetail", beans.getBeanDefinition("${fullName}JobDetail"))
+
                 jobClass.triggers.each {name, trigger ->
                     event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger")) 
                 }
 
                 scheduleJob(jobClass, event.ctx)
+            } else {
+                log.error("Application context or Quartz Scheduler not found. Can't reload Quartz plugin.")
             }
         }
     }
 
-    def scheduleJob = {GrailsTaskClass jobClass, ctx ->
+    def scheduleJob = {GrailsTaskClass jobClass, ApplicationContext ctx ->
         def scheduler = ctx.getBean("quartzScheduler")
         if(scheduler) {
             def fullName = jobClass.fullName
@@ -140,11 +152,15 @@ but is made simpler by the coding by convention paradigm.
             scheduler.addJob(ctx.getBean("${fullName}JobDetail"), true)
             jobClass.triggers.each {key, trigger ->
                 log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
+                if(scheduler.getTrigger(trigger.name, trigger.group)) {
+                    scheduler.rescheduleJob(trigger.name, trigger.group, ctx.getBean("${key}Trigger"))
+                } else {
+                    scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
+                }
             }
             log.debug("Job ${jobClass.fullName} scheduled")
         } else {
-            log.warn("failed to register job triggers: scheduler not found")
+            log.error("Failed to register job triggers: scheduler not found")
         }
     }
 

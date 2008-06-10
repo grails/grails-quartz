@@ -62,4 +62,6 @@ public interface GrailsTaskClassProperty {
 
     public static final boolean	DEFAULT_SESSION_REQUIRED = true;
     
+    public static final String DEFAULT_TRIGGERS_GROUP = "GRAILS_TRIGGERS";
+
 }

@@ -112,7 +112,6 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);
         jobDetail.getJobDataMap().put(JOB_NAME_PARAMETER, name);
-		jobDetail.setVolatility(true);
 		jobDetail.setDurability(true);
 
 		// Register job listener names.

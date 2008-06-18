@@ -45,6 +45,9 @@ public interface GrailsTaskClassProperty {
 
     public static final String REPEAT_COUNT = "repeatCount";
 
+    public static final String VOLATILITY = "volatility";
+
+    public static final String DURABILITY = "durability";
 
     // Default values for Job's properties
 
@@ -64,4 +67,7 @@ public interface GrailsTaskClassProperty {
     
     public static final String DEFAULT_TRIGGERS_GROUP = "GRAILS_TRIGGERS";
 
+    public static final boolean DEFAULT_VOLATILITY = true;
+
+    public static final boolean DEFAULT_DURABILITY = true;
 }

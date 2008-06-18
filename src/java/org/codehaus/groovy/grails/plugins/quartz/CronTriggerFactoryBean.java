@@ -44,6 +44,7 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
     private String group;
     private Long startDelay;
     private String cronExpression;
+    private boolean volatility;
 
     public void afterPropertiesSet() throws ParseException {
         cronTrigger = new CronTrigger();
@@ -57,7 +58,7 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
 			cronTrigger.setJobGroup(jobDetail.getGroup());
 		}
 
-        cronTrigger.setVolatility(true);
+        cronTrigger.setVolatility(volatility);
 	}
 
     /**
@@ -110,5 +111,9 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
 
     public void setCronExpression(String cronExpression) {
         this.cronExpression = cronExpression;
+    }
+
+    public void setVolatility(boolean volatility) {
+        this.volatility = volatility;
     }
 }

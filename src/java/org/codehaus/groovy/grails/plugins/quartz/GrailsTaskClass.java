@@ -91,5 +91,19 @@ public interface GrailsTaskClass extends InjectableGrailsClass {
      */
 	public boolean isSessionRequired();
 
+    /**
+     * If task is volatile (will not be persisted between Quartz runs) returns true.
+     *
+     * @return true if this job is volatile
+     */
+    public boolean getVolatility();
+
+    /**
+     * If task is durable returns true.
+     *
+     * @return true if this job is durable
+     */
+    public boolean getDurability();
+
     public Map getTriggers();
 }

@@ -44,6 +44,7 @@ public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, 
     private Long startDelay;
     private Long repeatInterval;
     private Integer repeatCount;
+    private boolean volatility;
 
     /**
      * {@inheritDoc}
@@ -61,7 +62,7 @@ public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, 
 			simpleTrigger.setJobName(jobDetail.getName());
 			simpleTrigger.setJobGroup(jobDetail.getGroup());
 		}
-		simpleTrigger.setVolatility(true);
+		simpleTrigger.setVolatility(volatility);
 	}
 
     /**
@@ -118,5 +119,9 @@ public class SimpleTriggerFactoryBean implements FactoryBean, InitializingBean, 
 
     public void setRepeatCount(Integer repeatCount) {
         this.repeatCount = repeatCount;
+    }
+
+    public void setVolatility(boolean volatility) {
+        this.volatility = volatility;
     }
 }

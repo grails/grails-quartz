@@ -35,7 +35,9 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
     private String name;
 	private String group;
 	private boolean concurrent = true;
-	private String[] jobListenerNames;
+    private boolean volatility = true;
+    private boolean durability = true;
+    private String[] jobListenerNames;
 	private JobDetail jobDetail;
 
 	/**
@@ -92,7 +94,15 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		this.jobListenerNames = names;
 	}
 
-	/**
+    public void setVolatility(boolean volatility) {
+        this.volatility = volatility;
+    }
+
+    public void setDurability(boolean durability) {
+        this.durability = durability;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
@@ -112,9 +122,10 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);
         jobDetail.getJobDataMap().put(JOB_NAME_PARAMETER, name);
-		jobDetail.setDurability(true);
+		jobDetail.setDurability(durability);
+        jobDetail.setVolatility(volatility);
 
-		// Register job listener names.
+        // Register job listener names.
 		if (jobListenerNames != null) {
 			for (int i = 0; i < jobListenerNames.length; i++) {
 				jobDetail.addJobListener(jobListenerNames[i]);

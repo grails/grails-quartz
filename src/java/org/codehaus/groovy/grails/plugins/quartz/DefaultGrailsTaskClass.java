@@ -146,6 +146,16 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired.booleanValue();
 	}
 
+    public boolean getVolatility() {
+        Boolean volatility = (Boolean) getPropertyValue(VOLATILITY, Boolean.class);
+        return volatility == null ? DEFAULT_VOLATILITY : volatility.booleanValue();
+    }
+
+    public boolean getDurability() {
+        Boolean durability = (Boolean) getPropertyValue(DURABILITY, Boolean.class);
+        return durability == null ? DEFAULT_DURABILITY : durability.booleanValue();
+    }
+
     public Map getTriggers() {
         return triggers;
     }

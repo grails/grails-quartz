@@ -16,10 +16,8 @@ package org.codehaus.groovy.grails.plugins.quartz.config
 
 import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
 import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
-import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty
+import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
 import org.quartz.Trigger
-import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
-import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -70,15 +68,17 @@ public class TriggersConfigBuilder extends BuilderSupport {
         if(name == 'simpleTrigger') {
             trigger = new Expando(
                     clazz: SimpleTriggerFactoryBean,
-                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GrailsTaskClassProperty.DEFAULT_START_DELAY,
-                    repeatInterval: attributes?.timeout != null ? attributes?.timeout : GrailsTaskClassProperty.DEFAULT_TIMEOUT,
-                    repeatCount: attributes?.repeatCount != null ? attributes?.repeatCount : GrailsTaskClassProperty.DEFAULT_REPEAT_COUNT
+                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GTCP.DEFAULT_START_DELAY,
+                    repeatInterval: attributes?.timeout != null ? attributes?.timeout : GTCP.DEFAULT_TIMEOUT,
+                    repeatCount: attributes?.repeatCount != null ? attributes?.repeatCount : GTCP.DEFAULT_REPEAT_COUNT,
+                    volatility: attributes?.volatility != null ? attributes?.volatility : GTCP.DEFAULT_VOLATILITY
             )
         } else if(name == 'cronTrigger') {
             trigger = new Expando(
                     clazz: CronTriggerFactoryBean,
-                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GrailsTaskClassProperty.DEFAULT_START_DELAY,
-                    cronExpression: attributes?.cronExpression ?: GrailsTaskClassProperty.DEFAULT_CRON_EXPRESSION
+                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GTCP.DEFAULT_START_DELAY,
+                    cronExpression: attributes?.cronExpression ?: GTCP.DEFAULT_CRON_EXPRESSION,
+                    volatility: attributes?.volatility != null ? attributes?.volatility : GTCP.DEFAULT_VOLATILITY
             )
         } else if(name == 'customTrigger') {
             trigger = new Expando(
@@ -91,7 +91,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
             throw new Exception("Invalid format")
         }
 
-        trigger.group = attributes?.group ?: GrailsTaskClassProperty.DEFAULT_TRIGGERS_GROUP
+        trigger.group = attributes?.group ?: GTCP.DEFAULT_TRIGGERS_GROUP
         trigger.name = value ? "${jobName}${value.size() == 0 ? '' : value[0].toUpperCase()}${value[1..-1]}" : "${jobName}${triggerNumber++}"
         trigger
     }

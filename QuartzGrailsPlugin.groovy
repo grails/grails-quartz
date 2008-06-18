@@ -183,6 +183,8 @@ but is made simpler by the coding by convention paradigm.
             name = fullName
             group = jobClass.group
             concurrent = jobClass.concurrent
+            volatility = jobClass.volatility
+            durability = jobClass.durability
             if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }

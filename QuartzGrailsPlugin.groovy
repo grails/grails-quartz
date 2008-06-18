@@ -32,7 +32,7 @@ import org.springframework.context.ApplicationContext
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.4-SNAPSHOT"
+    def version = "0.3.3-SNAPSHOT"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."

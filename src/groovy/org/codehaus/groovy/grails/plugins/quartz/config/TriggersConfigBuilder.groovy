@@ -70,14 +70,14 @@ public class TriggersConfigBuilder extends BuilderSupport {
         if(name == 'simpleTrigger') {
             trigger = new Expando(
                     clazz: SimpleTriggerFactoryBean,
-                    startDelay: attributes?.startDelay ?: GrailsTaskClassProperty.DEFAULT_START_DELAY,
-                    repeatInterval: attributes?.timeout ?: GrailsTaskClassProperty.DEFAULT_TIMEOUT,
-                    repeatCount: attributes?.repeatCount ?: GrailsTaskClassProperty.DEFAULT_REPEAT_COUNT
+                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GrailsTaskClassProperty.DEFAULT_START_DELAY,
+                    repeatInterval: attributes?.timeout != null ? attributes?.timeout : GrailsTaskClassProperty.DEFAULT_TIMEOUT,
+                    repeatCount: attributes?.repeatCount != null ? attributes?.repeatCount : GrailsTaskClassProperty.DEFAULT_REPEAT_COUNT
             )
         } else if(name == 'cronTrigger') {
             trigger = new Expando(
                     clazz: CronTriggerFactoryBean,
-                    startDelay: attributes?.startDelay ?: GrailsTaskClassProperty.DEFAULT_START_DELAY,
+                    startDelay: attributes?.startDelay != null ? attributes?.startDelay : GrailsTaskClassProperty.DEFAULT_START_DELAY,
                     cronExpression: attributes?.cronExpression ?: GrailsTaskClassProperty.DEFAULT_CRON_EXPRESSION
             )
         } else if(name == 'customTrigger') {

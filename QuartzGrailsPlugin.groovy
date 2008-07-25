@@ -15,12 +15,18 @@
  */
 
 import org.codehaus.groovy.grails.plugins.quartz.*
+import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
 import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.*
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.util.GrailsUtil
 import org.springframework.context.ApplicationContext
+import org.quartz.Scheduler
+import org.quartz.CronTrigger
+import org.quartz.Trigger
+import org.quartz.SimpleTrigger
+import org.quartz.JobDataMap
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -32,7 +38,7 @@ import org.springframework.context.ApplicationContext
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.3.3"
+    def version = "0.4-SNAPSHOT"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."
@@ -49,7 +55,7 @@ but is made simpler by the coding by convention paradigm.
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
     ]
-    
+
     def artefacts = [new TaskArtefactHandler()]
 
     def doWithSpring = {
@@ -83,6 +89,50 @@ but is made simpler by the coding by convention paradigm.
             jobFactory = quartzJobFactory
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
+        }
+    }
+
+    def doWithDynamicMethods = {ctx ->
+        def random = new Random()
+        Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
+        application.taskClasses.each {GrailsTaskClass tc ->
+            def mc = tc.metaClass
+            def jobName = tc.getFullName()
+            def jobGroup = tc.getGroup()
+
+            def generateTriggerName = { ->
+                long r = random.nextLong()
+                if (r < 0) {
+                    r = -r;
+                }
+                return "GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7));
+
+            }
+
+            mc.'static'.schedule = { String cronExperssion, Map params = null ->
+                Trigger trigger = new CronTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExperssion)
+                if(tc.getVolatility()) trigger.setVolatility(true)
+                if(params) trigger.jobDataMap.putAll(params)
+                quartzScheduler.scheduleJob(trigger)
+            }
+            mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
+                if(tc.getVolatility()) trigger.setVolatility(true)
+                if(params) trigger.jobDataMap.putAll(params)
+                quartzScheduler.scheduleJob(trigger)
+            }
+            mc.'static'.schedule = {Trigger trigger ->
+                trigger.jobName = jobName
+                trigger.jobGroup = jobGroup
+                quartzScheduler.scheduleJob(trigger)
+            }
+            mc.'static'.triggerNow = { Map params = null ->
+                if(tc.getVolatility()){
+                    quartzScheduler.triggerJobWithVolatileTrigger(jobName, jobGroup, params ? new JobDataMap(params) : null)
+                } else {
+                    quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
+                }
+            }
         }
     }
 
@@ -134,7 +184,7 @@ but is made simpler by the coding by convention paradigm.
                 context.registerBeanDefinition("${fullName}JobDetail", beans.getBeanDefinition("${fullName}JobDetail"))
 
                 jobClass.triggers.each {name, trigger ->
-                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger")) 
+                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
                 }
 
                 scheduleJob(jobClass, event.ctx)

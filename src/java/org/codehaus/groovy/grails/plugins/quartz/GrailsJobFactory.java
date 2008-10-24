@@ -39,11 +39,16 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 
     protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
         String grailsJobName = (String) bundle.getJobDetail().getJobDataMap().get(JobDetailFactoryBean.JOB_NAME_PARAMETER);
-        Object job = applicationContext.getBean(grailsJobName);
-        if(bundle.getJobDetail().getJobClass().equals(StatefulGrailsTaskClassJob.class)) {
-            return new StatefulGrailsTaskClassJob(job);
+        //Object job = applicationContext.getBean(grailsJobName);
+         if(grailsJobName != null) {
+            Object job = applicationContext.getBean(grailsJobName);
+            if(bundle.getJobDetail().getJobClass().equals(StatefulGrailsTaskClassJob.class)) {
+                return new StatefulGrailsTaskClassJob(job);
+            }
+            return new GrailsTaskClassJob(job);
+        } else {
+            return super.createJobInstance(bundle);
         }
-        return new GrailsTaskClassJob(job);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -64,6 +69,8 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 			try {
                 // trying to invoke execute(context) method
                 Method method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class});
+                System.out.println ("METHOD: " + method);
+                System.out.println ("JOB: " + job);
                 if(method != null) {
                     ReflectionUtils.invokeMethod(method, job, new Object[] {context});
                 } else {

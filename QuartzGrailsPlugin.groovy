@@ -139,6 +139,9 @@ but is made simpler by the coding by convention paradigm.
                     quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
                 }
             }
+            mc.'static'.removeJob = {
+                quartzScheduler.deleteJob(jobName, jobGroup)
+            }
         }
     }
 

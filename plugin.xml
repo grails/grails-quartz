@@ -6,6 +6,9 @@
   <resources>
     <resource>DefaultQuartzConfig</resource>
     <resource>QuartzBootStrap</resource>
+    <resource>UrlMappings</resource>
+    <resource>JobManagerController</resource>
+    <resource>JobManagerService</resource>
   </resources>
   <dependencies />
 </plugin>

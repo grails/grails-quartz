@@ -254,7 +254,7 @@ but is made simpler by the coding by convention paradigm.
             "${name}Trigger"(trigger.clazz) {
                 jobDetail = ref("${fullName}JobDetail")
                 trigger.properties.findAll {it.key != 'clazz'}.each {
-                    this["${it.key}"] = it.value
+                    delegate["${it.key}"] = it.value
                 }
             }
         }

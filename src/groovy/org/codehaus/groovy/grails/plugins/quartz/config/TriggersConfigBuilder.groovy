@@ -18,6 +18,8 @@ import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
 import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
 import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
 import org.quartz.Trigger
+import org.codehaus.groovy.grails.plugins.quartz.CustomTriggerFactoryBean
+import org.codehaus.groovy.grails.exceptions.GrailsRuntimeException
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -82,9 +84,10 @@ public class TriggersConfigBuilder extends BuilderSupport {
                     timeZone: attributes?.timeZone ?: TimeZone.getDefault() 
             )
         } else if(name == 'customTrigger') {
-            trigger = new Expando([clazz: attributes?.triggerClass] + attributes)
-            if(!trigger.clazz) throw new Exception("Custom trigger must have 'triggerClass' attribute")
-            if(!Trigger.isAssignableFrom(trigger.clazz)) throw new Exception("Custom trigger class must implement org.quartz.Trigger interface.")
+            if(!attributes?.triggerClass) throw new Exception("Custom trigger must have 'triggerClass' attribute")
+            if(!Trigger.isAssignableFrom(attributes?.triggerClass)) throw new Exception("Custom trigger class must implement org.quartz.Trigger interface.")
+            def triggerClass = attributes.remove('triggerClass')
+            trigger = new Expando(clazz: CustomTriggerFactoryBean, triggerClass: triggerClass, triggerAttributes: attributes)
         } else {
             throw new Exception("Invalid format")
         }

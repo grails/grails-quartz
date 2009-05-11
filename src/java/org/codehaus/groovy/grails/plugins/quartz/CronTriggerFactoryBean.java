@@ -77,7 +77,7 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
     public Class getObjectType() {
-        return SimpleTrigger.class;
+        return CronTrigger.class;
     }
 
     /**

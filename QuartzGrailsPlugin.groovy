@@ -121,7 +121,12 @@ but is made simpler by the coding by convention paradigm.
                 if(params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
-            mc.'static'.schedule = {Date scheduleDate, Map params = null ->
+            mc.'static'.schedule = {Date scheduleDate ->
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+                if(tc.getVolatility()) trigger.setVolatility(true)
+                quartzScheduler.scheduleJob(trigger)
+            }
+            mc.'static'.schedule = {Date scheduleDate, Map params ->
                 Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 if(params) trigger.jobDataMap.putAll(params)

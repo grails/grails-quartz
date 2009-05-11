@@ -17,6 +17,7 @@ package org.codehaus.groovy.grails.plugins.quartz;
 
 import org.codehaus.groovy.grails.commons.ArtefactHandlerAdapter;
 import org.springframework.util.ReflectionUtils;
+import org.quartz.JobExecutionContext;
 
 import java.lang.reflect.Method;
 
@@ -44,6 +45,10 @@ public class TaskArtefactHandler extends ArtefactHandlerAdapter {
         if(method == null) {
             // we're using Object as a param here to allow groovy-style 'def execute(param)' method
             method = ReflectionUtils.findMethod(clazz, GrailsTaskClassProperty.EXECUTE, new Class[]{Object.class});
+        }
+        if(method == null) {
+          // also check for the execution context as a variable because that's what's being passed
+          method = ReflectionUtils.findMethod(clazz, GrailsTaskClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
         }
         return method != null;
     }

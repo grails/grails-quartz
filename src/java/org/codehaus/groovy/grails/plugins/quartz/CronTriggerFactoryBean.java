@@ -23,6 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.ParseException;
 
 /**
@@ -45,18 +46,20 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
     private Long startDelay;
     private String cronExpression;
     private boolean volatility;
+    private TimeZone timeZone;
 
     public void afterPropertiesSet() throws ParseException {
         cronTrigger = new CronTrigger();
-	    cronTrigger.setName(name != null ? name : beanName);
-	    cronTrigger.setGroup(group);
+        cronTrigger.setName(name != null ? name : beanName);
+        cronTrigger.setGroup(group);
         if(startDelay != null) cronTrigger.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
         if(cronExpression != null) cronTrigger.setCronExpression(cronExpression);
+        if(timeZone != null) cronTrigger.setTimeZone(timeZone);
 
         if (jobDetail != null) {
-			cronTrigger.setJobName(jobDetail.getName());
-			cronTrigger.setJobGroup(jobDetail.getGroup());
-		}
+            cronTrigger.setJobName(jobDetail.getName());
+            cronTrigger.setJobGroup(jobDetail.getGroup());
+    		}
 
         cronTrigger.setVolatility(volatility);
 	}
@@ -115,5 +118,9 @@ public class CronTriggerFactoryBean implements FactoryBean, InitializingBean, Be
 
     public void setVolatility(boolean volatility) {
         this.volatility = volatility;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 }

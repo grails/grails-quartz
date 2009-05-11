@@ -78,13 +78,11 @@ public class TriggersConfigBuilder extends BuilderSupport {
                     clazz: CronTriggerFactoryBean,
                     startDelay: attributes?.startDelay != null ? attributes?.startDelay : GTCP.DEFAULT_START_DELAY,
                     cronExpression: attributes?.cronExpression ?: GTCP.DEFAULT_CRON_EXPRESSION,
-                    volatility: attributes?.volatility != null ? attributes?.volatility : GTCP.DEFAULT_VOLATILITY
+                    volatility: attributes?.volatility != null ? attributes?.volatility : GTCP.DEFAULT_VOLATILITY,
+                    timeZone: attributes?.timeZone ?: TimeZone.getDefault() 
             )
         } else if(name == 'customTrigger') {
-            trigger = new Expando(
-                    clazz: attributes?.triggerClass,
-                    attributes
-            )
+            trigger = new Expando([clazz: attributes?.triggerClass] + attributes)
             if(!trigger.clazz) throw new Exception("Custom trigger must have 'triggerClass' attribute")
             if(!Trigger.isAssignableFrom(trigger.clazz)) throw new Exception("Custom trigger class must implement org.quartz.Trigger interface.")
         } else {

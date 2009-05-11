@@ -54,6 +54,9 @@
       <entry name="?*.tld" />
     </wildcardResourcePatterns>
   </component>
+  <component name="CopyrightManager" default="">
+    <module2copyright />
+  </component>
   <component name="Cvs2Configuration">
     <option name="PRUNE_EMPTY_DIRECTORIES" value="true" />
     <option name="MERGING_MODE" value="0" />
@@ -342,6 +345,9 @@
     <option name="projectName" value="Quartz" />
   </component>
   <component name="ProjectFileVersion" converted="true" />
+  <component name="ProjectKey">
+    <option name="state" value="project:///Users/nebolsin/Documents/Projects/grails-quartz/Quartz.ipr" />
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Quartz.iml" filepath="$PROJECT_DIR$/Quartz.iml" />
@@ -352,7 +358,7 @@
       <SplitterProportionsDataImpl />
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="false" jdk-15="false" project-jdk-name="1.5" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" assert-keyword="false" jdk-15="false" project-jdk-name="1.5" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ResourceManagerContainer">
@@ -397,8 +403,8 @@
             <SvnBranchConfiguration>
               <option name="branchUrls">
                 <list>
-                  <option value="https://svn.codehaus.org/grails-plugins/grails-quartz/grails-quartz" />
                   <option value="https://svn.codehaus.org/grails-plugins/grails-quartz/branches" />
+                  <option value="https://svn.codehaus.org/grails-plugins/grails-quartz/grails-quartz" />
                   <option value="https://svn.codehaus.org/grails-plugins/grails-quartz/tags" />
                 </list>
               </option>
@@ -408,7 +414,8 @@
         </entry>
       </map>
     </option>
-    <option name="myVersion" value="123" />
+    <option name="myVersion" value="124" />
+    <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="SvnChangesBrowserSettings">
     <option name="USE_AUTHOR_FIELD" value="true" />
@@ -425,7 +432,7 @@
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="svn" />
+    <mapping directory="" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.intellij.ide.util.scopeChooser.ScopeChooserConfigurable" proportions="" version="1">
@@ -448,47 +455,18 @@
   <component name="libraryTable">
     <library name="Quartz">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/quartz-1.6.0.jar!/" />
+        <root url="jar://$QUARTZ_PATH$/quartz-1.6.5.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="file:///Developer/Java/quartz-1.6.0/docs/api" />
+        <root url="file://$QUARTZ_PATH$/docs/api" />
       </JAVADOC>
       <SOURCES>
-        <root url="file:///Developer/Java/quartz-1.6.0/src/java" />
+        <root url="file://$QUARTZ_PATH$/src/java" />
       </SOURCES>
-    </library>
-    <library name="Grails">
-      <CLASSES>
-        <root url="file://$GRAILS_HOME$/dist" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file://$GRAILS_HOME$/src/grails" />
-        <root url="file://$GRAILS_HOME$/src/persistence" />
-        <root url="file://$GRAILS_HOME$/src/war" />
-        <root url="file://$GRAILS_HOME$/src/commons" />
-        <root url="file://$GRAILS_HOME$/src/scaffolding" />
-        <root url="file://$GRAILS_HOME$/src/tiger" />
-        <root url="file://$GRAILS_HOME$/src/groovy" />
-        <root url="file://$GRAILS_HOME$/src/web" />
-        <root url="file://$GRAILS_HOME$/scripts" />
-      </SOURCES>
-      <jarDirectory url="file://$GRAILS_HOME$/dist" recursive="false" />
-    </library>
-    <library name="Grails Dependencies">
-      <CLASSES>
-        <root url="file://$GRAILS_HOME$/lib" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="file:///Developer/Java/hibernate-3.2/src" />
-        <root url="file:///Developer/Java/spring-framework-2.5.4/src" />
-      </SOURCES>
-      <jarDirectory url="file://$GRAILS_HOME$/lib" recursive="false" />
     </library>
   </component>
   <UsedPathMacros>
-    <macro name="GRAILS_HOME" />
+    <macro name="QUARTZ_PATH" />
   </UsedPathMacros>
 </project>
 

@@ -59,27 +59,28 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 	 * Quartz Job implementation that invokes execute() on the GrailsTaskClass instance.
 	 */
 	public class GrailsTaskClassJob implements Job {
-        Object job;
+      Object job;
 
-        public GrailsTaskClassJob(Object job) {
-            this.job = job;
-        }
+      public GrailsTaskClassJob(Object job) {
+          this.job = job;
+      }
 
-        public void execute(final JobExecutionContext context) throws JobExecutionException {
-			try {
-                // trying to invoke execute(context) method
-                Method method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class});
-                if(method != null) {
-                    ReflectionUtils.invokeMethod(method, job, new Object[] {context});
-                } else {
-                    // falling back to execute() method
-                    ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
-                }
-			}
-			catch (Exception e) {
-				throw new JobExecutionException(e.getMessage(), e);
-			}
-		}
+      public void execute(final JobExecutionContext context) throws JobExecutionException {
+          try {
+              Method method = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
+              if(method != null) {
+                  ReflectionUtils.invokeMethod(method, job, new JobExecutionContext[] {context});
+              } else if((method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class})) != null) {
+                ReflectionUtils.invokeMethod(method, job, new Object[] {context});
+              } else {
+                  // falling back to execute() method
+                  ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
+              }
+          }
+          catch (Exception e) {
+            throw new JobExecutionException(e.getMessage(), e);
+          }
+  		}
 	}
 
 	/**

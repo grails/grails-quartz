@@ -10,6 +10,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
 import java.util.Map;
+import java.util.Date;
 import java.text.ParseException;
 
 /**
@@ -17,30 +18,28 @@ import java.text.ParseException;
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
-public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean, BeanNameAware  {
+public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean  {
   private Class triggerClass;
   private Trigger customTrigger;
   private JobDetail jobDetail;
-  private String beanName;
-
-  private String name;
-  private String group;
-
 
   private Map triggerAttributes;
 
   public void afterPropertiesSet() throws ParseException {
       customTrigger = (Trigger) BeanUtils.instantiateClass(triggerClass);
-      BeanWrapper customTriggerWrapper = PropertyAccessorFactory.forBeanPropertyAccess(customTrigger);
-      customTriggerWrapper.setPropertyValues(triggerAttributes);
 
-      customTrigger.setName(name != null ? name : beanName);
-      customTrigger.setGroup(group);
+      if(triggerAttributes.containsKey(GrailsTaskClassProperty.START_DELAY)) {
+          Number startDelay = (Number) triggerAttributes.remove(GrailsTaskClassProperty.START_DELAY);
+          customTrigger.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
+      }
 
       if (jobDetail != null) {
           customTrigger.setJobName(jobDetail.getName());
           customTrigger.setJobGroup(jobDetail.getGroup());
       }
+
+      BeanWrapper customTriggerWrapper = PropertyAccessorFactory.forBeanPropertyAccess(customTrigger);
+      customTriggerWrapper.setPropertyValues(triggerAttributes);
   }
 
   /**
@@ -65,22 +64,6 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean, 
    */
   public boolean isSingleton() {
       return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @see org.springframework.beans.factory.BeanNameAware#setBeanName(String)
-   */
-  public void setBeanName(String name) {
-      this.beanName = name;
-  }
-
-  public void setName(String name) {
-      this.name = name;
-  }
-
-  public void setGroup(String group) {
-      this.group = group;
   }
 
   public void setJobDetail(JobDetail jobDetail) {

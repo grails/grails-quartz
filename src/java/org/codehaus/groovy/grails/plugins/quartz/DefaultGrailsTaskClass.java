@@ -24,6 +24,8 @@ import org.quartz.JobExecutionContext;
 import java.util.HashMap;
 import java.util.Map;
 
+import grails.util.GrailsUtil;
+
 /**
  * Grails artefact class which represents a Quartz job.
  *
@@ -41,7 +43,6 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 
     public DefaultGrailsTaskClass(Class clazz) {
 		super(clazz, JOB);
-        validateProperties();
         evaluateTriggers();
     }
 
@@ -57,38 +58,12 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         } else {
             // backward compatibility
             if(isCronExpressionConfigured()) {
+                GrailsUtil.deprecated("You're using deprecated 'def cronExpression = ...' parameter in the " + getFullName() + ", use 'static triggers = { cron cronExpression: ...} instead.");
                 triggers = builder.createEmbeddedCronTrigger(getStartDelay(), getCronExpression());
             } else {
+                GrailsUtil.deprecated("You're using deprecated 'def startDelay = ...; def timeout = ...' parameters in the" + getFullName() + ", use 'static triggers = { simple startDelay: ..., repeatInterval: ...} instead.");
                 triggers = builder.createEmbeddedSimpleTrigger(getStartDelay(), getTimeout(), getRepeatCount());
             }
-        }
-    }
-
-    private void validateProperties() {
-        Object obj = getPropertyValue(TIMEOUT);
-        if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
-            throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " must be Integer or Long");
-        }
-        if( obj != null && ((Number) obj).longValue() < 0 ) {
-            throw new IllegalArgumentException("Timeout property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
-        }
-        obj = getPropertyValue(START_DELAY);
-        if( obj != null && !(obj instanceof Integer || obj instanceof Long)) {
-            throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " must be Integer or Long");
-        }
-        if( obj != null && ((Number) obj).longValue() < 0 ) {
-            throw new IllegalArgumentException("Start delay property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
-        }
-        obj = getPropertyValue(REPEAT_COUNT);
-        if( obj != null && !(obj instanceof Integer)) {
-            throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " must be Integer");
-        }
-        if( obj != null && ((Number) obj).intValue() < 0 ) {
-            throw new IllegalArgumentException("Repeat count property for job class " + getClazz().getName() + " is negative (possibly integer overflow error)");
-        }
-        obj = getPropertyValue(CRON_EXPRESSION);
-        if(obj != null && !CronExpression.isValidExpression(obj.toString())) {
-            throw new IllegalArgumentException("Cron expression '" + obj.toString() + "' for job class " + getClazz().getName() + " is not a valid cron expression");
         }
     }
 
@@ -100,6 +75,7 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
         getMetaClass().invokeMethod(getReference().getWrappedInstance(), EXECUTE, new Object[] {context});
     }
 
+    // TODO: ============== start of deprecated methods =================
     public long getTimeout() {
 		Object obj = getPropertyValue( TIMEOUT );
 		if( obj == null ) return DEFAULT_TIMEOUT;
@@ -135,6 +111,7 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 		String cronExpression = (String)getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
         return cronExpression != null;
     }
+    // TODO: ============== end of deprecated methods =================
 
 	public boolean isConcurrent() {
 		Boolean concurrent = (Boolean)getPropertyValue(CONCURRENT, Boolean.class);

@@ -31,17 +31,22 @@ public interface GrailsTaskClassProperty {
 
 	public static final String EXECUTE = "execute";
 	
-	public static final String TIMEOUT = "timeout";
-	
 	public static final String START_DELAY = "startDelay";
 	
 	public static final String CRON_EXPRESSION = "cronExpression";
-	
+
+    public static final String NAME = "name";
+            
 	public static final String GROUP = "group";		
 	
 	public static final String CONCURRENT = "concurrent";
 	
 	public static final String SESSION_REQUIRED = "sessionRequired";
+
+    // TODO: deprecated, remove in the next release
+    public static final String TIMEOUT = "timeout";
+
+    public static final String REPEAT_INTERVAL = "repeatInterval";
 
     public static final String REPEAT_COUNT = "repeatCount";
 
@@ -51,7 +56,10 @@ public interface GrailsTaskClassProperty {
 
     // Default values for Job's properties
 
-    public static final long DEFAULT_TIMEOUT = 60000l;	// one minute
+    public static final long DEFAULT_REPEAT_INTERVAL = 60000l;	// one minute
+
+    // TODO: deprecated, remove in the next release
+    public static final long DEFAULT_TIMEOUT = DEFAULT_REPEAT_INTERVAL;	// one minute
 
     public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
 

@@ -66,7 +66,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     protected Object createNode(name, Map attributes, Object value) {
         def trigger = createTrigger(name, attributes, value)
-        triggers[GrailsClassUtils.getPropertyNameRepresentation(trigger.triggerAttributes.name)] = trigger
+        triggers[trigger.triggerAttributes.name] = trigger
         trigger
     }
 

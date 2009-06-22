@@ -187,15 +187,15 @@ but is made simpler by the coding by convention paradigm.
                 jobClass = application.addArtefact(TaskArtefactHandler.TYPE, event.source)
 
                 // configure and register job beans
-                def propertyName = jobClass.propertyName
+                def fullName = jobClass.fullName
                 def beans = beans {
                     configureJobBeans.delegate = delegate
                     configureJobBeans(jobClass)
                 }
 
-                context.registerBeanDefinition("${propertyName}Class", beans.getBeanDefinition("${propertyName}Class"))
-                context.registerBeanDefinition("${propertyName}", beans.getBeanDefinition("${propertyName}"))
-                context.registerBeanDefinition("${propertyName}Detail", beans.getBeanDefinition("${propertyName}Detail"))
+                context.registerBeanDefinition("${fullName}Class", beans.getBeanDefinition("${fullName}Class"))
+                context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
+                context.registerBeanDefinition("${fullName}Detail", beans.getBeanDefinition("${fullName}Detail"))
 
                 jobClass.triggers.each {name, trigger ->
                     event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
@@ -211,11 +211,11 @@ but is made simpler by the coding by convention paradigm.
     def scheduleJob = {GrailsTaskClass jobClass, ApplicationContext ctx ->
         def scheduler = ctx.getBean("quartzScheduler")
         if(scheduler) {
-            def propertyName = jobClass.propertyName
+            def fullName = jobClass.fullName
             // add job to scheduler, and associate triggers with it
-            scheduler.addJob(ctx.getBean("${propertyName}Detail"), true)
+            scheduler.addJob(ctx.getBean("${fullName}Detail"), true)
             jobClass.triggers.each {key, trigger ->
-                log.debug("Scheduling $propertyName with trigger $key: ${trigger}")
+                log.debug("Scheduling $fullName with trigger $key: ${trigger}")
                 if(scheduler.getTrigger(trigger.name, trigger.group)) {
                     scheduler.rescheduleJob(trigger.name, trigger.group, ctx.getBean("${key}Trigger"))
                 } else {
@@ -229,22 +229,22 @@ but is made simpler by the coding by convention paradigm.
     }
 
     def configureJobBeans = {GrailsTaskClass jobClass ->
-        def propertyName = jobClass.propertyName
+        def fullName = jobClass.fullName
 
-        "${propertyName}Class"(MethodInvokingFactoryBean) {
+        "${fullName}Class"(MethodInvokingFactoryBean) {
             targetObject = ref("grailsApplication", true)
             targetMethod = "getArtefact"
             arguments = [TaskArtefactHandler.TYPE, jobClass.fullName]
         }
 
-        "${propertyName}"(ref("${propertyName}Class")) {bean ->
+        "${fullName}"(ref("${fullName}Class")) {bean ->
             bean.factoryMethod = "newInstance"
             bean.autowire = "byName"
             bean.scope = "prototype"
         }
 
-        "${propertyName}Detail"(JobDetailFactoryBean) {
-            name = propertyName
+        "${fullName}Detail"(JobDetailFactoryBean) {
+            name = fullName
             group = jobClass.group
             concurrent = jobClass.concurrent
             volatility = jobClass.volatility
@@ -257,7 +257,7 @@ but is made simpler by the coding by convention paradigm.
         // registering triggers
         jobClass.triggers.each {name, trigger ->
             "${name}Trigger"(trigger.clazz) {
-                jobDetail = ref("${propertyName}Detail")
+                jobDetail = ref("${fullName}Detail")
                 trigger.properties.findAll {it.key != 'clazz'}.each {
                     delegate["${it.key}"] = it.value
                 }

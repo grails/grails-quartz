@@ -524,10 +524,10 @@
         <root url="jar://$QUARTZ_PATH$/quartz-1.6.5.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="file://$QUARTZ_PATH$/docs/api" />
+        <root url="file:///opt/local/share/java/quartz-1.6.5/docs/api" />
       </JAVADOC>
       <SOURCES>
-        <root url="file://$QUARTZ_PATH$/src/java" />
+        <root url="file:///opt/local/share/java/quartz-1.6.5/src/java" />
       </SOURCES>
     </library>
   </component>

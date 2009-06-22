@@ -1,4 +1,4 @@
-<plugin name='quartz' version='0.4.1-SNAPSHOT' grailsVersion='1.1 &gt; *'>
+<plugin name='quartz' version='0.4.1-SNAPSHOT' grailsVersion='1.1.1 &gt; *'>
   <author>Sergey Nebolsin</author>
   <authorEmail>nebolsin@gmail.com</authorEmail>
   <title>This plugin adds Quartz job scheduling features to Grails application.</title>

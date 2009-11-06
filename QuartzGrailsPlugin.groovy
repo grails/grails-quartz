@@ -80,12 +80,12 @@ but is made simpler by the coding by convention paradigm.
 
         quartzScheduler(SchedulerFactoryBean) {
             // delay scheduler startup to after-bootstrap stage
+            configLocation = "classpath:quartz.properties"
             autoStartup = false
             if(config.jdbcStore) {
                 dataSource = ref('dataSource')
                 transactionManager = ref('transactionManager')
             }
-
             jobFactory = quartzJobFactory
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]

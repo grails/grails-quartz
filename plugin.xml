@@ -12,7 +12,7 @@ but is made simpler by the coding by convention paradigm.
     <resource>DefaultQuartzConfig</resource>
     <resource>QuartzBootStrap</resource>
     <resource>UrlMappings</resource>
-    <resource>JobManagerService</resource>
+    <resource>org.grails.plugins.quartz.JobManagerService</resource>
   </resources>
   <dependencies />
 </plugin>

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="GRAILS_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="Grails" name="Grails">
-      <configuration />
-    </facet>
     <facet type="Spring" name="Spring">
       <configuration>
         <fileset id="Grails" name="Grails" removed="false">
@@ -25,6 +22,9 @@
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
         </building>
       </configuration>
+    </facet>
+    <facet type="Grails" name="Grails">
+      <configuration />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -49,12 +49,16 @@
       <library name="Grails User Library">
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib" />
+          <root url="file://$MODULE_DIR$/../../../.grails/1.1.1/projects/grails-quartz/plugins/hibernate-1.1/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../../../.grails/1.1.1/projects/grails-quartz/plugins/hibernate-1.1/lib" recursive="false" />
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="Quartz-grailsPlugins" />
+    <orderEntry type="library" name="grails-1.1.1" level="application" />
   </component>
 </module>
 

@@ -4,7 +4,6 @@ import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -12,6 +11,7 @@ import org.springframework.beans.PropertyAccessorFactory;
 import java.util.Map;
 import java.util.Date;
 import java.text.ParseException;
+import java.beans.PropertyEditorSupport;
 
 /**
  * TODO: write javadoc
@@ -39,6 +39,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean  
       }
 
       BeanWrapper customTriggerWrapper = PropertyAccessorFactory.forBeanPropertyAccess(customTrigger);
+      customTriggerWrapper.registerCustomEditor(String.class, new StringEditor());
       customTriggerWrapper.setPropertyValues(triggerAttributes);
   }
 
@@ -77,4 +78,17 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean  
   public void setTriggerAttributes(Map triggerAttributes) {
     this.triggerAttributes = triggerAttributes;
   }
+}
+
+// We need this additional editor to support GString -> String convertion for trigger's properties.
+class StringEditor extends PropertyEditorSupport {
+    @Override
+    public void setValue(Object value) {
+        super.setValue(value == null ? null : value.toString());
+    }
+
+    @Override
+    public void setAsText(String text) throws IllegalArgumentException {
+        setValue(text);
+    }
 }

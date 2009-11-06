@@ -14,8 +14,6 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz.config
 
-import org.codehaus.groovy.grails.plugins.quartz.CronTriggerFactoryBean
-import org.codehaus.groovy.grails.plugins.quartz.SimpleTriggerFactoryBean
 import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
 import org.quartz.Trigger
 import org.codehaus.groovy.grails.plugins.quartz.CustomTriggerFactoryBean

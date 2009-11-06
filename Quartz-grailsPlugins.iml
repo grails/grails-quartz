@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="false" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="grails-1.1.1" level="application" />
+    <orderEntry type="module-library" exported="">
+      <library name="Grails User Library">
+        <CLASSES>
+          <root url="file:///Users/nebolsin/.grails/1.1.1/projects/grails-quartz/plugins/hibernate-1.1/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file:///Users/nebolsin/.grails/1.1.1/projects/grails-quartz/plugins/hibernate-1.1/lib" recursive="false" />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

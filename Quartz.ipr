@@ -7,8 +7,16 @@
       <antReference projectDefault="true" />
       <customJdkName value="" />
       <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
       <properties />
     </buildFile>
+  </component>
+  <component name="ArtifactManager">
+    <artifact type="exploded-war" name="Quartz:GrailsWeb exploded">
+      <root id="root">
+        <element id="javaee-facet-resources" facet="Quartz/web/GrailsWeb" />
+      </root>
+    </artifact>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -34,6 +42,15 @@
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
+        <ADDITIONAL_INDENT_OPTIONS fileType="">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -417,6 +434,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Quartz.iml" filepath="$PROJECT_DIR$/Quartz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Quartz-grailsPlugins.iml" filepath="$PROJECT_DIR$/Quartz-grailsPlugins.iml" />
     </modules>
   </component>
   <component name="ProjectRootConfigurable.UI">
@@ -532,7 +550,6 @@
     </library>
   </component>
   <UsedPathMacros>
-    <macro name="GRAILS_HOME" />
     <macro name="QUARTZ_PATH" />
   </UsedPathMacros>
 </project>

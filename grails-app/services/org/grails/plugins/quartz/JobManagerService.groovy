@@ -1,6 +1,7 @@
+package org.grails.plugins.quartz
+
 import org.quartz.Scheduler
 import org.codehaus.groovy.grails.plugins.quartz.JobObject
-import org.quartz.JobExecutionContext
 
 class JobManagerService {
 

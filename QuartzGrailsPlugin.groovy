@@ -147,6 +147,16 @@ but is made simpler by the coding by convention paradigm.
             mc.'static'.removeJob = {
                 quartzScheduler.deleteJob(jobName, jobGroup)
             }
+
+            mc.'static'.reschedule = {Trigger trigger ->
+                trigger.jobName = jobName
+                trigger.jobGroup = jobGroup
+                quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
+            }
+
+            mc.'static'.unschedule = {String triggerName, String triggerGroup = GTCP.DEFAULT_TRIGGERS_GROUP ->
+                quartzScheduler.unscheduleJob(triggerName, triggerGroup)
+            }
         }
     }
 

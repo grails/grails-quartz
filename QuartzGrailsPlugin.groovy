@@ -226,8 +226,8 @@ but is made simpler by the coding by convention paradigm.
             scheduler.addJob(ctx.getBean("${fullName}Detail"), true)
             jobClass.triggers.each {key, trigger ->
                 log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                if(scheduler.getTrigger(trigger.name, trigger.group)) {
-                    scheduler.rescheduleJob(trigger.name, trigger.group, ctx.getBean("${key}Trigger"))
+                if(scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
+                    scheduler.rescheduleJob(trigger.triggerAttributes.name, trigger.triggerAttributes.group, ctx.getBean("${key}Trigger"))
                 } else {
                     scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
                 }

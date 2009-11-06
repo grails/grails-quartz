@@ -109,8 +109,8 @@ but is made simpler by the coding by convention paradigm.
 
             }
 
-            mc.'static'.schedule = { String cronExperssion, Map params = null ->
-                Trigger trigger = new CronTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExperssion)
+            mc.'static'.schedule = { String cronExpression, Map params = null ->
+                Trigger trigger = new CronTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 if(params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)

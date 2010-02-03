@@ -8,21 +8,6 @@
         </fileset>
       </configuration>
     </facet>
-    <facet type="web" name="GrailsWeb">
-      <configuration>
-        <webroots>
-          <root url="file://$MODULE_DIR$/web-app" relative="/" />
-        </webroots>
-        <sourceRoots />
-        <building>
-          <setting name="EXPLODED_URL" value="file://" />
-          <setting name="EXPLODED_ENABLED" value="false" />
-          <setting name="JAR_URL" value="file://" />
-          <setting name="JAR_ENABLED" value="false" />
-          <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-        </building>
-      </configuration>
-    </facet>
     <facet type="Grails" name="Grails">
       <configuration />
     </facet>
@@ -41,6 +26,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test/unit" isTestSource="true" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="grails-1.2.0" level="project" />
     <orderEntry type="library" name="grails-1.1.1" level="application" />
     <orderEntry type="library" name="grails-1.1" level="application" />
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
@@ -57,7 +43,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Quartz-grailsPlugins" />
     <orderEntry type="library" name="grails-1.1.1" level="application" />
   </component>
 </module>

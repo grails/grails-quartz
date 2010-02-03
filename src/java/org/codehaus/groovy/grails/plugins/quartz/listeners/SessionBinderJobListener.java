@@ -29,43 +29,46 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 /**
  * JobListener implementation which binds Hibernate Session to thread
  * before execution of job and flushes it after job execution.
- * 
+ *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
- * 
  * @since 0.2
  */
 public class SessionBinderJobListener extends JobListenerSupport {
-	private static final transient Log LOG = LogFactory.getLog(SessionBinderJobListener.class);
-	
-	public static final String NAME = "sessionBinderListener";
+    private static final transient Log LOG = LogFactory.getLog(SessionBinderJobListener.class);
 
-	private SessionFactory sessionFactory;
+    public static final String NAME = "sessionBinderListener";
 
-	public String getName() {
-		return NAME;
-	}
+    private SessionFactory sessionFactory;
 
-	public void jobToBeExecuted(JobExecutionContext context) {
-		Session session = SessionFactoryUtils.getSession(sessionFactory, true);
+    public String getName() {
+        return NAME;
+    }
+
+    public void jobToBeExecuted(JobExecutionContext context) {
+        Session session = SessionFactoryUtils.getSession(sessionFactory, true);
         session.setFlushMode(FlushMode.AUTO);
-		TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-		if( LOG.isDebugEnabled()) LOG.debug("Hibernate Session is bounded to Job thread");
-	}
+        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        if (LOG.isDebugEnabled()) LOG.debug("Hibernate Session is bounded to Job thread");
+    }
 
-	public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-		SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager.unbindResource(sessionFactory);
-        if(!FlushMode.MANUAL.equals(sessionHolder.getSession().getFlushMode())) {
-            sessionHolder.getSession().flush();
+    public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
+        SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
+        try {
+            if (!FlushMode.MANUAL.equals(sessionHolder.getSession().getFlushMode())) {
+                sessionHolder.getSession().flush();
+            }
+        } finally {
+            TransactionSynchronizationManager.unbindResource(sessionFactory);
+            SessionFactoryUtils.closeSession(sessionHolder.getSession());
+            if (LOG.isDebugEnabled()) LOG.debug("Hibernate Session is unbounded from Job thread and closed");
         }
-		SessionFactoryUtils.closeSession(sessionHolder.getSession());				
-		if( LOG.isDebugEnabled()) LOG.debug("Hibernate Session is unbounded from Job thread and closed");
-	}
+    }
 
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 }

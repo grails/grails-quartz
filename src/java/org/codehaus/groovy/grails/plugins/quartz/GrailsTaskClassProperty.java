@@ -54,6 +54,8 @@ public interface GrailsTaskClassProperty {
 
     public static final String DURABILITY = "durability";
 
+    public static final String REQUESTS_RECOVERY = "requestsRecovery";
+
     // Default values for Job's properties
 
     public static final long DEFAULT_REPEAT_INTERVAL = 60000l;	// one minute
@@ -78,4 +80,6 @@ public interface GrailsTaskClassProperty {
     public static final boolean DEFAULT_VOLATILITY = true;
 
     public static final boolean DEFAULT_DURABILITY = true;
+
+    public static final boolean DEFAULT_REQUESTS_RECOVERY = false;
 }

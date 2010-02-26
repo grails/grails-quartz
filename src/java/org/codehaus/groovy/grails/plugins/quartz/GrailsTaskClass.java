@@ -105,5 +105,12 @@ public interface GrailsTaskClass extends InjectableGrailsClass {
      */
     public boolean getDurability();
 
+    /**
+     * If task should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.
+     *
+     * @return true if this job requests recovery
+     */
+    public boolean getRequestsRecovery();
+
     public Map getTriggers();
 }

@@ -18,6 +18,7 @@ package org.codehaus.groovy.grails.plugins.quartz;
 import org.quartz.*;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
@@ -34,9 +35,10 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 
     private String name;
 	private String group;
-	private boolean concurrent = true;
-    private boolean volatility = true;
-    private boolean durability = true;
+	private boolean concurrent;
+    private boolean volatility;
+    private boolean durability;
+    private boolean requestsRecovery;
     private String[] jobListenerNames;
 	private JobDetail jobDetail;
 
@@ -66,20 +68,6 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	/**
-	 * Specify whether or not multiple jobs should be run in a concurrent
-	 * fashion. The behavior when one does not want concurrent jobs to be
-	 * executed is realized through adding the {@link StatefulJob} interface.
-	 * More information on stateful versus stateless jobs can be found
-	 * <a href="http://www.opensymphony.com/quartz/tutorial.html#jobsMore">here</a>.
-	 * <p>The default setting is to run jobs concurrently.
-     *
-     * @param concurrent true for concurrent runs
-     */
-	public void setConcurrent(final boolean concurrent) {
-		this.concurrent = concurrent;
-	}
-
-	/**
 	 * Set a list of JobListener names for this job, referring to
 	 * non-global JobListeners registered with the Scheduler.
 	 * <p>A JobListener name always refers to the name returned
@@ -94,12 +82,24 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		this.jobListenerNames = names;
 	}
 
+    @Required
+    public void setConcurrent(final boolean concurrent) {
+        this.concurrent = concurrent;
+    }
+
+    @Required
     public void setVolatility(boolean volatility) {
         this.volatility = volatility;
     }
 
+    @Required
     public void setDurability(boolean durability) {
         this.durability = durability;
+    }
+
+    @Required
+    public void setRequestsRecovery(boolean requestsRecovery) {
+        this.requestsRecovery = requestsRecovery;
     }
 
     /**
@@ -124,6 +124,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
         jobDetail.getJobDataMap().put(JOB_NAME_PARAMETER, name);
 		jobDetail.setDurability(durability);
         jobDetail.setVolatility(volatility);
+        jobDetail.setRequestsRecovery(requestsRecovery);
 
         // Register job listener names.
 		if (jobListenerNames != null) {

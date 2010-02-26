@@ -68,8 +68,8 @@ but is made simpler by the coding by convention paradigm.
         }
 
         // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
-        "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {bean ->
-            bean.autowire = "byName"
+        "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {
+            sessionFactory = ref('sessionFactory')
         }
 
         // register global ExceptionPrinterJobListener which will log exceptions occured
@@ -79,8 +79,8 @@ but is made simpler by the coding by convention paradigm.
         quartzJobFactory(GrailsJobFactory)
 
         quartzScheduler(SchedulerFactoryBean) {
-            // delay scheduler startup to after-bootstrap stage
             configLocation = "classpath:quartz.properties"
+            // delay scheduler startup to after-bootstrap stage
             autoStartup = false
             if(config.jdbcStore) {
                 dataSource = ref('dataSource')
@@ -259,6 +259,8 @@ but is made simpler by the coding by convention paradigm.
             concurrent = jobClass.concurrent
             volatility = jobClass.volatility
             durability = jobClass.durability
+            requestsRecovery = jobClass.requestsRecovery
+            
             if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }

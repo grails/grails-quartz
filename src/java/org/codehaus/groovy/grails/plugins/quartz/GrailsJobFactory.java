@@ -69,9 +69,9 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
           try {
               Method method = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
               if(method != null) {
-                  ReflectionUtils.invokeMethod(method, job, new JobExecutionContext[] {context});
+                  ReflectionUtils.invokeMethod(method, job, (Object[]) (new JobExecutionContext[] {context}));
               } else if((method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class})) != null) {
-                ReflectionUtils.invokeMethod(method, job, new Object[] {context});
+                ReflectionUtils.invokeMethod(method, job, context);
               } else {
                   // falling back to execute() method
                   ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);

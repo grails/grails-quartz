@@ -32,17 +32,16 @@ import grails.util.GrailsUtil;
  * @author Micha?? K??ujszo
  * @author Marcel Overdijk
  * @author Sergey Nebolsin (nebolsin@gmail.com)
- * 
  * @since 0.1
  */
 public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implements GrailsTaskClass, GrailsTaskClassProperty {
-	
-	public static final String JOB = "Job";
+
+    public static final String JOB = "Job";
     private Map triggers = new HashMap();
 
 
     public DefaultGrailsTaskClass(Class clazz) {
-		super(clazz, JOB);
+        super(clazz, JOB);
         evaluateTriggers();
     }
 
@@ -52,12 +51,12 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
 
         TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName());
 
-        if(triggersClosure != null) {
+        if (triggersClosure != null) {
             builder.build(triggersClosure);
             triggers = (Map) builder.getTriggers();
         } else {
             // backward compatibility
-            if(isCronExpressionConfigured()) {
+            if (isCronExpressionConfigured()) {
                 GrailsUtil.deprecated("You're using deprecated 'def cronExpression = ...' parameter in the " + getFullName() + ", use 'static triggers = { cron cronExpression: ...} instead.");
                 triggers = builder.createEmbeddedCronTrigger(getStartDelay(), getCronExpression());
             } else {
@@ -68,69 +67,74 @@ public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implem
     }
 
     public void execute() {
-        getMetaClass().invokeMethod( getReference().getWrappedInstance(), EXECUTE, new Object[] {} );
-	}
+        getMetaClass().invokeMethod(getReference().getWrappedInstance(), EXECUTE, new Object[]{});
+    }
 
     public void execute(JobExecutionContext context) {
-        getMetaClass().invokeMethod(getReference().getWrappedInstance(), EXECUTE, new Object[] {context});
+        getMetaClass().invokeMethod(getReference().getWrappedInstance(), EXECUTE, new Object[]{context});
     }
 
     // TODO: ============== start of deprecated methods =================
     public long getTimeout() {
-		Object obj = getPropertyValue( TIMEOUT );
-		if( obj == null ) return DEFAULT_TIMEOUT;
-		return ((Number)obj).longValue();
-	}
+        Object obj = getPropertyValue(TIMEOUT);
+        if (obj == null) return DEFAULT_TIMEOUT;
+        return ((Number) obj).longValue();
+    }
 
-	public long getStartDelay() {
-		Object obj = getPropertyValue(START_DELAY);
-		if( obj == null ) return DEFAULT_START_DELAY;
-		return ((Number)obj).longValue();
-	}
+    public long getStartDelay() {
+        Object obj = getPropertyValue(START_DELAY);
+        if (obj == null) return DEFAULT_START_DELAY;
+        return ((Number) obj).longValue();
+    }
 
     public int getRepeatCount() {
         Object obj = getPropertyValue(REPEAT_COUNT);
-        if(obj == null) return DEFAULT_REPEAT_COUNT;
-        return ((Number)obj).intValue();
+        if (obj == null) return DEFAULT_REPEAT_COUNT;
+        return ((Number) obj).intValue();
     }
 
     public String getCronExpression() {
-		String cronExpression = (String)getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
-		if( cronExpression == null || "".equals(cronExpression) ) return DEFAULT_CRON_EXPRESSION;
-		return cronExpression;	
-	}
+        String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
+        if (cronExpression == null || "".equals(cronExpression)) return DEFAULT_CRON_EXPRESSION;
+        return cronExpression;
+    }
 
-	public String getGroup() {
-		String group = (String)getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
-        if( group == null || "".equals(group) ) return DEFAULT_GROUP;
-		return group;	
-	}
+    public String getGroup() {
+        String group = (String) getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
+        if (group == null || "".equals(group)) return DEFAULT_GROUP;
+        return group;
+    }
 
-	// not certain about this... feels messy
-	public boolean isCronExpressionConfigured() {
-		String cronExpression = (String)getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
+    // not certain about this... feels messy
+    public boolean isCronExpressionConfigured() {
+        String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
         return cronExpression != null;
     }
     // TODO: ============== end of deprecated methods =================
 
-	public boolean isConcurrent() {
-		Boolean concurrent = (Boolean)getPropertyValue(CONCURRENT, Boolean.class);
-		return concurrent == null ? DEFAULT_CONCURRENT : concurrent.booleanValue();
-	}	
+    public boolean isConcurrent() {
+        Boolean concurrent = (Boolean) getPropertyValue(CONCURRENT, Boolean.class);
+        return concurrent == null ? DEFAULT_CONCURRENT : concurrent;
+    }
 
-	public boolean isSessionRequired() {
-		Boolean sessionRequired = (Boolean)getPropertyValue(SESSION_REQUIRED, Boolean.class);
-        return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired.booleanValue();
-	}
+    public boolean isSessionRequired() {
+        Boolean sessionRequired = (Boolean) getPropertyValue(SESSION_REQUIRED, Boolean.class);
+        return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired;
+    }
 
     public boolean getVolatility() {
         Boolean volatility = (Boolean) getPropertyValue(VOLATILITY, Boolean.class);
-        return volatility == null ? DEFAULT_VOLATILITY : volatility.booleanValue();
+        return volatility == null ? DEFAULT_VOLATILITY : volatility;
     }
 
     public boolean getDurability() {
         Boolean durability = (Boolean) getPropertyValue(DURABILITY, Boolean.class);
-        return durability == null ? DEFAULT_DURABILITY : durability.booleanValue();
+        return durability == null ? DEFAULT_DURABILITY : durability;
+    }
+
+    public boolean getRequestsRecovery() {
+        Boolean requestsRecovery = (Boolean) getPropertyValue(REQUESTS_RECOVERY, Boolean.class);
+        return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
     }
 
     public Map getTriggers() {

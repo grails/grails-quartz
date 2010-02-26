@@ -25,9 +25,10 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  * @since 0.3
  */
 class QuartzBootStrap {
+    def quartzScheduler
+
     def init = {servletContext ->
-        def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
-        if(ConfigurationHolder.config?.quartz?.autoStartup) ctx.quartzScheduler.start()
+        if(ConfigurationHolder.config?.quartz?.autoStartup) quartzScheduler.start()
     }
     def destroy = {}
 }

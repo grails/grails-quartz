@@ -1,11 +1,11 @@
 /* Copyright 2006-2008 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.StaleObjectStateException;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.listeners.JobListenerSupport;
@@ -57,6 +58,8 @@ public class SessionBinderJobListener extends JobListenerSupport {
             if (!FlushMode.MANUAL.equals(sessionHolder.getSession().getFlushMode())) {
                 sessionHolder.getSession().flush();
             }
+        } catch (Exception e) {
+            if(LOG.isErrorEnabled()) LOG.error("Cannot flush Hibernate Sesssion, error will be ignored", e);
         } finally {
             TransactionSynchronizationManager.unbindResource(sessionFactory);
             SessionFactoryUtils.closeSession(sessionHolder.getSession());

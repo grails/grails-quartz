@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  * Job factory which retrieves Job instances from ApplicationContext.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
- * 
+ *
  * @since 0.3.2
  */
 public class GrailsJobFactory extends AdaptableJobFactory implements ApplicationContextAware {
@@ -77,7 +77,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                   ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
               }
           }
-          catch (Exception e) {
+          catch (Throwable e) {
             throw new JobExecutionException(e.getMessage(), e);
           }
   		}

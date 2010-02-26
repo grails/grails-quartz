@@ -540,13 +540,13 @@
   <component name="libraryTable">
     <library name="Quartz">
       <CLASSES>
-        <root url="jar://$QUARTZ_PATH$/quartz-1.6.5.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/quartz-1.7.3.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="file:///opt/local/share/java/quartz-1.6.5/docs/api" />
+        <root url="file:///Users/nebolsin/Documents/Projects/os/quartz-1.7.3/docs/api" />
       </JAVADOC>
       <SOURCES>
-        <root url="file:///opt/local/share/java/quartz-1.6.5/src/java" />
+        <root url="file:///Users/nebolsin/Documents/Projects/os/quartz-1.7.3/quartz/src/main/java" />
       </SOURCES>
     </library>
     <library name="grails-1.2.0">
@@ -653,7 +653,6 @@
   </component>
   <UsedPathMacros>
     <macro name="GRAILS_HOME" />
-    <macro name="QUARTZ_PATH" />
   </UsedPathMacros>
 </project>
 

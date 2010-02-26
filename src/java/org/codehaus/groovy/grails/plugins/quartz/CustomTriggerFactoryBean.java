@@ -19,14 +19,14 @@ import java.beans.PropertyEditorSupport;
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
 public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean  {
-  private Class triggerClass;
+  private Class<Trigger> triggerClass;
   private Trigger customTrigger;
   private JobDetail jobDetail;
 
   private Map triggerAttributes;
 
   public void afterPropertiesSet() throws ParseException {
-      customTrigger = (Trigger) BeanUtils.instantiateClass(triggerClass);
+      customTrigger = BeanUtils.instantiateClass(triggerClass);
 
       if(triggerAttributes.containsKey(GrailsTaskClassProperty.START_DELAY)) {
           Number startDelay = (Number) triggerAttributes.remove(GrailsTaskClassProperty.START_DELAY);
@@ -71,7 +71,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean  
       this.jobDetail = jobDetail;
   }
 
-  public void setTriggerClass(Class triggerClass) {
+  public void setTriggerClass(Class<Trigger> triggerClass) {
     this.triggerClass = triggerClass;
   }
 

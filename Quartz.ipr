@@ -648,6 +648,18 @@
         <root url="file://$GRAILS_HOME$/src/scaffolding" />
         <root url="file://$GRAILS_HOME$/src/tiger" />
         <root url="file://$GRAILS_HOME$/src/web" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.instrument-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.jdbc-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.context.support-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.aspects-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.asm-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.expression-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.beans-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.transaction-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.core-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.aop-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.context-sources-3.0.0.RELEASE.jar!/" />
+        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.instrument.tomcat-sources-3.0.0.RELEASE.jar!/" />
       </SOURCES>
     </library>
   </component>

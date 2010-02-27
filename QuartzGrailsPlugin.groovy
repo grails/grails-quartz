@@ -86,6 +86,7 @@ but is made simpler by the coding by convention paradigm.
                 dataSource = ref('dataSource')
                 transactionManager = ref('transactionManager')
             }
+            waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown
             jobFactory = quartzJobFactory
             jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
@@ -164,18 +165,6 @@ but is made simpler by the coding by convention paradigm.
         application.taskClasses.each {jobClass ->
             scheduleJob.delegate = delegate
             scheduleJob(jobClass, applicationContext)
-        }
-    }
-
-    def onShutdown = {event ->
-        def ctx = event.ctx
-        if(!ctx) {
-            log.error("Application context not found. Cannot execute shutdown code.")
-            return
-        }
-        def scheduler = ctx.getBean("quartzScheduler")
-        if(scheduler) {
-            scheduler.shutdown()
         }
     }
 
@@ -260,7 +249,7 @@ but is made simpler by the coding by convention paradigm.
             volatility = jobClass.volatility
             durability = jobClass.durability
             requestsRecovery = jobClass.requestsRecovery
-            
+
             if(jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }

@@ -68,8 +68,8 @@ but is made simpler by the coding by convention paradigm.
         }
 
         // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
-        "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {
-            sessionFactory = ref('sessionFactory')
+        "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {bean ->
+            bean.autowire = "byName"
         }
 
         // register global ExceptionPrinterJobListener which will log exceptions occured

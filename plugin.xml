@@ -1,4 +1,4 @@
-<plugin name='quartz' version='0.4.2' grailsVersion='1.1 &gt; *'>
+<plugin name='quartz' version='1.0-SNAPSHOT' grailsVersion='1.1 &gt; *'>
   <author>Sergey Nebolsin</author>
   <authorEmail>nebolsin@gmail.com</authorEmail>
   <title>This plugin adds Quartz job scheduling features to Grails application.</title>
@@ -11,7 +11,6 @@ but is made simpler by the coding by convention paradigm.
   <resources>
     <resource>DefaultQuartzConfig</resource>
     <resource>QuartzBootStrap</resource>
-    <resource>UrlMappings</resource>
     <resource>org.grails.plugins.quartz.JobManagerService</resource>
   </resources>
   <dependencies>

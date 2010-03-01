@@ -38,7 +38,7 @@ import org.quartz.JobDataMap
  */
 class QuartzGrailsPlugin {
 
-    def version = "0.4.2"
+    def version = "1.0-SNAPSHOT"
     def grailsVersion = "1.1 > *"
     
     def author = "Sergey Nebolsin"

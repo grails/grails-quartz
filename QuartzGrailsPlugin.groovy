@@ -81,7 +81,13 @@ but is made simpler by the coding by convention paradigm.
         quartzJobFactory(GrailsJobFactory)
 
         quartzScheduler(SchedulerFactoryBean) {
-            configLocation = "classpath:quartz.properties"
+            if ( config.props != null ) {
+                def configProps = new Properties()
+                config.props.each { key, value -> configProps.setProperty( "org.quartz.$key", "$value") }
+                quartzProperties = configProps
+                log.debug("Set quartz properties $configProps")
+            }
+            
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
             if(config.jdbcStore) {

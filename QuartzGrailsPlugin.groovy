@@ -38,7 +38,7 @@ import org.quartz.JobDataMap
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-SNAPSHOT"
+    def version = "0.4.3-SNAPSHOT"
     def grailsVersion = "1.1 > *"
     
     def author = "Sergey Nebolsin"
@@ -81,13 +81,14 @@ but is made simpler by the coding by convention paradigm.
         quartzJobFactory(GrailsJobFactory)
 
         quartzScheduler(SchedulerFactoryBean) {
-            if ( config.props != null ) {
+            if ( config.containsKey( 'props') ) {
                 def configProps = new Properties()
                 config.props.each { key, value -> configProps.setProperty( "org.quartz.$key", "$value") }
                 quartzProperties = configProps
-                log.debug("Set quartz properties $configProps")
+            } else {
+                configLocation = "classpath:quartz.properties"
             }
-            
+
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
             if(config.jdbcStore) {

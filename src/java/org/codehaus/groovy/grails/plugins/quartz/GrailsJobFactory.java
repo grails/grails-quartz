@@ -25,6 +25,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -39,8 +40,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 
     protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
         String grailsJobName = (String) bundle.getJobDetail().getJobDataMap().get(JobDetailFactoryBean.JOB_NAME_PARAMETER);
-        //Object job = applicationContext.getBean(grailsJobName);
-         if(grailsJobName != null) {
+        if(grailsJobName != null) {
             Object job = applicationContext.getBean(grailsJobName);
             if(bundle.getJobDetail().getJobClass().equals(StatefulGrailsTaskClassJob.class)) {
                 return new StatefulGrailsTaskClassJob(job);
@@ -56,34 +56,49 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
     }
 
     /**
-	 * Quartz Job implementation that invokes execute() on the GrailsTaskClass instance.
+	 * Quartz Job implementation that invokes execute() on the application's job class.
 	 */
-	public class GrailsTaskClassJob implements Job {
-      Object job;
+    public class GrailsTaskClassJob implements Job {
+        Object job;
+        Method executeMethod;
+        boolean passExecutionContext;
 
-      public GrailsTaskClassJob(Object job) {
-          this.job = job;
-      }
+        public GrailsTaskClassJob(Object job) {
+            this.job = job;
+            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.EXECUTE, (Class<?>[]) null);
+            if (executeMethod == null) {
+                throw new IllegalArgumentException(job.getClass().getName() + " should declare #execute() method");
+            }
+            switch (executeMethod.getParameterTypes().length) {
+                case 0: passExecutionContext = false; break;
+                case 1: passExecutionContext = true; break;
+                default: throw new IllegalArgumentException(job.getClass().getName() + "#execute() method should take either no arguments or one argument of type JobExecutionContext"); 
+            }
+        }
 
-      public void execute(final JobExecutionContext context) throws JobExecutionException {
-          try {
-              Method method = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
-              if(method != null) {
-                  ReflectionUtils.invokeMethod(method, job, (Object[]) (new JobExecutionContext[] {context}));
-              } else if((method = ReflectionUtils.findMethod(job.getClass(), "execute", new Class[] {Object.class})) != null) {
-                ReflectionUtils.invokeMethod(method, job, context);
-              } else {
-                  // falling back to execute() method
-                  ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(job.getClass(), "execute"), job);
-              }
-          }
-          catch (Throwable e) {
-            throw new JobExecutionException(e.getMessage(), e);
-          }
-  		}
-	}
+        public void execute(final JobExecutionContext context) throws JobExecutionException {
+            try {
+                if (passExecutionContext) {
+                    executeMethod.invoke(job, context);
+                } else {
+                    executeMethod.invoke(job);
+                }
+            } catch (InvocationTargetException ite) {
+                Throwable targetException = ite.getTargetException();
+                if (targetException instanceof JobExecutionException) {
+                    throw (JobExecutionException) targetException;
+                } else {
+                    throw new JobExecutionException(targetException);
+                }
+            } catch (IllegalAccessException iae) {
+                JobExecutionException criticalError = new JobExecutionException("Cannot invoke " + job.getClass().getName() + "#execute() method", iae);
+                criticalError.setUnscheduleAllTriggers(true);
+                throw criticalError;
+            }
+        }
+    }
 
-	/**
+    /**
 	 * Extension of the GrailsTaskClassJob, implementing the StatefulJob interface.
 	 * Quartz checks whether or not jobs are stateful and if so,
 	 * won't let jobs interfere with each other.

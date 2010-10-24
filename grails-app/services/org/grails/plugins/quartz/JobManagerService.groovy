@@ -1,58 +1,65 @@
+/*
+ * Copyright 2004-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.grails.plugins.quartz
 
 import org.quartz.Scheduler
-import org.codehaus.groovy.grails.plugins.quartz.JobObject
+import org.codehaus.groovy.grails.plugins.quartz.JobDescriptor
+import org.quartz.JobExecutionContext
 
+/**
+ * JobManagerService simplifies interaction with the Quartz Scheduler from Grails application. 
+ *
+ * @author Marco Mornati (mmornati@byte-code.com)
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
+ *
+ * @since 0.4
+ */
 class JobManagerService {
 
     boolean transactional = false
 
     Scheduler quartzScheduler
 
+    /**
+     * Returns all the jobs, registered in the Quartz Scheduler, grouped bu their corresponding job groups.
+     *
+     * @return Map<String, List<JobDescriptor>> with job group names as keys
+     */
     def getAllJobs() {
-        def jobsList = []
-        def listJobGroups = quartzScheduler.getJobGroupNames()
-        listJobGroups?.each {jobGroup ->
-            quartzScheduler.getJobNames(jobGroup)?.each {jobName ->
-                JobObject currentJob = new JobObject()
-                currentJob.group = jobGroup
-                currentJob.name = jobName
-                def triggers = quartzScheduler.getTriggersOfJob(jobName, jobGroup)
-                if (triggers != null && triggers.size() > 0) {
-                    triggers.each {trigger ->
-                        currentJob.triggerName = trigger.name
-                        currentJob.triggerGroup = trigger.group
-                        currentJob.status = quartzScheduler.getTriggerState(trigger.name, trigger.group)                        
-                    }
-                }
-                jobsList.add(currentJob)
-            }
-        }
-
-        jobsList
+        quartzScheduler.jobGroupNames.inject([:]) { acc, group -> acc[group] = getJobs(group) }
     }
 
-    def getJob(String group) {
-        if (group != null && !group.equals("")) {
-            return quartzScheduler.getJobNames(group)
-        } else {
-            //TODO: Maybe we can create an exception for this kind of call
-            return null
+    /**
+     * Returns all the jobs, registered in the Quartz Scheduler, which belong to the specified group.
+     *
+     * @param group — the jobs group name
+     * @return a list of corresponding JobDescriptor objects
+     */
+    def getJobs(String group) {
+        quartzScheduler.getJobNames(group).collect { jobName ->
+            JobDescriptor.build(quartzScheduler.getJobDetail(jobName, jobGroup), quartzScheduler)
         }
     }
 
+    /**
+     * Returns a list of all currently executing jobs.
+     *
+     * @return a List<JobExecutionContext>, containing all currently executing jobs.
+     */
     def getRunningJobs() {
-        /*
-        JobExecutionContext:
-            trigger: 'G1.TR1
-            job: FooGroup1.FooJob1
-            fireTime: 'Thu Oct 23 11:12:49 CEST 2008
-            scheduledFireTime: Thu Oct 23 11:12:49 CEST 2008
-            previousFireTime: 'Thu Oct 23 11:12:42 CEST 2008
-            nextFireTime: Thu Oct 23 11:12:56 CEST 2008
-            isRecovering: false
-            refireCount: 0
-         */
         quartzScheduler.getCurrentlyExecutingJobs()
     }
 

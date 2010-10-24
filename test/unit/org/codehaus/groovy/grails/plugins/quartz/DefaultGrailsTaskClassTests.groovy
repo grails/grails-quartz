@@ -5,7 +5,7 @@ import org.quartz.SimpleTrigger
 /**
  * TODO: write javadoc
  *
- * @author Sergey Nebolsin (nebolsin@prophotos.ru)
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
 class DefaultGrailsJobClassTests extends GroovyTestCase {
     protected GroovyClassLoader gcl = new GroovyClassLoader();

@@ -6,7 +6,7 @@ import org.codehaus.groovy.grails.plugins.quartz.CustomTriggerFactoryBean
 /**
  * TODO: write javadoc
  *
- * @author Sergey Nebolsin (nebolsin@prophotos.ru)
+ * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
 class TriggersConfigBuilderTests extends GroovyTestCase {
     void testConfigBuilder() {

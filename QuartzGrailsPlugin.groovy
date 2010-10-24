@@ -69,9 +69,11 @@ but is made simpler by the coding by convention paradigm.
             configureJobBeans(jobClass)
         }
 
-        // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
-        "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {bean ->
-            bean.autowire = "byName"
+        if(manager?.hasGrailsPlugin("hibernate")) {
+            // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
+            "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {bean ->
+                bean.autowire = "byName"
+            }
         }
 
         // register global ExceptionPrinterJobListener which will log exceptions occured
@@ -97,7 +99,9 @@ but is made simpler by the coding by convention paradigm.
             }
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown
             jobFactory = quartzJobFactory
-            jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            if(manager?.hasGrailsPlugin("hibernate")) {
+              jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            }
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
         }
     }
@@ -258,8 +262,8 @@ but is made simpler by the coding by convention paradigm.
             volatility = jobClass.volatility
             durability = jobClass.durability
             requestsRecovery = jobClass.requestsRecovery
-
-            if(jobClass.sessionRequired) {
+                                       
+            if(manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }

@@ -297,10 +297,7 @@ but is made simpler by the coding by convention paradigm.
             properties << config.quartz.props.toProperties('org.quartz')
         }
 
-        println properties
-
         config.quartz._properties = properties
-
 
         return config.quartz
     }

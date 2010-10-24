@@ -20,25 +20,25 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
 
     void testDefaultProperties() {
         def jobClass = gcl.parseClass('class TestJob { def execute(){} }')
-        def jobClass = new DefaultGrailsJobClass(jobClass)
+        def grailsJobClass = new DefaultGrailsJobClass(jobClass)
 
-        assertEquals "Wrong default startDelay", 0, jobClass.startDelay
-        assertEquals "Wrong default timeout", 60000, jobClass.timeout
-        assertEquals "Wrong default repeatCount", SimpleTrigger.REPEAT_INDEFINITELY, jobClass.repeatCount
-        assertEquals "Wrong default cronExpression", '0 0 6 * * ?', jobClass.cronExpression
-        assertFalse "Job shouldn't be cron-job by default", jobClass.cronExpressionConfigured
-        assertEquals "Wrong default group", 'GRAILS_JOBS', jobClass.group
-        assertTrue "Job should require Hibernate session by default", jobClass.sessionRequired
-        assertTrue "Job should be concurrent by default", jobClass.concurrent
+        assertEquals "Wrong default startDelay", 0, grailsJobClass.startDelay
+        assertEquals "Wrong default timeout", 60000, grailsJobClass.timeout
+        assertEquals "Wrong default repeatCount", SimpleTrigger.REPEAT_INDEFINITELY, grailsJobClass.repeatCount
+        assertEquals "Wrong default cronExpression", '0 0 6 * * ?', grailsJobClass.cronExpression
+        assertFalse "Job shouldn't be cron-job by default", grailsJobClass.cronExpressionConfigured
+        assertEquals "Wrong default group", 'GRAILS_JOBS', grailsJobClass.group
+        assertTrue "Job should require Hibernate session by default", grailsJobClass.sessionRequired
+        assertTrue "Job should be concurrent by default", grailsJobClass.concurrent
     }
 
     void testJobClassExecute() {
         boolean wasExecuted = false
         def testClosure = { wasExecuted = true }
         Class jobClass = gcl.parseClass("class TestJob { def testClosure; def execute() {testClosure.call()}}\n")
-        GrailsJobClass jobClass = new DefaultGrailsJobClass(jobClass)
-        jobClass.getReference().setPropertyValue("testClosure", testClosure)
-        jobClass.execute()
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        grailsJobClass.getReference().setPropertyValue("testClosure", testClosure)
+        grailsJobClass.execute()
         assertTrue "Job wasn't executed", wasExecuted
     }
 

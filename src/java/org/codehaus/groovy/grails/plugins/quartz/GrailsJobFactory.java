@@ -14,16 +14,13 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz;
 
+import org.quartz.*;
 import org.springframework.scheduling.quartz.AdaptableJobFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.beans.BeansException;
 import org.quartz.spi.TriggerFiredBundle;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.StatefulJob;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,9 +55,10 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
     /**
 	 * Quartz Job implementation that invokes execute() on the application's job class.
 	 */
-    public class GrailsTaskClassJob implements Job {
+    public class GrailsTaskClassJob implements InterruptableJob {
         Object job;
         Method executeMethod;
+        Method interruptMethod;
         boolean passExecutionContext;
 
         public GrailsTaskClassJob(Object job) {
@@ -74,6 +72,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                 case 1: passExecutionContext = true; break;
                 default: throw new IllegalArgumentException(job.getClass().getName() + "#execute() method should take either no arguments or one argument of type JobExecutionContext"); 
             }
+            this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.INTERRUPT);
         }
 
         public void execute(final JobExecutionContext context) throws JobExecutionException {
@@ -94,6 +93,18 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                 JobExecutionException criticalError = new JobExecutionException("Cannot invoke " + job.getClass().getName() + "#execute() method", iae);
                 criticalError.setUnscheduleAllTriggers(true);
                 throw criticalError;
+            }
+        }
+
+        public void interrupt() throws UnableToInterruptJobException {
+            if (interruptMethod != null) {
+                try {
+                    interruptMethod.invoke(job);
+                } catch (Throwable e) {
+                    throw new UnableToInterruptJobException(e);
+                }
+            } else {
+                throw new UnableToInterruptJobException(job.getClass().getName() + " doesn't support interruption");
             }
         }
     }

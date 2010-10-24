@@ -30,7 +30,9 @@ import org.quartz.SimpleTrigger;
 public interface GrailsTaskClassProperty {
 
 	public static final String EXECUTE = "execute";
-	
+
+    public static final String INTERRUPT = "interrupt";
+
 	public static final String START_DELAY = "startDelay";
 	
 	public static final String CRON_EXPRESSION = "cronExpression";

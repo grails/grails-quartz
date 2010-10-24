@@ -19,7 +19,7 @@ import org.codehaus.groovy.grails.commons.InjectableGrailsClass;
 import java.util.Map;
 
 /**
- * Represents a task class in Grails. 
+ * Represents a job class in Grails.
  * 
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
@@ -28,15 +28,15 @@ import java.util.Map;
  * 
  * @since 0.1
  */
-public interface GrailsTaskClass extends InjectableGrailsClass {
+public interface GrailsJobClass extends InjectableGrailsClass {
 	
 	/**
-	 * Method which is executed by the task scheduler.
+	 * Method which is executed by the job scheduler.
 	 */
 	public void execute();
 
 	/**
-	 * Get task timeout between executions.
+	 * Get job timeout between executions.
      *
      * @return timeout between job executions (repeat interval) in milliseconds
      */
@@ -85,28 +85,28 @@ public interface GrailsTaskClass extends InjectableGrailsClass {
 	public boolean isConcurrent();
 
 	/**
-	 * If task requires Hibernate Session bounded to thread returns true.
+	 * If job requires Hibernate Session bounded to thread returns true.
      *
      * @return true if this job require a Hibernate Session bounded to thread
      */
 	public boolean isSessionRequired();
 
     /**
-     * If task is volatile (will not be persisted between Quartz runs) returns true.
+     * If job is volatile (will not be persisted between Quartz runs) returns true.
      *
      * @return true if this job is volatile
      */
     public boolean getVolatility();
 
     /**
-     * If task is durable returns true.
+     * If job is durable returns true.
      *
      * @return true if this job is durable
      */
     public boolean getDurability();
 
     /**
-     * If task should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.
+     * If job should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.
      *
      * @return true if this job requests recovery
      */

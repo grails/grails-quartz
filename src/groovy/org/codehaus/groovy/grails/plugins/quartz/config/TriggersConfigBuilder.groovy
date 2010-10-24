@@ -14,15 +14,14 @@
  */
 package org.codehaus.groovy.grails.plugins.quartz.config
 
-import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
+import org.codehaus.groovy.grails.plugins.quartz.GrailsJobClassProperty as GJCP
 import org.quartz.Trigger
 import org.codehaus.groovy.grails.plugins.quartz.CustomTriggerFactoryBean
-import org.codehaus.groovy.grails.exceptions.GrailsRuntimeException
+
 import org.quartz.CronTrigger
 import org.quartz.SimpleTrigger
 import grails.util.GrailsUtil
 import org.quartz.CronExpression
-import org.codehaus.groovy.grails.commons.GrailsClassUtils
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -98,7 +97,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
                 break
             case 'custom':
                 if(!triggerAttributes?.triggerClass) throw new Exception("Custom trigger must have 'triggerClass' attribute")
-                triggerClass = triggerAttributes.remove('triggerClass')
+                triggerClass = (Class) triggerAttributes.remove('triggerClass')
                 if(!Trigger.isAssignableFrom(triggerClass)) throw new Exception("Custom trigger class must extend org.quartz.Trigger class.")
                 break
             default:
@@ -109,43 +108,43 @@ public class TriggersConfigBuilder extends BuilderSupport {
     }
 
     private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
-        if(triggerAttributes[GTCP.NAME] == null) triggerAttributes[GTCP.NAME] = "${jobName}${triggerNumber++}"
-        if(triggerAttributes[GTCP.GROUP] == null) triggerAttributes[GTCP.GROUP] = GTCP.DEFAULT_GROUP
-        if(triggerAttributes[GTCP.START_DELAY] == null) triggerAttributes[GTCP.START_DELAY] = GTCP.DEFAULT_START_DELAY
-        if(!(triggerAttributes[GTCP.START_DELAY] instanceof Integer || triggerAttributes[GTCP.START_DELAY] instanceof Long)) {
+        if(triggerAttributes[GJCP.NAME] == null) triggerAttributes[GJCP.NAME] = "${jobName}${triggerNumber++}"
+        if(triggerAttributes[GJCP.GROUP] == null) triggerAttributes[GJCP.GROUP] = GJCP.DEFAULT_GROUP
+        if(triggerAttributes[GJCP.START_DELAY] == null) triggerAttributes[GJCP.START_DELAY] = GJCP.DEFAULT_START_DELAY
+        if(!(triggerAttributes[GJCP.START_DELAY] instanceof Integer || triggerAttributes[GJCP.START_DELAY] instanceof Long)) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} class must be Integer or Long");
         }
-        if(((Number) triggerAttributes[GTCP.START_DELAY]).longValue() < 0) {
+        if(((Number) triggerAttributes[GJCP.START_DELAY]).longValue() < 0) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)");
         }
-        if(triggerAttributes[GTCP.VOLATILITY] == null) triggerAttributes[GTCP.VOLATILITY] = GTCP.DEFAULT_VOLATILITY
+        if(triggerAttributes[GJCP.VOLATILITY] == null) triggerAttributes[GJCP.VOLATILITY] = GJCP.DEFAULT_VOLATILITY
     }
 
     private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
-        if (triggerAttributes[GTCP.TIMEOUT] != null) {
+        if (triggerAttributes[GJCP.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
-            triggerAttributes[GTCP.REPEAT_INTERVAL] = triggerAttributes.remove(GTCP.TIMEOUT)
+            triggerAttributes[GJCP.REPEAT_INTERVAL] = triggerAttributes.remove(GJCP.TIMEOUT)
         }
-        if (triggerAttributes[GTCP.REPEAT_INTERVAL] == null) triggerAttributes[GTCP.REPEAT_INTERVAL] = GTCP.DEFAULT_REPEAT_INTERVAL
-        if (!(triggerAttributes[GTCP.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[GTCP.REPEAT_INTERVAL] instanceof Long)) {
+        if (triggerAttributes[GJCP.REPEAT_INTERVAL] == null) triggerAttributes[GJCP.REPEAT_INTERVAL] = GJCP.DEFAULT_REPEAT_INTERVAL
+        if (!(triggerAttributes[GJCP.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[GJCP.REPEAT_INTERVAL] instanceof Long)) {
             throw new Exception("repeatInterval trigger property in the job class ${jobName} class must be Integer or Long");
         }
-        if (((Number) triggerAttributes[GTCP.REPEAT_INTERVAL]).longValue() < 0) {
+        if (((Number) triggerAttributes[GJCP.REPEAT_INTERVAL]).longValue() < 0) {
             throw new Exception("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
-        if (triggerAttributes[GTCP.REPEAT_COUNT] == null) triggerAttributes[GTCP.REPEAT_COUNT] = GTCP.DEFAULT_REPEAT_COUNT
-        if (!(triggerAttributes[GTCP.REPEAT_COUNT] instanceof Integer || triggerAttributes[GTCP.REPEAT_COUNT] instanceof Long)) {
+        if (triggerAttributes[GJCP.REPEAT_COUNT] == null) triggerAttributes[GJCP.REPEAT_COUNT] = GJCP.DEFAULT_REPEAT_COUNT
+        if (!(triggerAttributes[GJCP.REPEAT_COUNT] instanceof Integer || triggerAttributes[GJCP.REPEAT_COUNT] instanceof Long)) {
             throw new Exception("repeatCount trigger property in the job class ${jobName} class must be Integer or Long");
         }
-        if (((Number) triggerAttributes[GTCP.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[GTCP.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
+        if (((Number) triggerAttributes[GJCP.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[GJCP.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
             throw new Exception("repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
     }
 
     private def prepareCronTriggerAttributes(HashMap triggerAttributes) {
         if (!triggerAttributes?.cronExpression) throw new Exception("Cron trigger must have 'cronExpression' attribute")
-        if (!CronExpression.isValidExpression(triggerAttributes[GTCP.CRON_EXPRESSION].toString())) {
-            throw new Exception("Cron expression '${triggerAttributes[GTCP.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
+        if (!CronExpression.isValidExpression(triggerAttributes[GJCP.CRON_EXPRESSION].toString())) {
+            throw new Exception("Cron expression '${triggerAttributes[GJCP.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
         }
     }
 

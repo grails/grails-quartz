@@ -39,10 +39,10 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
         String grailsJobName = (String) bundle.getJobDetail().getJobDataMap().get(JobDetailFactoryBean.JOB_NAME_PARAMETER);
         if(grailsJobName != null) {
             Object job = applicationContext.getBean(grailsJobName);
-            if(bundle.getJobDetail().getJobClass().equals(StatefulGrailsTaskClassJob.class)) {
-                return new StatefulGrailsTaskClassJob(job);
+            if(bundle.getJobDetail().getJobClass().equals(StatefulGrailsJob.class)) {
+                return new StatefulGrailsJob(job);
             }
-            return new GrailsTaskClassJob(job);
+            return new GrailsJob(job);
         } else {
             return super.createJobInstance(bundle);
         }
@@ -55,15 +55,15 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
     /**
 	 * Quartz Job implementation that invokes execute() on the application's job class.
 	 */
-    public class GrailsTaskClassJob implements InterruptableJob {
+    public class GrailsJob implements InterruptableJob {
         Object job;
         Method executeMethod;
         Method interruptMethod;
         boolean passExecutionContext;
 
-        public GrailsTaskClassJob(Object job) {
+        public GrailsJob(Object job) {
             this.job = job;
-            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.EXECUTE, (Class<?>[]) null);
+            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassProperty.EXECUTE, (Class<?>[]) null);
             if (executeMethod == null) {
                 throw new IllegalArgumentException(job.getClass().getName() + " should declare #execute() method");
             }
@@ -72,7 +72,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                 case 1: passExecutionContext = true; break;
                 default: throw new IllegalArgumentException(job.getClass().getName() + "#execute() method should take either no arguments or one argument of type JobExecutionContext"); 
             }
-            this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsTaskClassProperty.INTERRUPT);
+            this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassProperty.INTERRUPT);
         }
 
         public void execute(final JobExecutionContext context) throws JobExecutionException {
@@ -110,15 +110,15 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
     }
 
     /**
-	 * Extension of the GrailsTaskClassJob, implementing the StatefulJob interface.
+	 * Extension of the GrailsJob, implementing the StatefulJob interface.
 	 * Quartz checks whether or not jobs are stateful and if so,
 	 * won't let jobs interfere with each other.
 	 */
-	public class StatefulGrailsTaskClassJob extends GrailsTaskClassJob implements StatefulJob {
+	public class StatefulGrailsJob extends GrailsJob implements StatefulJob {
 		// No implementation, just an addition of the tag interface StatefulJob
 		// in order to allow stateful jobs.
 
-        public StatefulGrailsTaskClassJob(Object job) {
+        public StatefulGrailsJob(Object job) {
             super(job);
         }
     }

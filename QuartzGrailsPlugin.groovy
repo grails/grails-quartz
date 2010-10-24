@@ -15,7 +15,7 @@
  */
 
 import org.codehaus.groovy.grails.plugins.quartz.*
-import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
+import org.codehaus.groovy.grails.plugins.quartz.GrailsJobClassProperty as GJCP
 import org.codehaus.groovy.grails.plugins.quartz.listeners.*
 import org.codehaus.groovy.grails.commons.*
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
@@ -58,13 +58,13 @@ but is made simpler by the coding by convention paradigm.
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
     ]
 
-    def artefacts = [new TaskArtefactHandler()]
+    def artefacts = [new JobArtefactHandler()]
 
     def doWithSpring = {
 
         def config = loadQuartzConfig()
 
-        application.taskClasses.each {jobClass ->
+        application.jobClasses.each {jobClass ->
             configureJobBeans.delegate = delegate
             configureJobBeans(jobClass)
         }
@@ -103,7 +103,7 @@ but is made simpler by the coding by convention paradigm.
     def doWithDynamicMethods = {ctx ->
         def random = new Random()
         Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
-        application.taskClasses.each {GrailsTaskClass tc ->
+        application.jobClasses.each {GrailsJobClass tc ->
             def mc = tc.metaClass
             def jobName = tc.getFullName()
             def jobGroup = tc.getGroup()
@@ -118,24 +118,24 @@ but is made simpler by the coding by convention paradigm.
             }
 
             mc.'static'.schedule = { String cronExpression, Map params = null ->
-                Trigger trigger = new CronTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
+                Trigger trigger = new CronTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 if(params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 if(params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate, Map params ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GTCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
                 if(tc.getVolatility()) trigger.setVolatility(true)
                 if(params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
@@ -162,35 +162,35 @@ but is made simpler by the coding by convention paradigm.
                 quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
             }
 
-            mc.'static'.unschedule = {String triggerName, String triggerGroup = GTCP.DEFAULT_TRIGGERS_GROUP ->
+            mc.'static'.unschedule = {String triggerName, String triggerGroup = GJCP.DEFAULT_TRIGGERS_GROUP ->
                 quartzScheduler.unscheduleJob(triggerName, triggerGroup)
             }
         }
     }
 
     def doWithApplicationContext = {applicationContext ->
-        application.taskClasses.each {jobClass ->
+        application.jobClasses.each {jobClass ->
             scheduleJob.delegate = delegate
             scheduleJob(jobClass, applicationContext)
         }
     }
 
     def onChange = {event ->
-        if(application.isArtefactOfType(TaskArtefactHandler.TYPE, event.source)) {
+        if(application.isArtefactOfType(JobArtefactHandler.TYPE, event.source)) {
             log.debug("Job ${event.source} changed. Reloading...")
             def context = event.ctx
             def scheduler = context?.getBean("quartzScheduler")
             // get quartz scheduler
             if(context && scheduler) {
                 // if job already exists, delete it from scheduler
-                def jobClass = application.getTaskClass(event.source?.name)
+                def jobClass = application.getJobClass(event.source?.name)
                 if(jobClass) {
                     scheduler.deleteJob(jobClass.fullName, jobClass.group)
                     log.debug("Job ${jobClass.fullName} deleted from the scheduler")
                 }
 
                 // add job artefact to application
-                jobClass = application.addArtefact(TaskArtefactHandler.TYPE, event.source)
+                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source)
 
                 // configure and register job beans
                 def fullName = jobClass.fullName
@@ -214,7 +214,7 @@ but is made simpler by the coding by convention paradigm.
         }
     }
 
-    def scheduleJob = {GrailsTaskClass jobClass, ApplicationContext ctx ->
+    def scheduleJob = {GrailsJobClass jobClass, ApplicationContext ctx ->
         def scheduler = ctx.getBean("quartzScheduler")
         if(scheduler) {
             def fullName = jobClass.fullName
@@ -234,13 +234,13 @@ but is made simpler by the coding by convention paradigm.
         }
     }
 
-    def configureJobBeans = {GrailsTaskClass jobClass ->
+    def configureJobBeans = {GrailsJobClass jobClass ->
         def fullName = jobClass.fullName
 
         "${fullName}Class"(MethodInvokingFactoryBean) {
             targetObject = ref("grailsApplication", true)
             targetMethod = "getArtefact"
-            arguments = [TaskArtefactHandler.TYPE, jobClass.fullName]
+            arguments = [JobArtefactHandler.TYPE, jobClass.fullName]
         }
 
         "${fullName}"(ref("${fullName}Class")) {bean ->

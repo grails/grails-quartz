@@ -1,6 +1,6 @@
 package org.codehaus.groovy.grails.plugins.quartz.config
 
-import org.codehaus.groovy.grails.plugins.quartz.GrailsTaskClassProperty as GTCP
+import org.codehaus.groovy.grails.plugins.quartz.GrailsJobClassProperty as GJCP
 import org.codehaus.groovy.grails.plugins.quartz.CustomTriggerFactoryBean
 
 /**
@@ -29,43 +29,43 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
 
         assertPropertiesEquals(new Expando(
                 name:'TestJob0',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
-                startDelay: GTCP.DEFAULT_START_DELAY,
-                repeatInterval: GTCP.DEFAULT_TIMEOUT,
-                repeatCount: GTCP.DEFAULT_REPEAT_COUNT
+                startDelay: GJCP.DEFAULT_START_DELAY,
+                repeatInterval: GJCP.DEFAULT_TIMEOUT,
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
             ), builder.triggers['TestJob0']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob1',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
-                startDelay: GTCP.DEFAULT_START_DELAY,
+                startDelay: GJCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GTCP.DEFAULT_REPEAT_COUNT
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
             ), builder.triggers['TestJob1']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob2',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
-                repeatInterval: GTCP.DEFAULT_TIMEOUT,
-                repeatCount: GTCP.DEFAULT_REPEAT_COUNT
+                repeatInterval: GJCP.DEFAULT_TIMEOUT,
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
             ), builder.triggers['TestJob2']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob3',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
-                repeatCount: GTCP.DEFAULT_REPEAT_COUNT
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
             ), builder.triggers['TestJob3']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob4',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
@@ -75,41 +75,41 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
 
         assertPropertiesEquals(new Expando(
                 name:'TestJobEverySecond',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
-                startDelay: GTCP.DEFAULT_START_DELAY,
+                startDelay: GJCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GTCP.DEFAULT_REPEAT_COUNT
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
             ), builder.triggers['TestJobEverySecond']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob5',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
-                startDelay:GTCP.DEFAULT_START_DELAY,
-                cronExpression: GTCP.DEFAULT_CRON_EXPRESSION
+                startDelay:GJCP.DEFAULT_START_DELAY,
+                cronExpression: GJCP.DEFAULT_CRON_EXPRESSION
             ), builder.triggers['TestJob5']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJob6',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
                 cronExpression: '0 15 6 * * ?',
-                startDelay: GTCP.DEFAULT_START_DELAY
+                startDelay: GJCP.DEFAULT_START_DELAY
             ), builder.triggers['TestJob6']
         )
         assertPropertiesEquals(new Expando(
                 name:'TestJobMyTrigger',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
-                startDelay: GTCP.DEFAULT_START_DELAY,
+                startDelay: GJCP.DEFAULT_START_DELAY,
                 cronExpression: '0 15 6 * * ?'
             ), builder.triggers['TestJobMyTrigger']
         )
 
         assertPropertiesEquals(new Expando(
                 name:'TestJob7',
-                group: GTCP.DEFAULT_TRIGGERS_GROUP,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
                 clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,

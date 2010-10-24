@@ -6,7 +6,7 @@ import org.codehaus.groovy.grails.plugins.quartz.listeners.ExceptionPrinterJobLi
 class MockDoWithSpring {
 
     def quartzProperties
-    def application = [taskClasses: null]
+    def application = [jobClasses: null]
 
     def ref( def whatever ) {
         null

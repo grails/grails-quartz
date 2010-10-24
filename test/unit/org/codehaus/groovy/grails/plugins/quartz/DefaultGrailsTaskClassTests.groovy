@@ -7,7 +7,7 @@ import org.quartz.SimpleTrigger
  *
  * @author Sergey Nebolsin (nebolsin@prophotos.ru)
  */
-class DefaultGrailsTaskClassTests extends GroovyTestCase {
+class DefaultGrailsJobClassTests extends GroovyTestCase {
     protected GroovyClassLoader gcl = new GroovyClassLoader();
 
     void setUp() {
@@ -20,37 +20,37 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
 
     void testDefaultProperties() {
         def jobClass = gcl.parseClass('class TestJob { def execute(){} }')
-        def taskClass = new DefaultGrailsTaskClass(jobClass)
+        def jobClass = new DefaultGrailsJobClass(jobClass)
 
-        assertEquals "Wrong default startDelay", 0, taskClass.startDelay
-        assertEquals "Wrong default timeout", 60000, taskClass.timeout
-        assertEquals "Wrong default repeatCount", SimpleTrigger.REPEAT_INDEFINITELY, taskClass.repeatCount
-        assertEquals "Wrong default cronExpression", '0 0 6 * * ?', taskClass.cronExpression
-        assertFalse "Task shouldn't be cron-task by default", taskClass.cronExpressionConfigured
-        assertEquals "Wrong default group", 'GRAILS_JOBS', taskClass.group
-        assertTrue "Task should require Hibernate session by default", taskClass.sessionRequired
-        assertTrue "Task should be concurrent by default", taskClass.concurrent
+        assertEquals "Wrong default startDelay", 0, jobClass.startDelay
+        assertEquals "Wrong default timeout", 60000, jobClass.timeout
+        assertEquals "Wrong default repeatCount", SimpleTrigger.REPEAT_INDEFINITELY, jobClass.repeatCount
+        assertEquals "Wrong default cronExpression", '0 0 6 * * ?', jobClass.cronExpression
+        assertFalse "Job shouldn't be cron-job by default", jobClass.cronExpressionConfigured
+        assertEquals "Wrong default group", 'GRAILS_JOBS', jobClass.group
+        assertTrue "Job should require Hibernate session by default", jobClass.sessionRequired
+        assertTrue "Job should be concurrent by default", jobClass.concurrent
     }
 
-    void testTaskClassExecute() {
+    void testJobClassExecute() {
         boolean wasExecuted = false
         def testClosure = { wasExecuted = true }
         Class jobClass = gcl.parseClass("class TestJob { def testClosure; def execute() {testClosure.call()}}\n")
-        GrailsTaskClass taskClass = new DefaultGrailsTaskClass(jobClass)
-        taskClass.getReference().setPropertyValue("testClosure", testClosure)
-        taskClass.execute()
+        GrailsJobClass jobClass = new DefaultGrailsJobClass(jobClass)
+        jobClass.getReference().setPropertyValue("testClosure", testClosure)
+        jobClass.execute()
         assertTrue "Job wasn't executed", wasExecuted
     }
 
     void testSimpleJob() {
         Class jobClass = gcl.parseClass("class TestJob { def timeout = 1000; def startDelay = 5000; def execute() {}}\n")
-        def taskClass = new DefaultGrailsTaskClass(jobClass)
-        assertFalse taskClass.cronExpressionConfigured
-        assertEquals 1000, taskClass.timeout
-        assertEquals 5000, taskClass.startDelay
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        assertFalse grailsJobClass.cronExpressionConfigured
+        assertEquals 1000, grailsJobClass.timeout
+        assertEquals 5000, grailsJobClass.startDelay
 
-        assertEquals 1, taskClass.triggers.size()
-        def trigger = taskClass.triggers['TestJob']
+        assertEquals 1, grailsJobClass.triggers.size()
+        def trigger = grailsJobClass.triggers['TestJob']
         assertTrue "Trigger with name TestJob should be registered", trigger != null
         assertEquals CustomTriggerFactoryBean, trigger.clazz
         assertEquals 1000, trigger.repeatInterval
@@ -59,12 +59,12 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
 
     void testCronJob() {
         Class jobClass = gcl.parseClass("class TestJob { def cronExpression = '0 1 6 * * ?'; def execute() {}}\n")
-        GrailsTaskClass taskClass = new DefaultGrailsTaskClass(jobClass)
-        assertTrue taskClass.isCronExpressionConfigured()
-        assertEquals '0 1 6 * * ?', taskClass.getCronExpression()
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        assertTrue grailsJobClass.isCronExpressionConfigured()
+        assertEquals '0 1 6 * * ?', grailsJobClass.getCronExpression()
 
-        assertEquals 1, taskClass.triggers.size()
-        def trigger = taskClass.triggers['TestJob']
+        assertEquals 1, grailsJobClass.triggers.size()
+        def trigger = grailsJobClass.triggers['TestJob']
         assertTrue "Trigger with name TestJob should be registered", trigger != null
         assertEquals CronTriggerFactoryBean, trigger.clazz
         assertEquals '0 1 6 * * ?', trigger.cronExpression
@@ -72,20 +72,20 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
 
     void testSessionRequiredParameter() {
         Class jobClass = gcl.parseClass("class TestJob { def sessionRequired = false; def execute() {}}\n")
-        GrailsTaskClass taskClass = new DefaultGrailsTaskClass(jobClass)
-        assertFalse "Hibernate Session shouldn't be required", taskClass.sessionRequired
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        assertFalse "Hibernate Session shouldn't be required", grailsJobClass.sessionRequired
     }
 
     void testConcurrentParameter() {
         Class jobClass = gcl.parseClass("class TestJob { def concurrent = false; def execute() {}}\n")
-        GrailsTaskClass taskClass = new DefaultGrailsTaskClass(jobClass)
-        assertFalse "Task class shouldn't be marked as concurrent", taskClass.concurrent
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        assertFalse "Job class shouldn't be marked as concurrent", grailsJobClass.concurrent
     }
 
     void testGroupParameter() {
         Class jobClass = gcl.parseClass("class TestJob { def group = 'myGroup'; def execute() {}}\n")
-        GrailsTaskClass taskClass = new DefaultGrailsTaskClass(jobClass)
-        assertEquals 'myGroup', taskClass.group
+        GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
+        assertEquals 'myGroup', grailsJobClass.group
     }
 
     void testWrongTimeoutOrStartDelayOrRepeatCount() {
@@ -93,12 +93,12 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
         ['timeout', 'startDelay', 'repeatCount'].each {
             jobClass = gcl.parseClass("class TestJob { def ${it} = '1000'; def execute() {}}\n")
             shouldFail(IllegalArgumentException) {
-                new DefaultGrailsTaskClass(jobClass)
+                new DefaultGrailsJobClass(jobClass)
             }
             // testcase for GRAILSPLUGINS-55 (integer overflow)
             jobClass = gcl.parseClass("class TestJob { def ${it} = 1000*60*60*24*30 ; def execute() {}}\n")
             shouldFail(IllegalArgumentException) {
-                new DefaultGrailsTaskClass(jobClass)
+                new DefaultGrailsJobClass(jobClass)
             }
         }
     }
@@ -106,7 +106,7 @@ class DefaultGrailsTaskClassTests extends GroovyTestCase {
     void testWrongCronExpression() {
         def jobClass = gcl.parseClass("class TestJob { def cronExpression = 'Not a cron expression'; def execute() {}}")
         shouldFail(IllegalArgumentException) {
-            new DefaultGrailsTaskClass(jobClass)
+            new DefaultGrailsJobClass(jobClass)
         }
     }
 }

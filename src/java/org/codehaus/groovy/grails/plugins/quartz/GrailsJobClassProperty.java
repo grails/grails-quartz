@@ -17,9 +17,9 @@ package org.codehaus.groovy.grails.plugins.quartz;
 import org.quartz.SimpleTrigger;
 
 /**
- * <p>Holds properties names from <code>GrailsTaskClass</code></p> 
+ * <p>Holds properties names from <code>GrailsJobClass</code></p>
  * 
- * @see GrailsTaskClass
+ * @see GrailsJobClass
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
  * @author Marcel Overdijk
@@ -27,7 +27,7 @@ import org.quartz.SimpleTrigger;
  * 
  * @since 0.1
  */
-public interface GrailsTaskClassProperty {
+public interface GrailsJobClassProperty {
 
 	public static final String EXECUTE = "execute";
 

@@ -18,7 +18,6 @@ import groovy.lang.Closure;
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
 import org.codehaus.groovy.grails.plugins.quartz.config.TriggersConfigBuilder;
-import org.quartz.CronExpression;
 import org.quartz.JobExecutionContext;
 
 import java.util.HashMap;
@@ -34,13 +33,13 @@ import grails.util.GrailsUtil;
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.1
  */
-public class DefaultGrailsTaskClass extends AbstractInjectableGrailsClass implements GrailsTaskClass, GrailsTaskClassProperty {
+public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass implements GrailsJobClass, GrailsJobClassProperty {
 
     public static final String JOB = "Job";
     private Map triggers = new HashMap();
 
 
-    public DefaultGrailsTaskClass(Class clazz) {
+    public DefaultGrailsJobClass(Class clazz) {
         super(clazz, JOB);
         evaluateTriggers();
     }

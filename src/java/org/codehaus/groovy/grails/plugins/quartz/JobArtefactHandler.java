@@ -22,33 +22,33 @@ import org.quartz.JobExecutionContext;
 import java.lang.reflect.Method;
 
 /**
- * Grails artefact handler for task classes.
+ * Grails artefact handler for job classes.
  *
  * @author Marc Palmer (marc@anyware.co.uk)
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * 
  * @since 0.1
  */
-public class TaskArtefactHandler extends ArtefactHandlerAdapter {
+public class JobArtefactHandler extends ArtefactHandlerAdapter {
 
-    public static final String TYPE = "Task";
+    public static final String TYPE = "Job";
 
-    public TaskArtefactHandler() {
-        super(TYPE, GrailsTaskClass.class, DefaultGrailsTaskClass.class, null);
+    public JobArtefactHandler() {
+        super(TYPE, GrailsJobClass.class, DefaultGrailsJobClass.class, null);
     }
 
     public boolean isArtefactClass(Class clazz) {
         // class shouldn't be null and shoud ends with Job suffix
-        if(clazz == null || !clazz.getName().endsWith(DefaultGrailsTaskClass.JOB)) return false;
+        if(clazz == null || !clazz.getName().endsWith(DefaultGrailsJobClass.JOB)) return false;
         // and should have one of execute() or execute(JobExecutionContext) methods defined
-        Method method = ReflectionUtils.findMethod(clazz, GrailsTaskClassProperty.EXECUTE);
+        Method method = ReflectionUtils.findMethod(clazz, GrailsJobClassProperty.EXECUTE);
         if(method == null) {
             // we're using Object as a param here to allow groovy-style 'def execute(param)' method
-            method = ReflectionUtils.findMethod(clazz, GrailsTaskClassProperty.EXECUTE, new Class[]{Object.class});
+            method = ReflectionUtils.findMethod(clazz, GrailsJobClassProperty.EXECUTE, new Class[]{Object.class});
         }
         if(method == null) {
           // also check for the execution context as a variable because that's what's being passed
-          method = ReflectionUtils.findMethod(clazz, GrailsTaskClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
+          method = ReflectionUtils.findMethod(clazz, GrailsJobClassProperty.EXECUTE, new Class[]{JobExecutionContext.class});
         }
         return method != null;
     }

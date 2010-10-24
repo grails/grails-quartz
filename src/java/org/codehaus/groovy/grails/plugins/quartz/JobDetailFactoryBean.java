@@ -117,7 +117,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 		}
 
 		// Consider the concurrent flag to choose between stateful and stateless job.
-		Class jobClass = (concurrent ? GrailsJobFactory.GrailsTaskClassJob.class : GrailsJobFactory.StatefulGrailsTaskClassJob.class);
+		Class jobClass = (concurrent ? GrailsJobFactory.GrailsJob.class : GrailsJobFactory.StatefulGrailsJob.class);
 
 		// Build JobDetail instance.
 		jobDetail = new JobDetail(name, group, jobClass);

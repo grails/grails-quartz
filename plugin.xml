@@ -9,6 +9,7 @@ but is made simpler by the coding by convention paradigm.
 </description>
   <documentation>http://grails.org/Quartz+plugin</documentation>
   <resources>
+    <resource>BuildConfig</resource>
     <resource>DataSource</resource>
     <resource>DefaultQuartzConfig</resource>
     <resource>QuartzBootStrap</resource>

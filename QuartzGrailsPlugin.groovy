@@ -83,13 +83,7 @@ but is made simpler by the coding by convention paradigm.
         quartzJobFactory(GrailsJobFactory)
 
         quartzScheduler(SchedulerFactoryBean) {
-            if ( config.containsKey( 'props') ) {
-                def configProps = new Properties()
-                config.props.each { key, value -> configProps.setProperty( "org.quartz.$key", "$value") }
-                quartzProperties = configProps
-            } else {
-                configLocation = "classpath:quartz.properties"
-            }
+            quartzProperties = config._properties
 
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
@@ -281,7 +275,7 @@ but is made simpler by the coding by convention paradigm.
 
     private ConfigObject loadQuartzConfig() {
         def config = ConfigurationHolder.config
-        GroovyClassLoader classLoader = new GroovyClassLoader(getClass().classLoader)
+        def classLoader = new GroovyClassLoader(getClass().classLoader)
 
         // merging default Quartz config into main application config
         config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig')))
@@ -292,6 +286,21 @@ but is made simpler by the coding by convention paradigm.
         } catch (Exception ignored) {
             // ignore, just use the defaults
         }
+
+        def properties = new Properties()
+        def resource = classLoader.getResourceAsStream("quartz.properties")
+        if (resource != null) {
+            properties.load(resource)
+        }
+
+        if (config.quartz.containsKey('props')) {
+            properties << config.quartz.props.toProperties('org.quartz')
+        }
+
+        println properties
+
+        config.quartz._properties = properties
+
 
         return config.quartz
     }

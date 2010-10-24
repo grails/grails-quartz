@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module relativePaths="true" type="GRAILS_MODULE" version="4">
+<module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration>
@@ -7,12 +7,6 @@
           <file>file://$MODULE_DIR$/web-app/WEB-INF/applicationContext.xml</file>
         </fileset>
       </configuration>
-    </facet>
-    <facet type="Grails" name="Grails">
-      <configuration />
-    </facet>
-    <facet type="Groovy" name="Groovy">
-      <configuration />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">

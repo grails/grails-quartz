@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
@@ -10,13 +10,6 @@
       <maximumStackSize value="2" />
       <properties />
     </buildFile>
-  </component>
-  <component name="ArtifactManager">
-    <artifact type="exploded-war" name="Quartz:GrailsWeb exploded">
-      <root id="root">
-        <element id="javaee-facet-resources" facet="Quartz/web/GrailsWeb" />
-      </root>
-    </artifact>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -42,15 +35,6 @@
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
-        <ADDITIONAL_INDENT_OPTIONS fileType="">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -120,7 +104,6 @@
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -136,6 +119,7 @@
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -194,11 +178,8 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
-    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="EclipseEmbeddedCompilerSettings">
     <option name="DEBUGGING_INFO" value="true" />
@@ -225,9 +206,6 @@
   </component>
   <component name="IdProvider" IDEtalkID="851E3CD14471CA6502F46E5650A70087" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
@@ -235,14 +213,9 @@
         <inspection_tool class="WebProperties" level="INFO" enabled="true" />
       </profile>
     </profiles>
-    <list size="0" />
-  </component>
-  <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="DEPRECATION" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -260,14 +233,6 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
-  </component>
-  <component name="JikesSettings">
-    <option name="JIKES_PATH" value="" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="LogConsolePreferences">
     <option name="FILTER_ERRORS" value="false" />
@@ -429,7 +394,6 @@
   <component name="ProjectDetails">
     <option name="projectName" value="Quartz" />
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="project:///Users/nebolsin/Documents/Projects/os/grails-quartz/Quartz.ipr" />
   </component>
@@ -443,7 +407,7 @@
       <SplitterProportionsDataImpl />
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ResourceManagerContainer">
@@ -452,13 +416,6 @@
         <list size="0" />
       </value>
     </option>
-  </component>
-  <component name="RmicSettings">
-    <option name="IS_EANABLED" value="false" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_IIOP_STUBS" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="ScopeChooserConfigurable.UI">
     <option name="proportions">
@@ -486,6 +443,25 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
+              <option name="branchMap">
+                <map>
+                  <entry key="https://svn.codehaus.org/grails-plugins/grails-quartz/branches">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="https://svn.codehaus.org/grails-plugins/grails-quartz/grails-quartz">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="https://svn.codehaus.org/grails-plugins/grails-quartz/tags">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                </map>
+              </option>
               <option name="branchUrls">
                 <list>
                   <option value="https://svn.codehaus.org/grails-plugins/grails-quartz/branches" />
@@ -542,129 +518,9 @@
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/quartz-1.7.3.jar!/" />
       </CLASSES>
-      <JAVADOC>
-        <root url="file:///Users/nebolsin/Documents/Projects/os/quartz-1.7.3/docs/api" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="file:///Users/nebolsin/Documents/Projects/os/quartz-1.7.3/quartz/src/main/java" />
-      </SOURCES>
-    </library>
-    <library name="grails-1.2.0">
-      <CLASSES>
-        <root url="jar://$GRAILS_HOME$/dist/grails-bootstrap-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-core-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-crud-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-docs-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-gorm-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-osgi-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-resources-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-scripts-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-spring-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-test-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-web-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/dist/grails-webflow-1.2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ant-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ant-junit-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ant-launcher-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ant-nodeps-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ant-trax-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/antlr-2.7.6.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/aopalliance-1.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/aspectjrt-1.6.6.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/aspectjweaver-1.6.6.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/cglib-nodep-2.1_3.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-beanutils-1.8.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-cli-1.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-codec-1.3.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-collections-3.2.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-dbcp-1.2.2.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-el-1.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-fileupload-1.2.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-io-1.4.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-lang-2.4.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-pool-1.5.3.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/commons-validator-1.3.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/dom4j-1.6.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ehcache-core-1.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ejb3-persistence-1.0.2.GA.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/gant_groovy1.6-1.6.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/GParallelizer-0.8.3.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/groovy-all-1.6.7.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/hibernate-annotations-3.4.0.GA.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/hibernate-commons-annotations-3.3.0.ga.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/hibernate-core-3.3.1.GA.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/hibernate-ehcache-3.3.1.GA.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/hsqldb-1.8.0.10.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ivy-2.0.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/javassist-3.8.0.GA.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jcl-over-slf4j-1.5.8.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jline-0.9.91.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jsp-api-2.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jsp-api-2.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jsr107cache-1.0.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jsr166y-070108.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jstl-1.1.2.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jta-1.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/jul-to-slf4j-1.5.8.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/junit-3.8.2.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/log4j-1.2.15.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/ognl-2.7.3.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.aop-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.asm-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.aspects-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.beans-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.binding-2.0.8.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.context-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.context.support-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.core-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.expression-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.instrument-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.jdbc-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.jms-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.js-2.0.8.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.orm-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.oxm-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.test-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.transaction-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.web-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.web.servlet-3.0.0.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/org.springframework.webflow-2.0.8.RELEASE.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/oro-2.0.8.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/radeox-1.0-b2.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/serializer-2.7.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/servlet-api-2.5.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/sitemesh-2.4.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/slf4j-api-1.5.8.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/slf4j-log4j12-1.5.8.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/standard-1.1.2.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/svnkit-1.3.1.jar!/" />
-        <root url="jar://$GRAILS_HOME$/lib/xpp3_min-1.1.3.4.O.jar!/" />
-      </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="file://$GRAILS_HOME$/src/commons" />
-        <root url="file://$GRAILS_HOME$/src/groovy" />
-        <root url="file://$GRAILS_HOME$/src/persistence" />
-        <root url="file://$GRAILS_HOME$/src/scaffolding" />
-        <root url="file://$GRAILS_HOME$/src/tiger" />
-        <root url="file://$GRAILS_HOME$/src/web" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.instrument-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.jdbc-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.context.support-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.aspects-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.asm-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.expression-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.beans-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.transaction-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.core-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.aop-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.context-sources-3.0.0.RELEASE.jar!/" />
-        <root url="jar:///opt/local/share/java/spring-framework-3.0.0.RELEASE/src/org.springframework.instrument.tomcat-sources-3.0.0.RELEASE.jar!/" />
-      </SOURCES>
+      <SOURCES />
     </library>
   </component>
-  <UsedPathMacros>
-    <macro name="GRAILS_HOME" />
-  </UsedPathMacros>
 </project>
 

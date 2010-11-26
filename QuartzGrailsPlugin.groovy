@@ -92,6 +92,7 @@ but is made simpler by the coding by convention paradigm.
                 transactionManager = ref('transactionManager')
             }
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown
+            exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory
             if(manager?.hasGrailsPlugin("hibernate")) {
               jobListeners = [ref("${SessionBinderJobListener.NAME}")]

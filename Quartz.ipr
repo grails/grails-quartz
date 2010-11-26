@@ -516,13 +516,13 @@
   <component name="libraryTable">
     <library name="Quartz">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/quartz-1.8.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/quartz-1.8.4.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="file://$PROJECT_DIR$/../../../java/quartz-1.8.3/docs" />
+        <root url="file://$PROJECT_DIR$/../../../java/quartz-1.8.4/docs/api" />
       </JAVADOC>
       <SOURCES>
-        <root url="file://$PROJECT_DIR$/../../../java/quartz-1.8.3/quartz/src/main/java" />
+        <root url="file://$PROJECT_DIR$/../../../java/quartz-1.8.4/quartz/src/main/java" />
       </SOURCES>
     </library>
     <library name="grails-1.3.4">

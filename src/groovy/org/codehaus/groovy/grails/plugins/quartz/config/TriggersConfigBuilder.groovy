@@ -69,7 +69,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     public Expando createTrigger(name, Map attributes, value) {
         def triggerClass
-        def triggerAttributes = new HashMap(attributes)
+        def triggerAttributes = attributes ? new HashMap(attributes) : [:]
 
         prepareCommonTriggerAttributes(triggerAttributes)
 
@@ -109,10 +109,10 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
         if(triggerAttributes[GJCP.NAME] == null) triggerAttributes[GJCP.NAME] = "${jobName}${triggerNumber++}"
-        if(triggerAttributes[GJCP.GROUP] == null) triggerAttributes[GJCP.GROUP] = GJCP.DEFAULT_GROUP
+        if(triggerAttributes[GJCP.GROUP] == null) triggerAttributes[GJCP.GROUP] = GJCP.DEFAULT_TRIGGERS_GROUP
         if(triggerAttributes[GJCP.START_DELAY] == null) triggerAttributes[GJCP.START_DELAY] = GJCP.DEFAULT_START_DELAY
         if(!(triggerAttributes[GJCP.START_DELAY] instanceof Integer || triggerAttributes[GJCP.START_DELAY] instanceof Long)) {
-            throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} class must be Integer or Long");
+            throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} must be Integer or Long");
         }
         if(((Number) triggerAttributes[GJCP.START_DELAY]).longValue() < 0) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)");
@@ -123,37 +123,44 @@ public class TriggersConfigBuilder extends BuilderSupport {
     private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
         if (triggerAttributes[GJCP.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
+            
+            if (!(triggerAttributes[GJCP.TIMEOUT] instanceof Integer || triggerAttributes[GJCP.TIMEOUT] instanceof Long)) {
+                throw new IllegalArgumentException("timeout trigger property in the job class ${jobName} must be Integer or Long");
+            }
+            if (((Number) triggerAttributes[GJCP.TIMEOUT]).longValue() < 0) {
+                throw new IllegalArgumentException("timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+            }
             triggerAttributes[GJCP.REPEAT_INTERVAL] = triggerAttributes.remove(GJCP.TIMEOUT)
         }
         if (triggerAttributes[GJCP.REPEAT_INTERVAL] == null) triggerAttributes[GJCP.REPEAT_INTERVAL] = GJCP.DEFAULT_REPEAT_INTERVAL
         if (!(triggerAttributes[GJCP.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[GJCP.REPEAT_INTERVAL] instanceof Long)) {
-            throw new Exception("repeatInterval trigger property in the job class ${jobName} class must be Integer or Long");
+            throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long");
         }
         if (((Number) triggerAttributes[GJCP.REPEAT_INTERVAL]).longValue() < 0) {
-            throw new Exception("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+            throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
         if (triggerAttributes[GJCP.REPEAT_COUNT] == null) triggerAttributes[GJCP.REPEAT_COUNT] = GJCP.DEFAULT_REPEAT_COUNT
         if (!(triggerAttributes[GJCP.REPEAT_COUNT] instanceof Integer || triggerAttributes[GJCP.REPEAT_COUNT] instanceof Long)) {
-            throw new Exception("repeatCount trigger property in the job class ${jobName} class must be Integer or Long");
+            throw new IllegalArgumentException("repeatCount trigger property in the job class ${jobName} must be Integer or Long");
         }
         if (((Number) triggerAttributes[GJCP.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[GJCP.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
-            throw new Exception("repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+            throw new IllegalArgumentException("repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
     }
 
     private def prepareCronTriggerAttributes(HashMap triggerAttributes) {
-        if (!triggerAttributes?.cronExpression) throw new Exception("Cron trigger must have 'cronExpression' attribute")
+        if (!triggerAttributes?.cronExpression) triggerAttributes[GJCP.CRON_EXPRESSION] = GJCP.DEFAULT_CRON_EXPRESSION
         if (!CronExpression.isValidExpression(triggerAttributes[GJCP.CRON_EXPRESSION].toString())) {
-            throw new Exception("Cron expression '${triggerAttributes[GJCP.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
+            throw new IllegalArgumentException("Cron expression '${triggerAttributes[GJCP.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
         }
     }
 
 
-    public Map createEmbeddedSimpleTrigger(long startDelay, long timeout, int repeatCount) {
+    public Map createEmbeddedSimpleTrigger(startDelay, timeout, repeatCount) {
         return [(jobName):createTrigger('simple', [name: jobName, startDelay:startDelay, repeatInterval:timeout, repeatCount:repeatCount], null)]
     }
 
-    public Map createEmbeddedCronTrigger(long startDelay, String cronExpression) {
+    public Map createEmbeddedCronTrigger(startDelay, cronExpression) {
         return [(jobName):createTrigger('cron', [name: jobName, startDelay:startDelay, cronExpression:cronExpression], null)] 
     }
 }

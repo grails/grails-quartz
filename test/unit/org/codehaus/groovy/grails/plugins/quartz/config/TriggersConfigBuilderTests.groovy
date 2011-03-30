@@ -17,112 +17,139 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
             simple startDelay:500
             simple startDelay:500, timeout: 1000
             simple startDelay:500, timeout: 1000, repeatCount: 3
-            simple 'everySecond', timeout:1000
+            simple name: 'everySecond', timeout:1000
             cron()
             cron cronExpression:'0 15 6 * * ?'
-            cron 'myTrigger', cronExpression:'0 15 6 * * ?'
+            cron name: 'myTrigger', cronExpression:'0 15 6 * * ?'
             simple startDelay:500, timeout: 1000, repeatCount: 0
         }
         builder.build(closure)
 
         assertEquals 'Invalid triggers count', 10, builder.triggers.size()
 
+        def jobName = 'TestJob0'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob0',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: GJCP.DEFAULT_START_DELAY,
                 repeatInterval: GJCP.DEFAULT_TIMEOUT,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
-            ), builder.triggers['TestJob0']
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob1'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob1',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: GJCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
-            ), builder.triggers['TestJob1']
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob2'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob2',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: GJCP.DEFAULT_TIMEOUT,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
-            ), builder.triggers['TestJob2']
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob3'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob3',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
-            ), builder.triggers['TestJob3']
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob4'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean 
         assertPropertiesEquals(new Expando(
-                name:'TestJob4',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
-                repeatCount: 3
-            ), builder.triggers['TestJob4']
+                repeatCount: 3,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
-
+        
+        jobName = 'everySecond'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJobEverySecond',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: GJCP.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT
-            ), builder.triggers['TestJobEverySecond']
+                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob5'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob5',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay:GJCP.DEFAULT_START_DELAY,
-                cronExpression: GJCP.DEFAULT_CRON_EXPRESSION
-            ), builder.triggers['TestJob5']
+                cronExpression: GJCP.DEFAULT_CRON_EXPRESSION,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
+        
+        jobName = 'TestJob6'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob6',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 cronExpression: '0 15 6 * * ?',
-                startDelay: GJCP.DEFAULT_START_DELAY
-            ), builder.triggers['TestJob6']
-        )
-        assertPropertiesEquals(new Expando(
-                name:'TestJobMyTrigger',
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: GJCP.DEFAULT_START_DELAY,
-                cronExpression: '0 15 6 * * ?'
-            ), builder.triggers['TestJobMyTrigger']
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
+        )
+        
+        jobName = 'myTrigger'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
+        assertPropertiesEquals(new Expando(
+                name:jobName,
+                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                startDelay: GJCP.DEFAULT_START_DELAY,
+                cronExpression: '0 15 6 * * ?',
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
 
+        jobName = 'TestJob7'
+        assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
-                name:'TestJob7',
+                name:jobName,
                 group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                clazz:CustomTriggerFactoryBean,
                 startDelay: 500,
                 repeatInterval: 1000,
-                repeatCount: 0
-            ), builder.triggers['TestJob7']
+                repeatCount: 0,
+                volatility: GJCP.DEFAULT_VOLATILITY
+            ), builder.triggers[jobName].triggerAttributes
         )
     }
 
     private assertPropertiesEquals(expected, actual) {
         expected.properties.each { entry ->
-            assertEquals "Unexpected value for property: ${entry.key}", entry.value, actual[entry.key]
+            assert actual[entry.key] == entry.value, "Unexpected value for property: ${entry.key}" 
         }
-        assertEquals 'Different number of properties', expected.properties.size(), actual.properties.size()
+        assert actual.size() == expected.properties?.size(), 'Different number of properties'
     }
 
 }

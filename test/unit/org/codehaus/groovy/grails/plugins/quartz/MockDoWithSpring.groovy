@@ -7,6 +7,7 @@ class MockDoWithSpring {
 
     def quartzProperties
     def application = [jobClasses: null]
+    def manager
 
     def ref( def whatever ) {
         null

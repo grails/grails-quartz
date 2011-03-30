@@ -77,18 +77,36 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
     public long getTimeout() {
         Object obj = getPropertyValue(TIMEOUT);
         if (obj == null) return DEFAULT_TIMEOUT;
+        else if (!(obj instanceof Number)) {
+            throw new IllegalArgumentException(
+                    "timeout trigger property in the job class " +
+                    getShortName() + " must be Integer or Long");
+        }
+        
         return ((Number) obj).longValue();
     }
 
     public long getStartDelay() {
         Object obj = getPropertyValue(START_DELAY);
         if (obj == null) return DEFAULT_START_DELAY;
+        else if (!(obj instanceof Number)) {
+            throw new IllegalArgumentException(
+                    "startDelay trigger property in the job class " +
+                    getShortName() + " must be Integer or Long");
+        }
+        
         return ((Number) obj).longValue();
     }
 
     public int getRepeatCount() {
         Object obj = getPropertyValue(REPEAT_COUNT);
         if (obj == null) return DEFAULT_REPEAT_COUNT;
+        else if (!(obj instanceof Number)) {
+            throw new IllegalArgumentException(
+                    "repeatCount trigger property in the job class " +
+                    getShortName() + " must be Integer or Long");
+        }
+        
         return ((Number) obj).intValue();
     }
 

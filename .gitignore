@@ -1,4 +1,4 @@
-*.iws
+.idea/workspace.xml
 stacktrace.log
 web-app
 grails-quartz-*.zip

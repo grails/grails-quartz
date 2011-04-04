@@ -40,6 +40,8 @@
     <orderEntry type="module-library">
       <library name="Grails User Library">
         <CLASSES>
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.0.jar!/" />
+          <root url="jar://$USER_HOME$/.ivy2/cache/org.quartz-scheduler/quartz/jars/quartz-1.8.4.jar!/" />
           <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
         <JAVADOC />
@@ -47,7 +49,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="grails-quartz-grailsPlugins" />
   </component>
 </module>
 

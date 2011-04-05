@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright (c) 2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import org.codehaus.groovy.grails.plugins.quartz.*
-import org.codehaus.groovy.grails.plugins.quartz.GrailsJobClassProperty as GJCP
-import org.codehaus.groovy.grails.plugins.quartz.listeners.*
-import org.codehaus.groovy.grails.commons.*
-import org.springframework.beans.factory.config.MethodInvokingFactoryBean
-import org.springframework.scheduling.quartz.SchedulerFactoryBean
+import grails.plugins.quartz.GrailsJobClassProperty as GJCP
+
+import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
+import grails.plugins.quartz.listeners.SessionBinderJobListener
 import grails.util.GrailsUtil
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
-import org.quartz.Scheduler
-import org.quartz.CronTrigger
-import org.quartz.Trigger
-import org.quartz.SimpleTrigger
-import org.quartz.JobDataMap
+import org.springframework.scheduling.quartz.SchedulerFactoryBean
+import grails.plugins.quartz.*
+import org.quartz.*
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -40,7 +38,7 @@ class QuartzGrailsPlugin {
 
     def version = "1.0-SNAPSHOT"
     def grailsVersion = "1.2 > *"
-    
+
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
     def title = "This plugin adds Quartz job scheduling features to Grails application."
@@ -69,7 +67,7 @@ but is made simpler by the coding by convention paradigm.
             configureJobBeans(jobClass)
         }
 
-        if(manager?.hasGrailsPlugin("hibernate")) {
+        if (manager?.hasGrailsPlugin("hibernate")) {
             // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
             "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) {bean ->
                 bean.autowire = "byName"
@@ -87,15 +85,15 @@ but is made simpler by the coding by convention paradigm.
 
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
-            if(config.jdbcStore) {
+            if (config.jdbcStore) {
                 dataSource = ref('dataSource')
                 transactionManager = ref('transactionManager')
             }
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown
             exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory
-            if(manager?.hasGrailsPlugin("hibernate")) {
-              jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            if (manager?.hasGrailsPlugin("hibernate")) {
+                jobListeners = [ref("${SessionBinderJobListener.NAME}")]
             }
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
         }
@@ -109,7 +107,7 @@ but is made simpler by the coding by convention paradigm.
             def jobName = tc.getFullName()
             def jobGroup = tc.getGroup()
 
-            def generateTriggerName = { ->
+            def generateTriggerName = {->
                 long r = random.nextLong()
                 if (r < 0) {
                     r = -r;
@@ -120,25 +118,25 @@ but is made simpler by the coding by convention paradigm.
 
             mc.'static'.schedule = { String cronExpression, Map params = null ->
                 Trigger trigger = new CronTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
-                if(tc.getVolatility()) trigger.setVolatility(true)
-                if(params) trigger.jobDataMap.putAll(params)
+                if (tc.getVolatility()) trigger.setVolatility(true)
+                if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
-                if(tc.getVolatility()) trigger.setVolatility(true)
-                if(params) trigger.jobDataMap.putAll(params)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), GrailsJobClassProperty.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
+                if (tc.getVolatility()) trigger.setVolatility(true)
+                if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate ->
                 Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if(tc.getVolatility()) trigger.setVolatility(true)
+                if (tc.getVolatility()) trigger.setVolatility(true)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate, Map params ->
                 Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if(tc.getVolatility()) trigger.setVolatility(true)
-                if(params) trigger.jobDataMap.putAll(params)
+                if (tc.getVolatility()) trigger.setVolatility(true)
+                if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Trigger trigger ->
@@ -147,7 +145,7 @@ but is made simpler by the coding by convention paradigm.
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.triggerNow = { Map params = null ->
-                if(tc.getVolatility()){
+                if (tc.getVolatility()) {
                     quartzScheduler.triggerJobWithVolatileTrigger(jobName, jobGroup, params ? new JobDataMap(params) : null)
                 } else {
                     quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
@@ -177,15 +175,15 @@ but is made simpler by the coding by convention paradigm.
     }
 
     def onChange = {event ->
-        if(application.isArtefactOfType(JobArtefactHandler.TYPE, event.source)) {
+        if (application.isArtefactOfType(JobArtefactHandler.TYPE, event.source)) {
             log.debug("Job ${event.source} changed. Reloading...")
             def context = event.ctx
             def scheduler = context?.getBean("quartzScheduler")
             // get quartz scheduler
-            if(context && scheduler) {
+            if (context && scheduler) {
                 // if job already exists, delete it from scheduler
                 def jobClass = application.getJobClass(event.source?.name)
-                if(jobClass) {
+                if (jobClass) {
                     scheduler.deleteJob(jobClass.fullName, jobClass.group)
                     log.debug("Job ${jobClass.fullName} deleted from the scheduler")
                 }
@@ -217,13 +215,13 @@ but is made simpler by the coding by convention paradigm.
 
     def scheduleJob = {GrailsJobClass jobClass, ApplicationContext ctx ->
         def scheduler = ctx.getBean("quartzScheduler")
-        if(scheduler) {
+        if (scheduler) {
             def fullName = jobClass.fullName
             // add job to scheduler, and associate triggers with it
             scheduler.addJob(ctx.getBean("${fullName}Detail"), true)
             jobClass.triggers.each {key, trigger ->
                 log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                if(scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
+                if (scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
                     scheduler.rescheduleJob(trigger.triggerAttributes.name, trigger.triggerAttributes.group, ctx.getBean("${key}Trigger"))
                 } else {
                     scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
@@ -257,8 +255,8 @@ but is made simpler by the coding by convention paradigm.
             volatility = jobClass.volatility
             durability = jobClass.durability
             requestsRecovery = jobClass.requestsRecovery
-                                       
-            if(manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
+
+            if (manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }

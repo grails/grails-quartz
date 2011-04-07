@@ -48,7 +48,12 @@ executed using a specified interval or cron expression. The underlying
 system uses the Quartz Enterprise Job Scheduler configured via Spring,
 but is made simpler by the coding by convention paradigm.
 '''
-    def documentation = "http://grails.org/Quartz+plugin"
+    def documentation = "http://grails.org/plugin/quartz"
+
+    def license = "APACHE"
+    def developers = [[name: "Sergey Nebolsin", email: "nebolsin@gmail.com"]]
+    def issueManagement = [system: "GitHub Issues", url: "http://github.com/nebolsin/grails-quartz/issues"]
+    def scm = [url: "http://github.com/nebolsin/grails-quartz"]
 
     def loadAfter = ['core', 'hibernate']
     def watchedResources = [

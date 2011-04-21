@@ -51,7 +51,6 @@ but is made simpler by the coding by convention paradigm.
     def documentation = "http://grails.org/plugin/quartz"
 
     def license = "APACHE"
-    def developers = [[name: "Sergey Nebolsin", email: "nebolsin@gmail.com"]]
     def issueManagement = [system: "GitHub Issues", url: "http://github.com/nebolsin/grails-quartz/issues"]
     def scm = [url: "http://github.com/nebolsin/grails-quartz"]
 

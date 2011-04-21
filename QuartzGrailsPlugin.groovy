@@ -21,7 +21,6 @@ import grails.plugins.quartz.listeners.SessionBinderJobListener
 import grails.util.GrailsUtil
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
-import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.plugins.quartz.*
 import org.quartz.*
@@ -51,7 +50,6 @@ but is made simpler by the coding by convention paradigm.
     def documentation = "http://grails.org/plugin/quartz"
 
     def license = "APACHE"
-    def developers = [[name: "Sergey Nebolsin", email: "nebolsin@gmail.com"]]
     def issueManagement = [system: "GitHub Issues", url: "http://github.com/nebolsin/grails-quartz/issues"]
     def scm = [url: "http://github.com/nebolsin/grails-quartz"]
 
@@ -63,10 +61,13 @@ but is made simpler by the coding by convention paradigm.
 
     def artefacts = [new JobArtefactHandler()]
 
+    def config
+
+    QuartzGrailsPlugin() {
+        this.config = loadQuartzConfig()
+    }
+
     def doWithSpring = {
-
-        def config = loadQuartzConfig()
-
         application.jobClasses.each {jobClass ->
             configureJobBeans.delegate = delegate
             configureJobBeans(jobClass)
@@ -79,7 +80,7 @@ but is made simpler by the coding by convention paradigm.
             }
         }
 
-        // register global ExceptionPrinterJobListener which will log exceptions occured
+        // register global ExceptionPrinterJobListener which will log exceptions occurred
         // during job's execution
         "${ExceptionPrinterJobListener.NAME}"(ExceptionPrinterJobListener)
 
@@ -104,137 +105,17 @@ but is made simpler by the coding by convention paradigm.
         }
     }
 
-    def doWithDynamicMethods = {ctx ->
-        def random = new Random()
-        Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
-        application.jobClasses.each {GrailsJobClass tc ->
-            def mc = tc.metaClass
-            def jobName = tc.getFullName()
-            def jobGroup = tc.getGroup()
-
-            def generateTriggerName = {->
-                long r = random.nextLong()
-                if (r < 0) {
-                    r = -r;
-                }
-                return "GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7));
-
-            }
-
-            mc.'static'.schedule = { String cronExpression, Map params = null ->
-                Trigger trigger = new CronTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
-                if (tc.getVolatility()) trigger.setVolatility(true)
-                if (params) trigger.jobDataMap.putAll(params)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GrailsJobClassProperty.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
-                if (tc.getVolatility()) trigger.setVolatility(true)
-                if (params) trigger.jobDataMap.putAll(params)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Date scheduleDate ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if (tc.getVolatility()) trigger.setVolatility(true)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Date scheduleDate, Map params ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if (tc.getVolatility()) trigger.setVolatility(true)
-                if (params) trigger.jobDataMap.putAll(params)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Trigger trigger ->
-                trigger.jobName = jobName
-                trigger.jobGroup = jobGroup
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.triggerNow = { Map params = null ->
-                if (tc.getVolatility()) {
-                    quartzScheduler.triggerJobWithVolatileTrigger(jobName, jobGroup, params ? new JobDataMap(params) : null)
-                } else {
-                    quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
-                }
-            }
-            mc.'static'.removeJob = {
-                quartzScheduler.deleteJob(jobName, jobGroup)
-            }
-
-            mc.'static'.reschedule = {Trigger trigger ->
-                trigger.jobName = jobName
-                trigger.jobGroup = jobGroup
-                quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
-            }
-
-            mc.'static'.unschedule = {String triggerName, String triggerGroup = GJCP.DEFAULT_TRIGGERS_GROUP ->
-                quartzScheduler.unscheduleJob(triggerName, triggerGroup)
-            }
+    def doWithDynamicMethods = {applicationContext ->
+        application.jobClasses.each {GrailsJobClass jobClass ->
+            addJobMethods.delegate = delegate
+            addJobMethods jobClass
         }
     }
 
     def doWithApplicationContext = {applicationContext ->
         application.jobClasses.each {jobClass ->
             scheduleJob.delegate = delegate
-            scheduleJob(jobClass, applicationContext)
-        }
-    }
-
-    def onChange = {event ->
-        if (application.isArtefactOfType(JobArtefactHandler.TYPE, event.source)) {
-            log.debug("Job ${event.source} changed. Reloading...")
-            def context = event.ctx
-            def scheduler = context?.getBean("quartzScheduler")
-            // get quartz scheduler
-            if (context && scheduler) {
-                // if job already exists, delete it from scheduler
-                def jobClass = application.getJobClass(event.source?.name)
-                if (jobClass) {
-                    scheduler.deleteJob(jobClass.fullName, jobClass.group)
-                    log.debug("Job ${jobClass.fullName} deleted from the scheduler")
-                }
-
-                // add job artefact to application
-                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source)
-
-                // configure and register job beans
-                def fullName = jobClass.fullName
-                def beans = beans {
-                    configureJobBeans.delegate = delegate
-                    configureJobBeans(jobClass)
-                }
-
-                context.registerBeanDefinition("${fullName}Class", beans.getBeanDefinition("${fullName}Class"))
-                context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
-                context.registerBeanDefinition("${fullName}Detail", beans.getBeanDefinition("${fullName}Detail"))
-
-                jobClass.triggers.each {name, trigger ->
-                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
-                }
-
-                scheduleJob(jobClass, event.ctx)
-            } else {
-                log.error("Application context or Quartz Scheduler not found. Can't reload Quartz plugin.")
-            }
-        }
-    }
-
-    def scheduleJob = {GrailsJobClass jobClass, ApplicationContext ctx ->
-        def scheduler = ctx.getBean("quartzScheduler")
-        if (scheduler) {
-            def fullName = jobClass.fullName
-            // add job to scheduler, and associate triggers with it
-            scheduler.addJob(ctx.getBean("${fullName}Detail"), true)
-            jobClass.triggers.each {key, trigger ->
-                log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                if (scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
-                    scheduler.rescheduleJob(trigger.triggerAttributes.name, trigger.triggerAttributes.group, ctx.getBean("${key}Trigger"))
-                } else {
-                    scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
-                }
-            }
-            log.debug("Job ${jobClass.fullName} scheduled")
-        } else {
-            log.error("Failed to register job triggers: scheduler not found")
+            scheduleJob jobClass
         }
     }
 
@@ -273,6 +154,131 @@ but is made simpler by the coding by convention paradigm.
                 trigger.properties.findAll {it.key != 'clazz'}.each {
                     delegate["${it.key}"] = it.value
                 }
+            }
+        }
+    }
+
+    def addJobMethods = {GrailsJobClass jobClass ->
+        def scheduler = applicationContext.getBean("quartzScheduler")
+
+        def mc = jobClass.metaClass
+        def jobName = jobClass.fullName
+        def jobGroup = jobClass.group
+
+        def generateTriggerName = {->
+            long r = new Random().nextLong()
+            if (r < 0) {
+                r = -r;
+            }
+            return "GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7));
+
+        }
+
+        mc.'static'.schedule = { String cronExpression, Map params = null ->
+            Trigger trigger = new CronTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
+            if (jobClass.getVolatility()) trigger.setVolatility(true)
+            if (params) trigger.jobDataMap.putAll(params)
+            scheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
+            Trigger trigger = new SimpleTrigger(generateTriggerName(), GrailsJobClassProperty.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
+            if (jobClass.getVolatility()) trigger.setVolatility(true)
+            if (params) trigger.jobDataMap.putAll(params)
+            scheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Date scheduleDate ->
+            Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+            if (jobClass.getVolatility()) trigger.setVolatility(true)
+            scheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Date scheduleDate, Map params ->
+            Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+            if (jobClass.getVolatility()) trigger.setVolatility(true)
+            if (params) trigger.jobDataMap.putAll(params)
+            scheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Trigger trigger ->
+            trigger.jobName = jobName
+            trigger.jobGroup = jobGroup
+            scheduler.scheduleJob(trigger)
+        }
+        mc.'static'.triggerNow = { Map params = null ->
+            if (jobClass.getVolatility()) {
+                scheduler.triggerJobWithVolatileTrigger(jobName, jobGroup, params ? new JobDataMap(params) : null)
+            } else {
+                scheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
+            }
+        }
+        mc.'static'.removeJob = {
+            scheduler.deleteJob(jobName, jobGroup)
+        }
+
+        mc.'static'.reschedule = {Trigger trigger ->
+            trigger.jobName = jobName
+            trigger.jobGroup = jobGroup
+            scheduler.rescheduleJob(trigger.name, trigger.group, trigger)
+        }
+
+        mc.'static'.unschedule = {String triggerName, String triggerGroup = GJCP.DEFAULT_TRIGGERS_GROUP ->
+            scheduler.unscheduleJob(triggerName, triggerGroup)
+        }
+    }
+
+    def scheduleJob = {GrailsJobClass jobClass ->
+        Scheduler scheduler = applicationContext.getBean("quartzScheduler")
+        if (scheduler) {
+            def fullName = jobClass.fullName
+            // add job to scheduler, and associate triggers with it
+            scheduler.addJob(applicationContext.getBean("${fullName}Detail"), true)
+            jobClass.triggers.each {key, trigger ->
+                log.debug("Scheduling $fullName with trigger $key: ${trigger}")
+                if (scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
+                    scheduler.rescheduleJob(trigger.triggerAttributes.name, trigger.triggerAttributes.group, applicationContext.getBean("${key}Trigger"))
+                } else {
+                    scheduler.scheduleJob(applicationContext.getBean("${key}Trigger"))
+                }
+            }
+            log.debug("Job ${jobClass.fullName} scheduled")
+        } else {
+            log.error("Failed to register job triggers: scheduler not found")
+        }
+    }
+
+    def onChange = {event ->
+        if (application.isArtefactOfType(JobArtefactHandler.TYPE, event.source)) {
+            log.debug("Job ${event.source} changed. Reloading...")
+            def context = event.ctx
+            def scheduler = context?.getBean("quartzScheduler")
+            // get quartz scheduler
+            if (context && scheduler) {
+                // if job already exists, delete it from scheduler
+                def jobClass = application.getJobClass(event.source?.name)
+                if (jobClass) {
+                    scheduler.deleteJob(jobClass.fullName, jobClass.group)
+                    log.debug("Job ${jobClass.fullName} deleted from the scheduler")
+                }
+
+                // add job artefact to application
+                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source)
+
+                // configure and register job beans
+                def fullName = jobClass.fullName
+                def beans = beans {
+                    configureJobBeans.delegate = delegate
+                    configureJobBeans(jobClass)
+                }
+
+                context.registerBeanDefinition("${fullName}Class", beans.getBeanDefinition("${fullName}Class"))
+                context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
+                context.registerBeanDefinition("${fullName}Detail", beans.getBeanDefinition("${fullName}Detail"))
+
+                jobClass.triggers.each {name, trigger ->
+                    event.ctx.registerBeanDefinition("${name}Trigger", beans.getBeanDefinition("${name}Trigger"))
+                }
+
+                scheduleJob(jobClass, event.ctx)
+            } else {
+                log.error("Application context or Quartz Scheduler not found. Can't reload Quartz plugin.")
             }
         }
     }

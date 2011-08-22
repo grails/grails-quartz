@@ -17,7 +17,7 @@
 package grails.plugins.quartz.config
 
 import grails.plugins.quartz.CustomTriggerFactoryBean
-import grails.plugins.quartz.GrailsJobClassProperty as GJCP
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 
 /**
  * TODO: write javadoc
@@ -47,11 +47,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                startDelay: GJCP.DEFAULT_START_DELAY,
-                repeatInterval: GJCP.DEFAULT_TIMEOUT,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
+                startDelay: Constants.DEFAULT_START_DELAY,
+                repeatInterval: Constants.DEFAULT_TIMEOUT,
+                repeatCount: Constants.DEFAULT_REPEAT_COUNT,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -59,11 +59,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                startDelay: GJCP.DEFAULT_START_DELAY,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
+                startDelay: Constants.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                repeatCount: Constants.DEFAULT_REPEAT_COUNT,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -71,11 +71,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: 500,
-                repeatInterval: GJCP.DEFAULT_TIMEOUT,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                repeatInterval: Constants.DEFAULT_TIMEOUT,
+                repeatCount: Constants.DEFAULT_REPEAT_COUNT,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -83,11 +83,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: 500,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                repeatCount: Constants.DEFAULT_REPEAT_COUNT,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -95,11 +95,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean 
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: 3,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -107,11 +107,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                startDelay: GJCP.DEFAULT_START_DELAY,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
+                startDelay: Constants.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
-                repeatCount: GJCP.DEFAULT_REPEAT_COUNT,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                repeatCount: Constants.DEFAULT_REPEAT_COUNT,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -119,10 +119,10 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                startDelay:GJCP.DEFAULT_START_DELAY,
-                cronExpression: GJCP.DEFAULT_CRON_EXPRESSION,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
+                startDelay:Constants.DEFAULT_START_DELAY,
+                cronExpression: Constants.DEFAULT_CRON_EXPRESSION,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -130,10 +130,10 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
                 cronExpression: '0 15 6 * * ?',
-                startDelay: GJCP.DEFAULT_START_DELAY,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                startDelay: Constants.DEFAULT_START_DELAY,
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -141,10 +141,10 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
-                startDelay: GJCP.DEFAULT_START_DELAY,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
+                startDelay: Constants.DEFAULT_START_DELAY,
                 cronExpression: '0 15 6 * * ?',
-                volatility: GJCP.DEFAULT_VOLATILITY
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
 
@@ -152,11 +152,11 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         assert builder.triggers[jobName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
                 name:jobName,
-                group: GJCP.DEFAULT_TRIGGERS_GROUP,
+                group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: 0,
-                volatility: GJCP.DEFAULT_VOLATILITY
+                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
     }

@@ -26,6 +26,9 @@ import org.quartz.JobExecutionContext;
 import java.util.HashMap;
 import java.util.Map;
 
+import static grails.plugins.quartz.GrailsJobClassConstants.*;
+
+
 /**
  * Grails artefact class which represents a Quartz job.
  *
@@ -34,7 +37,7 @@ import java.util.Map;
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.1
  */
-public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass implements GrailsJobClass, GrailsJobClassProperty {
+public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass implements GrailsJobClass {
 
     public static final String JOB = "Job";
     private Map triggers = new HashMap();

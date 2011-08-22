@@ -19,7 +19,7 @@ package grails.plugins.quartz;
 import org.quartz.SimpleTrigger;
 
 /**
- * <p>Holds properties names from <code>GrailsJobClass</code></p>
+ * <p>Holds plugin constants.</p>
  *
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
@@ -28,7 +28,10 @@ import org.quartz.SimpleTrigger;
  * @see GrailsJobClass
  * @since 0.1
  */
-public interface GrailsJobClassProperty {
+public final class GrailsJobClassConstants {
+
+    // restrict instantiation
+    private GrailsJobClassConstants() {}
 
     public static final String EXECUTE = "execute";
 

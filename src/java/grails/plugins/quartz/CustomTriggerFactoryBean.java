@@ -44,8 +44,8 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
     public void afterPropertiesSet() throws ParseException {
         customTrigger = BeanUtils.instantiateClass(triggerClass);
 
-        if (triggerAttributes.containsKey(GrailsJobClassProperty.START_DELAY)) {
-            Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassProperty.START_DELAY);
+        if (triggerAttributes.containsKey(GrailsJobClassConstants.START_DELAY)) {
+            Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassConstants.START_DELAY);
             customTrigger.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
         }
 

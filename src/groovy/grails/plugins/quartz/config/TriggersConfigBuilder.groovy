@@ -16,10 +16,9 @@
 
 package grails.plugins.quartz.config
 
-import grails.plugins.quartz.GrailsJobClassProperty as GJCP
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 
 import grails.plugins.quartz.CustomTriggerFactoryBean
-import grails.plugins.quartz.GrailsJobClassProperty
 import grails.util.GrailsUtil
 import org.quartz.CronExpression
 import org.quartz.CronTrigger
@@ -111,50 +110,50 @@ public class TriggersConfigBuilder extends BuilderSupport {
     }
 
     private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
-        if (triggerAttributes[GrailsJobClassProperty.NAME] == null) triggerAttributes[GJCP.NAME] = "${jobName}${triggerNumber++}"
-        if (triggerAttributes[GJCP.GROUP] == null) triggerAttributes[GrailsJobClassProperty.GROUP] = GJCP.DEFAULT_TRIGGERS_GROUP
-        if (triggerAttributes[GJCP.START_DELAY] == null) triggerAttributes[GJCP.START_DELAY] = GrailsJobClassProperty.DEFAULT_START_DELAY
-        if (!(triggerAttributes[GrailsJobClassProperty.START_DELAY] instanceof Integer || triggerAttributes[GrailsJobClassProperty.START_DELAY] instanceof Long)) {
+        if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}"
+        if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP
+        if (triggerAttributes[Constants.START_DELAY] == null) triggerAttributes[Constants.START_DELAY] = Constants.DEFAULT_START_DELAY
+        if (!(triggerAttributes[Constants.START_DELAY] instanceof Integer || triggerAttributes[Constants.START_DELAY] instanceof Long)) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} must be Integer or Long");
         }
-        if (((Number) triggerAttributes[GJCP.START_DELAY]).longValue() < 0) {
+        if (((Number) triggerAttributes[Constants.START_DELAY]).longValue() < 0) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)");
         }
-        if (triggerAttributes[GJCP.VOLATILITY] == null) triggerAttributes[GrailsJobClassProperty.VOLATILITY] = GrailsJobClassProperty.DEFAULT_VOLATILITY
+        if (triggerAttributes[Constants.VOLATILITY] == null) triggerAttributes[Constants.VOLATILITY] = Constants.DEFAULT_VOLATILITY
     }
 
     private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
-        if (triggerAttributes[GrailsJobClassProperty.TIMEOUT] != null) {
+        if (triggerAttributes[Constants.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
 
-            if (!(triggerAttributes[GJCP.TIMEOUT] instanceof Integer || triggerAttributes[GJCP.TIMEOUT] instanceof Long)) {
+            if (!(triggerAttributes[Constants.TIMEOUT] instanceof Integer || triggerAttributes[Constants.TIMEOUT] instanceof Long)) {
                 throw new IllegalArgumentException("timeout trigger property in the job class ${jobName} must be Integer or Long");
             }
-            if (((Number) triggerAttributes[GrailsJobClassProperty.TIMEOUT]).longValue() < 0) {
+            if (((Number) triggerAttributes[Constants.TIMEOUT]).longValue() < 0) {
                 throw new IllegalArgumentException("timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)");
             }
-            triggerAttributes[GJCP.REPEAT_INTERVAL] = triggerAttributes.remove(GJCP.TIMEOUT)
+            triggerAttributes[Constants.REPEAT_INTERVAL] = triggerAttributes.remove(Constants.TIMEOUT)
         }
-        if (triggerAttributes[GJCP.REPEAT_INTERVAL] == null) triggerAttributes[GrailsJobClassProperty.REPEAT_INTERVAL] = GJCP.DEFAULT_REPEAT_INTERVAL
-        if (!(triggerAttributes[GJCP.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[GrailsJobClassProperty.REPEAT_INTERVAL] instanceof Long)) {
+        if (triggerAttributes[Constants.REPEAT_INTERVAL] == null) triggerAttributes[Constants.REPEAT_INTERVAL] = Constants.DEFAULT_REPEAT_INTERVAL
+        if (!(triggerAttributes[Constants.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[Constants.REPEAT_INTERVAL] instanceof Long)) {
             throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long");
         }
-        if (((Number) triggerAttributes[GJCP.REPEAT_INTERVAL]).longValue() < 0) {
+        if (((Number) triggerAttributes[Constants.REPEAT_INTERVAL]).longValue() < 0) {
             throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
-        if (triggerAttributes[GJCP.REPEAT_COUNT] == null) triggerAttributes[GrailsJobClassProperty.REPEAT_COUNT] = GJCP.DEFAULT_REPEAT_COUNT
-        if (!(triggerAttributes[GJCP.REPEAT_COUNT] instanceof Integer || triggerAttributes[GJCP.REPEAT_COUNT] instanceof Long)) {
+        if (triggerAttributes[Constants.REPEAT_COUNT] == null) triggerAttributes[Constants.REPEAT_COUNT] = Constants.DEFAULT_REPEAT_COUNT
+        if (!(triggerAttributes[Constants.REPEAT_COUNT] instanceof Integer || triggerAttributes[Constants.REPEAT_COUNT] instanceof Long)) {
             throw new IllegalArgumentException("repeatCount trigger property in the job class ${jobName} must be Integer or Long");
         }
-        if (((Number) triggerAttributes[GrailsJobClassProperty.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[GJCP.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
+        if (((Number) triggerAttributes[Constants.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[Constants.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
             throw new IllegalArgumentException("repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)");
         }
     }
 
     private def prepareCronTriggerAttributes(HashMap triggerAttributes) {
-        if (!triggerAttributes?.cronExpression) triggerAttributes[GJCP.CRON_EXPRESSION] = GJCP.DEFAULT_CRON_EXPRESSION
-        if (!CronExpression.isValidExpression(triggerAttributes[GJCP.CRON_EXPRESSION].toString())) {
-            throw new IllegalArgumentException("Cron expression '${triggerAttributes[GJCP.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
+        if (!triggerAttributes?.cronExpression) triggerAttributes[Constants.CRON_EXPRESSION] = Constants.DEFAULT_CRON_EXPRESSION
+        if (!CronExpression.isValidExpression(triggerAttributes[Constants.CRON_EXPRESSION].toString())) {
+            throw new IllegalArgumentException("Cron expression '${triggerAttributes[Constants.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
         }
     }
 

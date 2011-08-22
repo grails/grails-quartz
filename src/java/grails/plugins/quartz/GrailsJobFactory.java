@@ -64,7 +64,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 
         public GrailsJob(Object job) {
             this.job = job;
-            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassProperty.EXECUTE, (Class<?>[]) null);
+            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassConstants.EXECUTE, (Class<?>[]) null);
             if (executeMethod == null) {
                 throw new IllegalArgumentException(job.getClass().getName() + " should declare #execute() method");
             }
@@ -78,7 +78,7 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                 default:
                     throw new IllegalArgumentException(job.getClass().getName() + "#execute() method should take either no arguments or one argument of type JobExecutionContext");
             }
-            this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassProperty.INTERRUPT);
+            this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassConstants.INTERRUPT);
         }
 
         public void execute(final JobExecutionContext context) throws JobExecutionException {

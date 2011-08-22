@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import grails.plugins.quartz.GrailsJobClassProperty as GJCP
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
@@ -121,24 +121,24 @@ but is made simpler by the coding by convention paradigm.
             }
 
             mc.'static'.schedule = { String cronExpression, Map params = null ->
-                Trigger trigger = new CronTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
+                Trigger trigger = new CronTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
                 if (tc.getVolatility()) trigger.setVolatility(true)
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GrailsJobClassProperty.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
                 if (tc.getVolatility()) trigger.setVolatility(true)
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
                 if (tc.getVolatility()) trigger.setVolatility(true)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate, Map params ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), GJCP.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
+                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
                 if (tc.getVolatility()) trigger.setVolatility(true)
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
@@ -165,7 +165,7 @@ but is made simpler by the coding by convention paradigm.
                 quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
             }
 
-            mc.'static'.unschedule = {String triggerName, String triggerGroup = GJCP.DEFAULT_TRIGGERS_GROUP ->
+            mc.'static'.unschedule = {String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
                 quartzScheduler.unscheduleJob(triggerName, triggerGroup)
             }
         }

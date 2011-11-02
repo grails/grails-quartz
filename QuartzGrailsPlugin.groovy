@@ -54,7 +54,7 @@ but is made simpler by the coding by convention paradigm.
     def issueManagement = [system: "GitHub Issues", url: "http://github.com/nebolsin/grails-quartz/issues"]
     def scm = [url: "http://github.com/nebolsin/grails-quartz"]
 
-    def loadAfter = ['core', 'hibernate']
+    def loadAfter = ['core', 'hibernate', 'datasources']
     def watchedResources = [
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"

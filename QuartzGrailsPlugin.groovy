@@ -274,20 +274,37 @@ This plugin adds Quartz job scheduling features to Grails application.
         }
     }
 
+    /*
+     * Load the various configs. 
+     * Order of priority has been "fixed" in 1.0-RC2 to be:
+     *
+     * 1. DefaultQuartzConfig is loaded 
+     * 2. App's Config.groovy is loaded in and overwrites anything from DQC
+     * 3. QuartzConfig is loaded and overwrites anything from DQC or AppConfig
+     * 4. quartz.properties are loaded into config as quartz._props
+     */
     private ConfigObject loadQuartzConfig() {
         def config = ConfigurationHolder.config
         def classLoader = new GroovyClassLoader(getClass().classLoader)
 
-        // merging default Quartz config into main application config
-        config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig')))
+        // Note here the order of objects when calling merge - merge OVERWRITES values in the target object
+        // Load default Quartz config as a basis
+        def newConfig = new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig'))
 
-        // merging user-defined Quartz config into main application config if provided
+		// Overwrite defaults with what Config.groovy has supplied, perhaps from external files        
+        newConfig.merge(config)
+
+        // Overwrite with contents of QuartzConfig
         try {
-            config.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('QuartzConfig')))
+            newConfig.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('QuartzConfig')))
         } catch (Exception ignored) {
             // ignore, just use the defaults
         }
+        
+        // Now merge our correctly merged DefaultQuartzConfig and QuartzConfig into the main config
+        config.merge(newConfig)
 
+        // And now load quartz properties into main config
         def properties = new Properties()
         def resource = classLoader.getResourceAsStream("quartz.properties")
         if (resource != null) {

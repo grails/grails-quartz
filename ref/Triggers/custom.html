@@ -62,15 +62,13 @@ function addJsClass(el) {
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                <h1>custom</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>A custom trigger that executes based on the result of a custom <code>Trigger</code> implementation<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre></pre></div>
-class MyJob {
-  static triggers = {
+                <h1>custom</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>A custom trigger that executes based on the result of a custom <code>Trigger</code> implementation<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class MyJob &#123;
+  <span class="java&#45;keyword">static</span> triggers = &#123;
     custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
-  }<p class="paragraph"/>  def execute() {
-    println "Job run!"
-  }
-}
-<div class="code"><pre></pre></div><p class="paragraph"/>
+  &#125;<p class="paragraph"/>  def execute() &#123;
+    println <span class="java&#45;quote">"Job run!"</span>
+  &#125;
+&#125;</pre></div><p class="paragraph"/>
             </div>
         </td>
         <td id="col2">

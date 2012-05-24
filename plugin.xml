@@ -7,14 +7,27 @@ executed using a specified interval or cron expression. The underlying
 system uses the Quartz Enterprise Job Scheduler configured via Spring,
 but is made simpler by the coding by convention paradigm.
 </description>
-  <documentation>http://grails.org/Quartz+plugin</documentation>
+  <documentation>http://grails.org/plugin/quartz</documentation>
+  <type>QuartzGrailsPlugin</type>
   <resources>
-    <resource>BuildConfig</resource>
-    <resource>DataSource</resource>
     <resource>DefaultQuartzConfig</resource>
     <resource>QuartzBootStrap</resource>
     <resource>grails.plugins.quartz.JobManagerService</resource>
   </resources>
-  <dependencies />
+  <repositories>
+    <repository name='grailsCentral' url='http://plugins.grails.org' />
+    <repository name='http://repo.grails.org/grails/plugins' url='http://repo.grails.org/grails/plugins/' />
+    <repository name='http://repo.grails.org/grails/core' url='http://repo.grails.org/grails/core/' />
+    <repository name='grailsCore' url='http://svn.codehaus.org/grails/trunk/grails-plugins' />
+    <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
+  </repositories>
+  <dependencies>
+    <compile>
+      <dependency group='org.quartz-scheduler' name='quartz' version='1.8.4' />
+      <dependency group='org.hibernate' name='hibernate-core' version='3.6.10.Final' />
+    </compile>
+  </dependencies>
+  <plugins />
+  <runtimePluginRequirements />
   <behavior />
 </plugin>

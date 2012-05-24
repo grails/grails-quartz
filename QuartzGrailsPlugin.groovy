@@ -49,10 +49,11 @@ system uses the Quartz Enterprise Job Scheduler configured via Spring,
 but is made simpler by the coding by convention paradigm.
 '''
     def documentation = "http://grails.org/plugin/quartz"
+	def pluginExcludes = ['grails-app/jobs/**']
 
     def license = "APACHE"
-    def issueManagement = [system: "GitHub Issues", url: "http://github.com/nebolsin/grails-quartz/issues"]
-    def scm = [url: "http://github.com/nebolsin/grails-quartz"]
+    def issueManagement = [system: "GitHub Issues", url: "http://jira.grails.org/browse/GPQUARTZ"]
+    def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
 
     def loadAfter = ['core', 'hibernate']
     def watchedResources = [
@@ -68,7 +69,7 @@ but is made simpler by the coding by convention paradigm.
 
         application.jobClasses.each {jobClass ->
             configureJobBeans.delegate = delegate
-            configureJobBeans(jobClass)
+            configureJobBeans(jobClass, manager?.hasGrailsPlugin("hibernate"))
         }
 
         if (manager?.hasGrailsPlugin("hibernate")) {
@@ -199,7 +200,7 @@ but is made simpler by the coding by convention paradigm.
                 def fullName = jobClass.fullName
                 def beans = beans {
                     configureJobBeans.delegate = delegate
-                    configureJobBeans(jobClass)
+                    configureJobBeans(jobClass, manager.hasGrailsPlugin("hibernate"))
                 }
 
                 context.registerBeanDefinition("${fullName}Class", beans.getBeanDefinition("${fullName}Class"))
@@ -237,7 +238,7 @@ but is made simpler by the coding by convention paradigm.
         }
     }
 
-    def configureJobBeans = {GrailsJobClass jobClass ->
+    def configureJobBeans = {GrailsJobClass jobClass, boolean hasHibernate = true ->
         def fullName = jobClass.fullName
 
         "${fullName}Class"(MethodInvokingFactoryBean) {
@@ -260,7 +261,7 @@ but is made simpler by the coding by convention paradigm.
             durability = jobClass.durability
             requestsRecovery = jobClass.requestsRecovery
 
-            if (manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
+            if (hasHibernate && jobClass.sessionRequired) {
                 jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
             }
         }

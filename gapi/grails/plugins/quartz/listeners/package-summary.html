@@ -97,8 +97,8 @@ Package grails.plugins.quartz.listeners
 
         <TR BGCOLOR="white" CLASS="TableRowColor">
         <TD WIDTH="15%"><B><A HREF="SessionBinderJobListener.html" title="class in grails/plugins/quartz/listeners">SessionBinderJobListener</A></B></TD>
-        <TD>JobListener implementation which binds Hibernate Session to thread
- before execution of job and flushes it after job execution.</TD>
+        <TD>JobListener implementation which wraps the execution of a Quartz Job in a
+ persistence context, via the persistenceInterceptor.</TD>
         </TR>
 
 </TABLE>

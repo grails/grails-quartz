@@ -334,6 +334,8 @@ function windowTitle()
 </dt><dd>{@inheritDoc}</dd>
 <dt><a href="grails/plugins/quartz/JobDetailFactoryBean.html#getObjectType()" title="Method in JobDetailFactoryBean"><b>getObjectType</b>()</b></a> - Method in <a href="grails/plugins/quartz/JobDetailFactoryBean.html">JobDetailFactoryBean</a>
 </dt><dd>{@inheritDoc}</dd>
+<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#getPersistenceInterceptor()" title="Method in SessionBinderJobListener"><b>getPersistenceInterceptor</b>()</b></a> - Method in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
+</dt><dd></dd>
 <dt><a href="grails/plugins/quartz/DefaultGrailsJobClass.html#getRepeatCount()" title="Method in DefaultGrailsJobClass"><b>getRepeatCount</b>()</b></a> - Method in <a href="grails/plugins/quartz/DefaultGrailsJobClass.html">DefaultGrailsJobClass</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/GrailsJobClass.html#getRepeatCount()" title="Method in GrailsJobClass"><b>getRepeatCount</b>()</b></a> - Method in <a href="grails/plugins/quartz/GrailsJobClass.html">GrailsJobClass</a>
@@ -344,8 +346,6 @@ function windowTitle()
 </dt><dd>If job should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.</dd>
 <dt><a href="grails/plugins/quartz/JobManagerService.html#getRunningJobs()" title="Method in JobManagerService"><b>getRunningJobs</b>()</b></a> - Method in <a href="grails/plugins/quartz/JobManagerService.html">JobManagerService</a>
 </dt><dd>Returns a list of all currently executing jobs.</dd>
-<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#getSessionFactory()" title="Method in SessionBinderJobListener"><b>getSessionFactory</b>()</b></a> - Method in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
-</dt><dd></dd>
 <dt><a href="grails/plugins/quartz/DefaultGrailsJobClass.html#getStartDelay()" title="Method in DefaultGrailsJobClass"><b>getStartDelay</b>()</b></a> - Method in <a href="grails/plugins/quartz/DefaultGrailsJobClass.html">DefaultGrailsJobClass</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/GrailsJobClass.html#getStartDelay()" title="Method in GrailsJobClass"><b>getStartDelay</b>()</b></a> - Method in <a href="grails/plugins/quartz/GrailsJobClass.html">GrailsJobClass</a>
@@ -516,8 +516,6 @@ function windowTitle()
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/listeners/ExceptionPrinterJobListener.html#LOG" title="Field in ExceptionPrinterJobListener"><b>LOG</b></a> - Field in <a href="grails/plugins/quartz/listeners/ExceptionPrinterJobListener.html">ExceptionPrinterJobListener</a>
 </dt><dd></dd>
-<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#LOG" title="Field in SessionBinderJobListener"><b>LOG</b></a> - Field in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
-</dt><dd></dd>
 </dl>
 
     
@@ -577,6 +575,8 @@ function windowTitle()
 <dt><a href="grails/plugins/quartz/JobManagerService.html#pauseTrigger(java.lang.String, java.lang.String)" title="Method in JobManagerService"><b>pauseTrigger</b>(String, String)</b></a> - Method in <a href="grails/plugins/quartz/JobManagerService.html">JobManagerService</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/JobManagerService.html#pauseTriggerGroup(java.lang.String)" title="Method in JobManagerService"><b>pauseTriggerGroup</b>(String)</b></a> - Method in <a href="grails/plugins/quartz/JobManagerService.html">JobManagerService</a>
+</dt><dd></dd>
+<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#persistenceInterceptor" title="Field in SessionBinderJobListener"><b>persistenceInterceptor</b></a> - Field in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/QuartzGrailsPlugin.html#pluginExcludes" title="Property in QuartzGrailsPlugin"><b>pluginExcludes</b></a> - Property in <a href="DefaultPackage/QuartzGrailsPlugin.html">QuartzGrailsPlugin</a>
 </dt><dd></dd>
@@ -653,11 +653,9 @@ function windowTitle()
 <dt><a href="grails/plugins/quartz/GrailsJobClassConstants.html#SESSION_REQUIRED" title="Field in GrailsJobClassConstants"><b>SESSION_REQUIRED</b></a> - Field in <a href="grails/plugins/quartz/GrailsJobClassConstants.html">GrailsJobClassConstants</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html" title="Class in grails.plugins.quartz.listeners"><b>SessionBinderJobListener</b></a> - Class in <a href="./grails/plugins/quartz/listeners/package-summary.html">grails.plugins.quartz.listeners</a>
-</dt><dd>JobListener implementation which binds Hibernate Session to thread
- before execution of job and flushes it after job execution.</dd>
+</dt><dd>JobListener implementation which wraps the execution of a Quartz Job in a
+ persistence context, via the persistenceInterceptor.</dd>
 <dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#SessionBinderJobListener()" title="Constructor in SessionBinderJobListener"><b>SessionBinderJobListener</b>()</b></a> - Constructor in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
-</dt><dd></dd>
-<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#sessionFactory" title="Field in SessionBinderJobListener"><b>sessionFactory</b></a> - Field in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/GrailsJobFactory.html#setApplicationContext(org.springframework.context.ApplicationContext)" title="Method in GrailsJobFactory"><b>setApplicationContext</b>(ApplicationContext)</b></a> - Method in <a href="grails/plugins/quartz/GrailsJobFactory.html">GrailsJobFactory</a>
 </dt><dd></dd>
@@ -678,9 +676,9 @@ function windowTitle()
 </dt><dd>Set the name of the job.</dd>
 <dt><a href="grails/plugins/quartz/config/TriggersConfigBuilder.html#setParent(def, def)" title="Method in TriggersConfigBuilder"><b>setParent</b>(def, def)</b></a> - Method in <a href="grails/plugins/quartz/config/TriggersConfigBuilder.html">TriggersConfigBuilder</a>
 </dt><dd></dd>
-<dt><a href="grails/plugins/quartz/JobDetailFactoryBean.html#setRequestsRecovery(boolean)" title="Method in JobDetailFactoryBean"><b>setRequestsRecovery</b>(boolean)</b></a> - Method in <a href="grails/plugins/quartz/JobDetailFactoryBean.html">JobDetailFactoryBean</a>
+<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#setPersistenceInterceptor(org.codehaus.groovy.grails.support.PersistenceContextInterceptor)" title="Method in SessionBinderJobListener"><b>setPersistenceInterceptor</b>(PersistenceContextInterceptor)</b></a> - Method in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
 </dt><dd></dd>
-<dt><a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html#setSessionFactory(org.hibernate.SessionFactory)" title="Method in SessionBinderJobListener"><b>setSessionFactory</b>(SessionFactory)</b></a> - Method in <a href="grails/plugins/quartz/listeners/SessionBinderJobListener.html">SessionBinderJobListener</a>
+<dt><a href="grails/plugins/quartz/JobDetailFactoryBean.html#setRequestsRecovery(boolean)" title="Method in JobDetailFactoryBean"><b>setRequestsRecovery</b>(boolean)</b></a> - Method in <a href="grails/plugins/quartz/JobDetailFactoryBean.html">JobDetailFactoryBean</a>
 </dt><dd></dd>
 <dt><a href="grails/plugins/quartz/CustomTriggerFactoryBean.html#setTriggerAttributes(java.util.Map)" title="Method in CustomTriggerFactoryBean"><b>setTriggerAttributes</b>(Map)</b></a> - Method in <a href="grails/plugins/quartz/CustomTriggerFactoryBean.html">CustomTriggerFactoryBean</a>
 </dt><dd></dd>

@@ -7,7 +7,6 @@ A custom trigger that executes based on the result of a custom @Trigger@ impleme
 h2. Examples
 
 {code}
-{code}
 class MyJob {
   static triggers = {
     custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
@@ -17,6 +16,5 @@ class MyJob {
     println "Job run!"
   }
 }
-{code}
 {code}
 

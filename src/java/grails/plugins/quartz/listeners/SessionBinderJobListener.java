@@ -16,63 +16,46 @@
 
 package grails.plugins.quartz.listeners;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.FlushMode;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.codehaus.groovy.grails.support.PersistenceContextInterceptor;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.listeners.JobListenerSupport;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
-import org.springframework.orm.hibernate3.SessionHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
- * JobListener implementation which binds Hibernate Session to thread
- * before execution of job and flushes it after job execution.
+ * JobListener implementation which wraps the execution of a Quartz Job in a
+ * persistence context, via the persistenceInterceptor.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.2
  */
 public class SessionBinderJobListener extends JobListenerSupport {
-    private static final transient Log LOG = LogFactory.getLog(SessionBinderJobListener.class);
 
     public static final String NAME = "sessionBinderListener";
 
-    private SessionFactory sessionFactory;
+    private PersistenceContextInterceptor persistenceInterceptor;
 
     public String getName() {
         return NAME;
     }
 
-    public void jobToBeExecuted(JobExecutionContext context) {
-        Session session = SessionFactoryUtils.getSession(sessionFactory, true);
-        session.setFlushMode(FlushMode.AUTO);
-        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
-        if (LOG.isDebugEnabled()) LOG.debug("Hibernate Session is bounded to Job thread");
+    public PersistenceContextInterceptor getPersistenceInterceptor() {
+        return persistenceInterceptor;
     }
 
-    public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-        SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-        try {
-            if (!FlushMode.MANUAL.equals(sessionHolder.getSession().getFlushMode())) {
-                sessionHolder.getSession().flush();
-            }
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) LOG.error("Cannot flush Hibernate Sesssion, error will be ignored", e);
-        } finally {
-            TransactionSynchronizationManager.unbindResource(sessionFactory);
-            SessionFactoryUtils.closeSession(sessionHolder.getSession());
-            if (LOG.isDebugEnabled()) LOG.debug("Hibernate Session is unbounded from Job thread and closed");
+    public void setPersistenceInterceptor(PersistenceContextInterceptor persistenceInterceptor) {
+        this.persistenceInterceptor = persistenceInterceptor;
+    }
+
+    public void jobToBeExecuted(JobExecutionContext context) {
+        if (persistenceInterceptor != null) {
+            persistenceInterceptor.init();
         }
     }
 
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
+        if (persistenceInterceptor != null) {
+            persistenceInterceptor.flush();
+            persistenceInterceptor.destroy();
+        }
     }
 }

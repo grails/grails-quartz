@@ -52,7 +52,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     def issueManagement = [system: "GitHub Issues", url: "http://jira.grails.org/browse/GPQUARTZ"]
     def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
 
-    def loadAfter = ['core', 'hibernate']
+    def loadAfter = ['core', 'hibernate', 'datasources']
     def watchedResources = [
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"

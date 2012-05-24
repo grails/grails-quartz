@@ -1,0 +1,58 @@
+h4. Scheduling Jobs
+
+To create a new job run the "grails create-job" command and enter the name of the job. Grails will create a new job and place it in the "grails-app/jobs" directory:
+
+{code}
+class MyJob {
+  static triggers = {
+    simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000  
+  }
+  def group = "MyGroup"
+
+  def execute(){
+    print "Job run!"
+  }
+}
+{code}
+
+The above example will wait for 1 minute and after that will call the 'execute' method every second. The 'repeatInterval' and 'startDelay' properties are specified in milliseconds and must have Integer or Long type. If these properties are not specified default values are applied (1 minute for 'repeatInterval' property and 30 seconds for 'startDelay' property). Jobs can optionally be placed in different groups.
+The triggers name property must be unique across all triggers in the application.
+
+By default, jobs will not be executed when running under the test environment.
+
+h4. Scheduling a Cron Job
+
+Jobs can be scheduled using a cron expression. For those unfamiliar with "cron", this means being able to create a firing schedule such as: "At 8:00am every Monday through Friday" or "At 1:30am every last Friday of the month". (See the API docs for the CronTrigger class in Quartz for more info on cron expressions):
+
+{code}
+class MyJob  {
+  static triggers = {
+    cron name: 'myTrigger', cronExpression: "0 0 6 * * ?"
+  }
+ def group = "MyGroup"
+
+ def execute(){
+   print "Job run!"
+ }
+}
+{code}
+
+The fields in the cronExpression are: (summarizing the Quartz CronTrigger Tutorial)
+
+{code}
+cronExpression: "s m h D M W Y"
+                 | | | | | | `- Year [optional]
+                 | | | | | `- Day of Week, 1-7 or SUN-SAT, ?
+                 | | | | `- Month, 1-12 or JAN-DEC
+                 | | | `- Day of Month, 1-31, ?
+                 | | `- Hour, 0-23
+                 | `- Minute, 0-59
+                 `- Second, 0-59
+{code}
+
+{note}
+* Year is the only optional field and may be omitted, the rest are mandatory
+* Day-of-Week and Month are case insensitive, so "DEC" = "dec" = "Dec"
+* Either Day-of-Week or Day-of-Month must be "?", or you will get an error since support by the underlying library is not complete. So you can't specify both fields, nor leave both as the all values wildcard "*"; this is a departure from the unix crontab specification.
+* See the CronTrigger Tutorial for an explanation of all the special characters you may use.
+{note}

@@ -1,0 +1,64 @@
+h4. Configuring the plugin
+
+Since 0.3 version plugin supports configuration file which is stored in grails-app/conf/QuartzConfig.groovy. The syntax is the same as default Grails configuration file Config.groovy . You could also use per-environment configuration feature (more info).
+
+To have an initial Quartz config file generated for you, type the following in the command line: 'grails install-quartz-config' . This will generate a file that looks like this:
+
+{code}
+quartz {
+    autoStartup = true
+    jdbcStore = false
+}
+environments {
+    test {
+        quartz {
+            autoStartup = false
+        }
+    }
+}
+{code}
+
+Currently supported options:
+
+* @autoStartup@ controls automatic startup of the Quartz scheduler during application bootstrap (default: true )
+* @jdbcStore@ set to true if you want Quartz to persist jobs in your DB (default: false ), you'll also need to provide quartz.properties file and make sure that required tables exist in your db (see Clustering section below for the sample config and automatic tables creation using Hibernate)
+
+You could also create grails-app/conf/quartz.properties file and provide different options to the Quartz scheduler (see Quartz configuration reference for details).
+
+h4. Logging
+
+A log is auto-injected into your task Job class without having to enable it. To set the logging level, just add something like this to your grails-app/conf/Config.groovy log4j configuration.
+
+{code}
+debug 'grails.app.jobs'
+{code}
+
+h4. Hibernate Sessions and Jobs
+
+Jobs are configured by default to have Hibernate Session bounded to thread each time job is executed. This is required if you are using Hibernate code which requires open session (such as lazy loading of collections) or working with domain objects with unique persistent constraint (it uses Hibernate Session behind the scene). If you want to override this behavior (rarely useful) you can use 'sessionRequired' property:
+
+{code}
+def sessionRequired = false
+{code}
+
+h4. Configuring concurrent execution
+
+By default Jobs are executed in concurrent fashion, so new Job execution can start even if previous execution of the same Job is still running. If you want to override this behavior you can use 'concurrent' property, in this case Quartz's StatefulJob will be used (you can find more info about it here):
+
+{code}
+def concurrent = false
+{code}
+
+h4. Clustering
+
+Quartz plugin doesn't support clustering out-of-the-box now. However, you could use standard Quartz clustering configuration. Take a look at the [example provided by Burt Beckwith|http://docs.codehaus.org/download/attachments/78053/clustering_sample.tar.gz?version=1]. You'll also need to set jdbcStore configuration option to true .
+
+There are also two parameters for configuring store/clustering on jobs ( volatility and durability , both are true by default) and one for triggers ( volatility , also true by default). Volatile job and trigger will not persist between Quartz runs, and durable job will live even when there is no triggers referring to it.
+
+Read Quartz documentation for more information on clustering and job stores as well as volatility and durability.
+
+h4. Recovering
+
+Since 0.4.2 recovering from 'recovery' or 'fail-over' situation is supported with requestsRecovery job-level flag ( false by default).
+
+If a job "requests recovery", and it is executing during the time of a 'hard shutdown' of the scheduler (i.e. the process it is running within crashes, or the machine is shut off), then it is re-executed when the scheduler is started again. In this case, the JobExecutionContext.isRecovering() method will return true.

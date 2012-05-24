@@ -1,0 +1,1 @@
+Quartz plugin allows your Grails application to schedule jobs to be executed using a specified interval or cron expression. The underlying system uses the [Quartz Enterprise Job Scheduler|http://www.quartz-scheduler.org/] configured via Spring, but is made simpler by the coding by convention paradigm.

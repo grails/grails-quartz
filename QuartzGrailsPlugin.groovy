@@ -36,17 +36,14 @@ import org.quartz.*
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-SNAPSHOT"
+    def version = "1.0-RC2"
     def grailsVersion = "1.2 > *"
 
-    def author = "Sergey Nebolsin"
+    def author = "Sergey Nebolsin, Graeme Rocher"
     def authorEmail = "nebolsin@gmail.com"
-    def title = "This plugin adds Quartz job scheduling features to Grails application."
+    def title = "Quartz plugin for Grails"
     def description = '''\
-Quartz plugin allows your Grails application to schedule jobs to be
-executed using a specified interval or cron expression. The underlying
-system uses the Quartz Enterprise Job Scheduler configured via Spring,
-but is made simpler by the coding by convention paradigm.
+This plugin adds Quartz job scheduling features to Grails application.
 '''
     def documentation = "http://grails.org/plugin/quartz"
 	def pluginExcludes = ['grails-app/jobs/**']

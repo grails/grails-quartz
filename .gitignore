@@ -3,3 +3,7 @@ stacktrace.log
 web-app
 grails-quartz-*.zip
 target
+.classpath
+.project
+.settings
+.target-eclipse

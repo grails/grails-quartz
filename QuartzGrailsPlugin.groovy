@@ -59,6 +59,8 @@ This plugin adds Quartz job scheduling features to Grails application.
     ]
 
     def artefacts = [new JobArtefactHandler()]
+	
+	private def random = new Random()
 
     def doWithSpring = {
 
@@ -110,7 +112,6 @@ This plugin adds Quartz job scheduling features to Grails application.
 	}
 	
 	private void addMethods(tc , ctx) {
-		def random = new Random()
 		Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
 		def mc = tc.metaClass
 		def jobName = tc.getFullName()

@@ -65,7 +65,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     protected Object createNode(name, Map attributes, Object value) {
         def trigger = createTrigger(name, attributes, value)
-        triggers[trigger.triggerAttributes.name] = trigger
+        triggers[trigger.triggerAttributes.name.toString()] = trigger
         trigger
     }
 
@@ -100,7 +100,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
             case 'custom':
                 if (!triggerAttributes?.triggerClass) throw new Exception("Custom trigger must have 'triggerClass' attribute")
                 triggerClass = (Class) triggerAttributes.remove('triggerClass')
-                if (!Trigger.isAssignableFrom(triggerClass)) throw new Exception("Custom trigger class must extend org.quartz.Trigger class.")
+                if (!Trigger.isAssignableFrom(triggerClass)) throw new Exception("Custom trigger class must implement org.quartz.Trigger class.")
                 break
             default:
                 throw new Exception("Invalid format")
@@ -110,8 +110,8 @@ public class TriggersConfigBuilder extends BuilderSupport {
     }
 
     private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
-        if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}"
-        if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP
+        if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
+        if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP.toString()
         if (triggerAttributes[Constants.START_DELAY] == null) triggerAttributes[Constants.START_DELAY] = Constants.DEFAULT_START_DELAY
         if (!(triggerAttributes[Constants.START_DELAY] instanceof Integer || triggerAttributes[Constants.START_DELAY] instanceof Long)) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} must be Integer or Long");
@@ -119,7 +119,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
         if (((Number) triggerAttributes[Constants.START_DELAY]).longValue() < 0) {
             throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)");
         }
-        if (triggerAttributes[Constants.VOLATILITY] == null) triggerAttributes[Constants.VOLATILITY] = Constants.DEFAULT_VOLATILITY
+
     }
 
     private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {

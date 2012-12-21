@@ -51,7 +51,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: Constants.DEFAULT_START_DELAY,
                 repeatInterval: Constants.DEFAULT_TIMEOUT,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -63,7 +62,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: Constants.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -75,7 +73,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: 500,
                 repeatInterval: Constants.DEFAULT_TIMEOUT,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -87,7 +84,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -99,7 +95,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: 3,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -111,7 +106,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: Constants.DEFAULT_START_DELAY,
                 repeatInterval: 1000,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -122,7 +116,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay:Constants.DEFAULT_START_DELAY,
                 cronExpression: Constants.DEFAULT_CRON_EXPRESSION,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -133,7 +126,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 group: Constants.DEFAULT_TRIGGERS_GROUP,
                 cronExpression: '0 15 6 * * ?',
                 startDelay: Constants.DEFAULT_START_DELAY,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
         
@@ -144,7 +136,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: Constants.DEFAULT_START_DELAY,
                 cronExpression: '0 15 6 * * ?',
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
 
@@ -156,7 +147,6 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: 500,
                 repeatInterval: 1000,
                 repeatCount: 0,
-                volatility: Constants.DEFAULT_VOLATILITY
             ), builder.triggers[jobName].triggerAttributes
         )
     }

@@ -16,11 +16,23 @@
 
 package grails.plugins.quartz;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.codehaus.groovy.grails.web.context.ServletContextHolder;
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
 import org.quartz.JobDetail;
+import org.quartz.ListenerManager;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import static org.quartz.JobBuilder.*;
+import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
@@ -36,11 +48,11 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
     private String name;
     private String group;
     private boolean concurrent;
-    private boolean volatility;
     private boolean durability;
     private boolean requestsRecovery;
     private String[] jobListenerNames;
     private JobDetail jobDetail;
+    private static Log log = LogFactory.getLog(JobDetailFactoryBean.class);
 
     /**
      * Set the name of the job.
@@ -67,7 +79,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 
     /**
      * Set a list of JobListener names for this job, referring to
-     * non-global JobListeners registered with the Scheduler.
+     * JobListeners registered with the Scheduler.
      * <p>A JobListener name always refers to the name returned
      * by the JobListener implementation.
      *
@@ -82,11 +94,6 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
     @Required
     public void setConcurrent(final boolean concurrent) {
         this.concurrent = concurrent;
-    }
-
-    @Required
-    public void setVolatility(boolean volatility) {
-        this.volatility = volatility;
     }
 
     @Required
@@ -118,16 +125,31 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
         Class jobClass = (concurrent ? GrailsJobFactory.GrailsJob.class : GrailsJobFactory.StatefulGrailsJob.class);
 
         // Build JobDetail instance.
-        jobDetail = new JobDetail(name, group, jobClass);
-        jobDetail.getJobDataMap().put(JOB_NAME_PARAMETER, name);
-        jobDetail.setDurability(durability);
-        jobDetail.setVolatility(volatility);
-        jobDetail.setRequestsRecovery(requestsRecovery);
+        jobDetail = newJob(jobClass)
+                .withIdentity(name,group)
+                .storeDurably(durability)
+                .requestRecovery(requestsRecovery)
+                .usingJobData(JOB_NAME_PARAMETER, name)
+                .build();
+
+
 
         // Register job listener names.
         if (jobListenerNames != null) {
-            for (String jobListenerName : jobListenerNames) {
-                jobDetail.addJobListener(jobListenerName);
+            ApplicationContext ctx =
+                    (ApplicationContext) ApplicationHolder.getApplication().getMainContext();
+            Scheduler quartzScheduler = (Scheduler)ctx.getBean("quartzScheduler");
+            try {
+                ListenerManager manager =  quartzScheduler.getListenerManager();
+                for (String jobListenerName : jobListenerNames) {
+
+                    // no matcher == match all jobs
+
+                    manager.addJobListener(manager.getJobListener(jobListenerName),allJobs());
+
+                }
+            } catch (SchedulerException e) {
+                log.error("Error adding job listener to scheduler:",e);
             }
         }
     }

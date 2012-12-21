@@ -56,8 +56,6 @@ public final class GrailsJobClassConstants {
 
     public static final String REPEAT_COUNT = "repeatCount";
 
-    public static final String VOLATILITY = "volatility";
-
     public static final String DURABILITY = "durability";
 
     public static final String REQUESTS_RECOVERY = "requestsRecovery";
@@ -82,8 +80,6 @@ public final class GrailsJobClassConstants {
     public static final boolean DEFAULT_SESSION_REQUIRED = true;
 
     public static final String DEFAULT_TRIGGERS_GROUP = "GRAILS_TRIGGERS";
-
-    public static final boolean DEFAULT_VOLATILITY = true;
 
     public static final boolean DEFAULT_DURABILITY = true;
 

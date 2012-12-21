@@ -93,13 +93,6 @@ public interface GrailsJobClass extends InjectableGrailsClass {
     public boolean isSessionRequired();
 
     /**
-     * If job is volatile (will not be persisted between Quartz runs) returns true.
-     *
-     * @return true if this job is volatile
-     */
-    public boolean getVolatility();
-
-    /**
      * If job is durable returns true.
      *
      * @return true if this job is durable

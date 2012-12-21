@@ -25,6 +25,9 @@ import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 import grails.plugins.quartz.*
 import org.quartz.*
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -33,14 +36,15 @@ import org.quartz.*
  * @author Graeme Rocher
  * @author Marcel Overdijk
  * @author Sergey Nebolsin
+ * @author Ryan Vanderwerf
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-RC2"
+    def version = "1.0-RC3"
     def grailsVersion = "1.2 > *"
 
-    def author = "Sergey Nebolsin, Graeme Rocher"
-    def authorEmail = "nebolsin@gmail.com"
+    def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"
+    def authorEmail = "rvanderwerf@gmail.com"
     def title = "Quartz plugin for Grails"
     def description = '''\
 This plugin adds Quartz job scheduling features to Grails application.
@@ -60,13 +64,13 @@ This plugin adds Quartz job scheduling features to Grails application.
 
     def artefacts = [new JobArtefactHandler()]
 
-    def doWithSpring = {
+    def doWithSpring = { context ->
 
         def config = loadQuartzConfig()
 
-        application.jobClasses.each {jobClass ->
+        application.jobClasses.each { jobClass ->
             configureJobBeans.delegate = delegate
-            configureJobBeans(jobClass, manager?.hasGrailsPlugin("hibernate"))
+            configureJobBeans(jobClass, manager.hasGrailsPlugin("hibernate"))
         }
 
         if (manager?.hasGrailsPlugin("hibernate")) {
@@ -95,10 +99,13 @@ This plugin adds Quartz job scheduling features to Grails application.
             exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory
             if (manager?.hasGrailsPlugin("hibernate")) {
-                jobListeners = [ref("${SessionBinderJobListener.NAME}")]
+                globalJobListeners = [ref("${SessionBinderJobListener.NAME}")]
+            }  else {
+                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}"),ref("${SessionBinderJobListener.NAME}")]
             }
-            globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
+
         }
+
     }
 
     def doWithDynamicMethods = {ctx ->
@@ -115,29 +122,58 @@ This plugin adds Quartz job scheduling features to Grails application.
                     r = -r;
                 }
                 return "GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7));
-
             }
 
             mc.'static'.schedule = { String cronExpression, Map params = null ->
-                Trigger trigger = new CronTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, cronExpression)
-                if (tc.getVolatility()) trigger.setVolatility(true)
+                Trigger trigger = newTrigger()
+                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                        .withPriority(6)
+                        .forJob(jobName,jobGroup)
+                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+                        .build();
+
+
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
+
             mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, new Date(), null, repeatCount, interval)
-                if (tc.getVolatility()) trigger.setVolatility(true)
+
+                Trigger trigger = newTrigger()
+                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                        .withPriority(6)
+                        .forJob(jobName,jobGroup)
+                        .withSchedule(simpleSchedule()
+                        .withIntervalInMilliseconds(interval)
+                        .repeatForever())
+                        .build();
+
+
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if (tc.getVolatility()) trigger.setVolatility(true)
+
+                Trigger trigger = newTrigger()
+                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                        .withPriority(6)
+                        .forJob(jobName,jobGroup)
+                        .startAt(scheduleDate)
+                        .build();
+
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.schedule = {Date scheduleDate, Map params ->
-                Trigger trigger = new SimpleTrigger(generateTriggerName(), Constants.DEFAULT_TRIGGERS_GROUP, jobName, jobGroup, scheduleDate, null, 0, 0)
-                if (tc.getVolatility()) trigger.setVolatility(true)
+
+                Trigger trigger = newTrigger()
+                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                        .withPriority(6)
+                        .forJob(jobName,jobGroup)
+                        .startAt(scheduleDate)
+                        .build();
+
+
+
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
             }
@@ -147,23 +183,21 @@ This plugin adds Quartz job scheduling features to Grails application.
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.triggerNow = { Map params = null ->
-                if (tc.getVolatility()) {
-                    quartzScheduler.triggerJobWithVolatileTrigger(jobName, jobGroup, params ? new JobDataMap(params) : null)
-                } else {
+
                     quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
-                }
+
             }
             mc.'static'.removeJob = {
                 quartzScheduler.deleteJob(jobName, jobGroup)
             }
 
-            mc.'static'.reschedule = {Trigger trigger ->
+            mc.'static'.reschedule = { Trigger trigger ->
                 trigger.jobName = jobName
                 trigger.jobGroup = jobGroup
                 quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
             }
 
-            mc.'static'.unschedule = {String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
+            mc.'static'.unschedule = { String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
                 quartzScheduler.unscheduleJob(triggerName, triggerGroup)
             }
         }
@@ -174,6 +208,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             scheduleJob.delegate = delegate
             scheduleJob(jobClass, applicationContext)
         }
+        log.debug("Scheduled Job Classes Count:"+application.jobClasses.size())
     }
 
     def onChange = {event ->
@@ -220,57 +255,72 @@ This plugin adds Quartz job scheduling features to Grails application.
         if (scheduler) {
             def fullName = jobClass.fullName
             // add job to scheduler, and associate triggers with it
+            if (ctx.getBean("${fullName}Detail")) {
             scheduler.addJob(ctx.getBean("${fullName}Detail"), true)
             jobClass.triggers.each {key, trigger ->
+                TriggerKey triggerKey = new TriggerKey(trigger.triggerAttributes.name,trigger.triggerAttributes.group)
                 log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                if (scheduler.getTrigger(trigger.triggerAttributes.name, trigger.triggerAttributes.group)) {
-                    scheduler.rescheduleJob(trigger.triggerAttributes.name, trigger.triggerAttributes.group, ctx.getBean("${key}Trigger"))
+                if (scheduler.getTrigger(triggerKey)) {
+                    scheduler.rescheduleJob(triggerKey, ctx.getBean("${key}Trigger"))
                 } else {
                     scheduler.scheduleJob(ctx.getBean("${key}Trigger"))
                 }
             }
             log.debug("Job ${jobClass.fullName} scheduled")
+            } else {
+                log.error("Error scheduling job, ${fullName}Detail not found in ApplicationContext!")
+            }
         } else {
             log.error("Failed to register job triggers: scheduler not found")
         }
     }
 
     def configureJobBeans = {GrailsJobClass jobClass, boolean hasHibernate = true ->
+
         def fullName = jobClass.fullName
 
-        "${fullName}Class"(MethodInvokingFactoryBean) {
-            targetObject = ref("grailsApplication", true)
-            targetMethod = "getArtefact"
-            arguments = [JobArtefactHandler.TYPE, jobClass.fullName]
-        }
+        try {
 
-        "${fullName}"(ref("${fullName}Class")) {bean ->
-            bean.factoryMethod = "newInstance"
-            bean.autowire = "byName"
-            bean.scope = "prototype"
-        }
 
-        "${fullName}Detail"(JobDetailFactoryBean) {
-            name = fullName
-            group = jobClass.group
-            concurrent = jobClass.concurrent
-            volatility = jobClass.volatility
-            durability = jobClass.durability
-            requestsRecovery = jobClass.requestsRecovery
-
-            if (hasHibernate && jobClass.sessionRequired) {
-                jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
+            "${fullName}Class"(MethodInvokingFactoryBean) {
+                targetObject = ref("grailsApplication", true)
+                targetMethod = "getArtefact"
+                arguments = [JobArtefactHandler.TYPE, jobClass.fullName]
             }
+
+            "${fullName}"(ref("${fullName}Class")) {bean ->
+                bean.factoryMethod = "newInstance"
+                bean.autowire = "byName"
+                bean.scope = "prototype"
+            }
+
+            "${fullName}Detail"(JobDetailFactoryBean) {
+                name = fullName
+                group = jobClass.group
+                concurrent = jobClass.concurrent
+                durability = jobClass.durability
+                requestsRecovery = jobClass.requestsRecovery
+
+                if (hasHibernate && jobClass.sessionRequired) {
+                    jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error declaring ${fullName}Detail bean in context",e)
         }
 
         // registering triggers
-        jobClass.triggers.each {name, trigger ->
-            "${name}Trigger"(trigger.clazz) {
-                jobDetail = ref("${fullName}Detail")
-                trigger.properties.findAll {it.key != 'clazz'}.each {
-                    delegate["${it.key}"] = it.value
+        try {
+            jobClass.triggers.each {name, trigger ->
+                "${name}Trigger"(trigger.clazz) {
+                    jobDetail = ref("${fullName}Detail")
+                    trigger.properties.findAll {it.key != 'clazz'}.each {
+                        delegate["${it.key}"] = it.value
+                    }
                 }
             }
+        } catch (Exception te) {
+            log.error("Error registering triggers",te)
         }
     }
 

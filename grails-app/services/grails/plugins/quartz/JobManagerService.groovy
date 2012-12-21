@@ -49,7 +49,7 @@ class JobManagerService {
      */
     def getJobs(String group) {
         quartzScheduler.getJobNames(group).collect { jobName ->
-            JobDescriptor.build(quartzScheduler.getJobDetail(jobName, jobGroup), quartzScheduler)
+            JobDescriptor.build(quartzScheduler.getJobDetail(jobName, group), quartzScheduler)
         }
     }
 

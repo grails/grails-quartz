@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/grails-quartz.iml" filepath="$PROJECT_DIR$/grails-quartz.iml" />
       <module fileurl="file://$PROJECT_DIR$/grails-quartz-grailsPlugins.iml" filepath="$PROJECT_DIR$/grails-quartz-grailsPlugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/grails-quartz-grailsPlugins.iml" filepath="$PROJECT_DIR$/grails-quartz-grailsPlugins.iml" />
     </modules>
   </component>
 </project>

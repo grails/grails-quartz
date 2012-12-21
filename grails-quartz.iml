@@ -48,7 +48,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="grails-1.3.7" level="application" />
     <orderEntry type="module-library">
       <library name="Grails User Library">
         <CLASSES>
@@ -71,9 +70,6 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/dom4j/dom4j/jars/dom4j-1.6.1.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/antlr/antlr/jars/antlr-2.7.6.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.hibernate/hibernate-core/jars/hibernate-core-3.6.10.Final.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-simple/jars/grails-datastore-simple-1.1.0.RELEASE.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-core/jars/grails-datastore-core-1.1.0.RELEASE.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-gorm/jars/grails-datastore-gorm-1.1.0.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.2.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework/spring-webmvc/jars/spring-webmvc-3.1.2.RELEASE.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.springframework/spring-web/jars/spring-web-3.1.2.RELEASE.jar!/" />
@@ -160,7 +156,6 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/nekohtml/nekohtml/jars/nekohtml-1.9.6.2.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/nekohtml/xercesMinimal/jars/xercesMinimal-1.9.6.2.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.maven.wagon/wagon-http-shared/jars/wagon-http-shared-1.0-beta-6.jar!/" />
-          <root url="file://$MODULE_DIR$/lib" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.eclipse.jdt.core.compiler/ecj/jars/ecj-3.7.2.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.tomcat.embed/tomcat-embed-logging-juli/jars/tomcat-embed-logging-juli-7.0.30.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.apache.tomcat/tomcat-catalina-ant/jars/tomcat-catalina-ant-7.0.30.jar!/" />
@@ -169,15 +164,18 @@
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.javassist/javassist/jars/javassist-3.16.1-GA.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/javax.validation/validation-api/jars/validation-api-1.0.0.GA.jar!/" />
           <root url="jar://$USER_HOME$/.grails/ivy-cache/org.hibernate/hibernate-validator/jars/hibernate-validator-4.1.0.Final.jar!/" />
-          <root url="jar://$USER_HOME$/.grails/ivy-cache/javassist/javassist/jars/javassist-3.12.0.GA.jar!/" />
+          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-simple/jars/grails-datastore-simple-1.1.2.RELEASE.jar!/" />
+          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-core/jars/grails-datastore-core-1.1.2.RELEASE.jar!/" />
+          <root url="jar://$USER_HOME$/.grails/ivy-cache/org.grails/grails-datastore-gorm/jars/grails-datastore-gorm-1.1.2.RELEASE.jar!/" />
+          <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="grails-2.1.1" level="application" />
     <orderEntry type="module" module-name="grails-quartz-grailsPlugins" />
+    <orderEntry type="library" name="grails-2.1.3" level="application" />
   </component>
 </module>
 

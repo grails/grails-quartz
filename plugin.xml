@@ -1,6 +1,6 @@
-<plugin name='quartz' version='1.0-RC2' grailsVersion='2.1.3 &gt; *'>
-  <author>Sergey Nebolsin, Graeme Rocher</author>
-  <authorEmail>nebolsin@gmail.com</authorEmail>
+<plugin name='quartz' version='1.0-RC3' grailsVersion='1.2 &gt; *'>
+  <author>Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf</author>
+  <authorEmail>rvanderwerf@gmail.com</authorEmail>
   <title>Quartz plugin for Grails</title>
   <description>This plugin adds Quartz job scheduling features to Grails application.
 </description>
@@ -13,27 +13,18 @@
   </resources>
   <repositories>
     <repository name='grailsCentral' url='http://grails.org/plugins' />
-    <repository name='http://repo.grails.org/grails/core' url='http://repo.grails.org/grails/core/' />
     <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
-    <repository name='http://www.terracotta.org/download/reflector/maven2' url='http://www.terracotta.org/download/reflector/maven2/' />
   </repositories>
   <dependencies>
+    <compile>
+      <dependency group='org.hibernate' name='hibernate-core' version='3.6.10.Final' />
+      <dependency group='org.quartz-scheduler' name='quartz' version='2.1.5' />
+    </compile>
     <runtime>
-      <dependency group='org.terracotta.quartz' name='quartz-terracotta' version='2.3.0' />
-      <dependency group='net.sf.ehcache' name='ehcache-core' version='2.6.0' />
-      <dependency group='net.sf.ehcache' name='ehcache-terracotta' version='2.6.0' />
+      <dependency group='hsqldb' name='hsqldb' version='1.8.0.10' />
     </runtime>
   </dependencies>
-  <plugins>
-    <runtime>
-      <plugin group='org.grails.plugins' name='hibernate' version='2.1.3' />
-      <plugin group='org.grails.plugins' name='jquery' version='1.7.1' />
-      <plugin group='org.grails.plugins' name='resources' version='1.1.6' />
-    </runtime>
-    <build>
-      <plugin group='org.grails.plugins' name='tomcat' version='2.1.3' />
-    </build>
-  </plugins>
+  <plugins />
   <runtimePluginRequirements />
   <behavior />
 </plugin>

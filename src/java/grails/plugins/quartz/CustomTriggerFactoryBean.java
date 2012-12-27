@@ -50,40 +50,80 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
     private Map triggerAttributes;
 
     public void afterPropertiesSet() throws ParseException {
-        Trigger customTriggerUser;
+
 
 
         if (triggerAttributes.containsKey(GrailsJobClassConstants.START_DELAY)) {
             Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassConstants.START_DELAY);
 
             if (jobDetail == null) {
-                customTrigger = newTrigger()
-                        .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
-                        .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
-                        .forJob((String)triggerAttributes.get("name"))
-                        .build();
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob((String)triggerAttributes.get("name"))
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+
+                } else {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob((String)triggerAttributes.get("name"))
+                            .build();
+                }
+
             } else {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob(jobDetail)
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+                }  else {
                 customTrigger = newTrigger()
                         .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                         .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
                         .forJob(jobDetail)
                         .build();
+                }
             }
 
         } else {
             if (jobDetail != null) {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob(jobDetail)
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+                } else {
 
                 customTrigger = newTrigger()
                         .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                         .startAt(new Date(System.currentTimeMillis()))
                         .forJob(jobDetail)
                         .build();
+                }
             } else {
-                customTrigger = newTrigger()
-                        .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
-                        .startAt(new Date(System.currentTimeMillis()))
-                        .forJob((String)triggerAttributes.get("name").toString())
-                        .build();
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob((String)triggerAttributes.get("name").toString())
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+
+                } else {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob((String)triggerAttributes.get("name").toString())
+                            .build();
+                }
+
             }
         }
 

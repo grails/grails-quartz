@@ -1,4 +1,4 @@
-<plugin name='quartz' version='1.0-RC3' grailsVersion='1.2 &gt; *'>
+<plugin name='quartz' version='1.0-RC4' grailsVersion='1.2 &gt; *'>
   <author>Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf</author>
   <authorEmail>rvanderwerf@gmail.com</authorEmail>
   <title>Quartz plugin for Grails</title>

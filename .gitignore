@@ -1,5 +1,16 @@
-.idea/workspace.xml
-stacktrace.log
+# JetBrains IntelliJ IDEA files
+.idea
+*.iml
+
+# Log files
+*.log
+
+# Libraries and others
+*.jar
+*.zip
+
+#unused directories
 web-app
-grails-quartz-*.zip
 target
+
+

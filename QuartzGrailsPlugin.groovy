@@ -99,11 +99,10 @@ This plugin adds Quartz job scheduling features to Grails application.
             exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory
             if (manager?.hasGrailsPlugin("hibernate")) {
-                globalJobListeners = [ref("${SessionBinderJobListener.NAME}")]
+                globalJobListeners = [ref("${SessionBinderJobListener.NAME}"), ref("${ExceptionPrinterJobListener.NAME}")]
             }  else {
-                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}"),ref("${SessionBinderJobListener.NAME}")]
+                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
             }
-
         }
 
     }

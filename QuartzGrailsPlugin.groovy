@@ -99,11 +99,10 @@ This plugin adds Quartz job scheduling features to Grails application.
             exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory
             if (manager?.hasGrailsPlugin("hibernate")) {
-                globalJobListeners = [ref("${SessionBinderJobListener.NAME}")]
+                globalJobListeners = [ref("${SessionBinderJobListener.NAME}"), ref("${ExceptionPrinterJobListener.NAME}")]
             }  else {
-                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}"),ref("${SessionBinderJobListener.NAME}")]
+                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
             }
-
         }
 
     }
@@ -183,22 +182,20 @@ This plugin adds Quartz job scheduling features to Grails application.
                 quartzScheduler.scheduleJob(trigger)
             }
             mc.'static'.triggerNow = { Map params = null ->
-
-                    quartzScheduler.triggerJob(jobName, jobGroup, params ? new JobDataMap(params) : null)
-
+                quartzScheduler.triggerJob(new JobKey(jobName, jobGroup), params ? new JobDataMap(params) : null)
             }
             mc.'static'.removeJob = {
-                quartzScheduler.deleteJob(jobName, jobGroup)
+                quartzScheduler.deleteJob(new JobKey(jobName, jobGroup))
             }
 
             mc.'static'.reschedule = { Trigger trigger ->
                 trigger.jobName = jobName
                 trigger.jobGroup = jobGroup
-                quartzScheduler.rescheduleJob(trigger.name, trigger.group, trigger)
+                quartzScheduler.rescheduleJob(trigger.getKey(), trigger)
             }
 
             mc.'static'.unschedule = { String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
-                quartzScheduler.unscheduleJob(triggerName, triggerGroup)
+                quartzScheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
             }
         }
     }

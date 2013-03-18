@@ -40,7 +40,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-RC5"
+    def version = "1.0-RC6"
     def grailsVersion = "1.2 > *"
 
     def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"

@@ -57,6 +57,8 @@ There are also two parameters for configuring store/clustering on jobs ( volatil
 
 Read Quartz documentation for more information on clustering and job stores as well as volatility and durability.
 
+Now that the plugin supports Quartz 2.1.x, you can now use current versions of open source Terracotta see https://github.com/rvanderwerf/terracotta-grails-demo for an example app.
+
 h4. Recovering
 
 Since 0.4.2 recovering from 'recovery' or 'fail-over' situation is supported with requestsRecovery job-level flag ( false by default).

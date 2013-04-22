@@ -16,13 +16,21 @@
 
 package grails.plugins.quartz;
 
+import org.quartz.CalendarIntervalTrigger;
+import org.quartz.DateBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
+import org.quartz.impl.JobDetailImpl;
+import org.quartz.impl.triggers.CalendarIntervalTriggerImpl;
+import org.quartz.impl.triggers.CoreTrigger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import static org.quartz.DateBuilder.*;
+import static org.quartz.TriggerBuilder.*;
+import static org.quartz.CronScheduleBuilder.*;
 
 import java.beans.PropertyEditorSupport;
 import java.text.ParseException;
@@ -37,22 +45,89 @@ import java.util.Map;
 public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
     private Class<Trigger> triggerClass;
     private Trigger customTrigger;
-    private JobDetail jobDetail;
+    private JobDetailImpl jobDetail;
 
     private Map triggerAttributes;
 
     public void afterPropertiesSet() throws ParseException {
-        customTrigger = BeanUtils.instantiateClass(triggerClass);
+
+
 
         if (triggerAttributes.containsKey(GrailsJobClassConstants.START_DELAY)) {
             Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassConstants.START_DELAY);
-            customTrigger.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
+
+            if (jobDetail == null) {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob((String)triggerAttributes.get("name"))
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+
+                } else {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob((String)triggerAttributes.get("name"))
+                            .build();
+                }
+
+            } else {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                            .forJob(jobDetail)
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+                }  else {
+                customTrigger = newTrigger()
+                        .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                        .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
+                        .forJob(jobDetail)
+                        .build();
+                }
+            }
+
+        } else {
+            if (jobDetail != null) {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob(jobDetail)
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+                } else {
+
+                customTrigger = newTrigger()
+                        .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                        .startAt(new Date(System.currentTimeMillis()))
+                        .forJob(jobDetail)
+                        .build();
+                }
+            } else {
+                if (triggerAttributes.containsKey(GrailsJobClassConstants.CRON_EXPRESSION)) {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob((String)triggerAttributes.get("name").toString())
+                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .build();
+
+                } else {
+                    customTrigger = newTrigger()
+                            .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
+                            .startAt(new Date(System.currentTimeMillis()))
+                            .forJob((String)triggerAttributes.get("name").toString())
+                            .build();
+                }
+
+            }
         }
 
-        if (jobDetail != null) {
-            customTrigger.setJobName(jobDetail.getName());
-            customTrigger.setJobGroup(jobDetail.getGroup());
-        }
+
 
         BeanWrapper customTriggerWrapper = PropertyAccessorFactory.forBeanPropertyAccess(customTrigger);
         customTriggerWrapper.registerCustomEditor(String.class, new StringEditor());
@@ -86,7 +161,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
         return true;
     }
 
-    public void setJobDetail(JobDetail jobDetail) {
+    public void setJobDetail(JobDetailImpl jobDetail) {
         this.jobDetail = jobDetail;
     }
 

@@ -1,4 +1,4 @@
-<plugin name='quartz' version='1.0-RC4' grailsVersion='1.2 &gt; *'>
+<plugin name='quartz' version='1.0-RC6' grailsVersion='1.2 &gt; *'>
   <author>Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf</author>
   <authorEmail>rvanderwerf@gmail.com</authorEmail>
   <title>Quartz plugin for Grails</title>
@@ -30,8 +30,8 @@
   </repositories>
   <dependencies>
     <compile>
-      <dependency group='org.hibernate' name='hibernate-core' version='3.6.10.Final' />
       <dependency group='org.quartz-scheduler' name='quartz' version='2.1.5' />
+      <dependency group='org.hibernate' name='hibernate-core' version='3.6.10.Final' />
     </compile>
     <runtime>
       <dependency group='hsqldb' name='hsqldb' version='1.8.0.10' />

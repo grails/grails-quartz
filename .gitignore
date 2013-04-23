@@ -12,5 +12,8 @@
 #unused directories
 web-app
 target
-
-
+.classpath
+.project
+.settings
+.target-eclipse/**
+target-eclipse

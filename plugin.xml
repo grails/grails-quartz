@@ -14,6 +14,19 @@
   <repositories>
     <repository name='grailsCentral' url='http://grails.org/plugins' />
     <repository name='mavenCentral' url='http://repo1.maven.org/maven2/' />
+    <repository name='http://coco-php:8080/artifactory/remote-repos' url='http://coco-php:8080/artifactory/remote-repos/' />
+    <repository name='http://coco-php:8080/artifactory/libs-release' url='http://coco-php:8080/artifactory/libs-release/' />
+    <repository name='http://coco-php:8080/artifactory/libs-snapshot' url='http://coco-php:8080/artifactory/libs-snapshot/' />
+    <repository name='http://coco-php:8080/artifactory/plugins-release' url='http://coco-php:8080/artifactory/plugins-release/' />
+    <repository name='http://coco-php:8080/artifactory/plugins-snapshot' url='http://coco-php:8080/artifactory/plugins-snapshot/' />
+    <repository name='http://coco-php:8080/artifactory/plugins-release-local' url='http://coco-php:8080/artifactory/plugins-release-local/' />
+    <repository name='http://coco-php:8080/artifactory/plugins-snapshot-local' url='http://coco-php:8080/artifactory/plugins-snapshot-local/' />
+    <repository name='Grails Snapshots' url='http://snapshots.repository.codehaus.org/' />
+    <repository name='Spring Milestone' url='http://maven.springframework.org/milestone/' />
+    <repository name='ebrRelease' url='http://repository.springsource.com/maven/bundles/release/' />
+    <repository name='ebrExternal' url='http://repository.springsource.com/maven/bundles/external/' />
+    <repository name='http://download.java.net/maven/2/' url='http://download.java.net/maven/2/' />
+    <repository name='http://grails.org/plugins' url='http://grails.org/plugins' />
   </repositories>
   <dependencies>
     <compile>
@@ -24,7 +37,42 @@
       <dependency group='hsqldb' name='hsqldb' version='1.8.0.10' />
     </runtime>
   </dependencies>
-  <plugins />
+  <plugins>
+    <compile>
+      <plugin group='org.grails.plugins' name='jquery-validation-ui' version='1.2.2' />
+      <plugin group='org.grails.plugins' name='spring-security-acl' version='1.1.1' />
+      <plugin group='org.grails.plugins' name='rest' version='0.7' />
+      <plugin group='org.grails.plugins' name='cache-headers' version='1.1.5' />
+      <plugin group='org.grails.plugins' name='mail' version='1.0.1' />
+      <plugin group='org.grails.plugins' name='famfamfam' version='1.0.1' />
+      <plugin group='org.grails.plugins' name='smart-static' version='0.6' />
+      <plugin group='org.grails.plugins' name='mail' version='1.0.1' />
+      <plugin group='org.grails.plugins' name='spring-security-ui' version='0.2-vista' />
+      <plugin group='org.grails.plugins' name='recaptcha' version='0.5.3' />
+      <plugin group='org.grails.plugins' name='webflow' version='2.0.0' />
+      <plugin group='org.grails.plugins' name='console' version='1.2' />
+      <plugin group='org.grails.plugins' name='jquery-ui' version='1.8.15' />
+      <plugin group='org.grails.plugins' name='jquery-validation' version='1.7.3-vista' />
+      <plugin group='org.grails.plugins' name='wurfl' version='0.2' />
+      <plugin group='org.grails.plugins' name='browser-detection' version='0.4.2' />
+      <plugin group='org.grails.plugins' name='qrcode' version='0.5' />
+      <plugin group='org.grails.plugins' name='font-awesome-resources' version='3.0-likella' />
+      <plugin group='org.grails.plugins' name='constraints' version='0.8.0' />
+      <plugin group='org.grails.plugins' name='session-temp-files' version='1.0' />
+    </compile>
+    <runtime>
+      <plugin group='org.grails.plugins' name='jquery' version='1.7.1' />
+      <plugin group='org.grails.plugins' name='cached-resources' version='1.2' />
+      <plugin group='org.grails.plugins' name='zipped-resources' version='1.0' />
+      <plugin group='org.grails.plugins' name='yui-minify-resources' version='0.1.5' />
+      <plugin group='org.grails.plugins' name='resources' version='1.2.RC2' />
+    </runtime>
+    <build>
+      <plugin group='org.grails.plugins' name='tomcat' version='2.2.1' />
+      <plugin group='org.grails.plugins' name='release' version='2.2.0' />
+      <plugin group='org.grails.plugins' name='tomcat' version='2.2.1' />
+    </build>
+  </plugins>
   <runtimePluginRequirements />
   <behavior />
 </plugin>

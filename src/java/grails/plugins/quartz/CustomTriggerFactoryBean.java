@@ -20,6 +20,8 @@ import org.quartz.CalendarIntervalTrigger;
 import org.quartz.DateBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
+import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.CalendarIntervalTriggerImpl;
 import org.quartz.impl.triggers.CoreTrigger;
@@ -62,7 +64,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
                             .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                             .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
                             .forJob((String)triggerAttributes.get("name"))
-                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .withSchedule(buildCronSchedule())
                             .build();
 
                 } else {
@@ -79,7 +81,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
                             .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                             .startAt(new Date(System.currentTimeMillis() + startDelay.longValue()))
                             .forJob(jobDetail)
-                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .withSchedule(buildCronSchedule())
                             .build();
                 }  else {
                 customTrigger = newTrigger()
@@ -97,7 +99,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
                             .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                             .startAt(new Date(System.currentTimeMillis()))
                             .forJob(jobDetail)
-                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .withSchedule(buildCronSchedule())
                             .build();
                 } else {
 
@@ -113,7 +115,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
                             .withIdentity((String)triggerAttributes.get("name"),(String)triggerAttributes.get("group"))
                             .startAt(new Date(System.currentTimeMillis()))
                             .forJob((String)triggerAttributes.get("name").toString())
-                            .withSchedule(cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION)))
+                            .withSchedule(buildCronSchedule())
                             .build();
 
                 } else {
@@ -132,6 +134,18 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
         BeanWrapper customTriggerWrapper = PropertyAccessorFactory.forBeanPropertyAccess(customTrigger);
         customTriggerWrapper.registerCustomEditor(String.class, new StringEditor());
         customTriggerWrapper.setPropertyValues(triggerAttributes);
+    }
+
+    /**
+     * Allow the cronExpression to be passed as either a string or instance of CronExpression
+     *
+     * @return an instance of CronScheduleBuilder
+     */
+    private CronScheduleBuilder buildCronSchedule() {
+        if (triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION) instanceof CronExpression) {
+            return cronSchedule((CronExpression)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION));
+        }
+        return cronSchedule((String)triggerAttributes.get(GrailsJobClassConstants.CRON_EXPRESSION));
     }
 
     /**

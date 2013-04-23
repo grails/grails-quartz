@@ -63,6 +63,8 @@ This plugin adds Quartz job scheduling features to Grails application.
     ]
 
     def artefacts = [new JobArtefactHandler()]
+	
+	private def random = new Random()
 
     def doWithSpring = { context ->
 
@@ -106,24 +108,21 @@ This plugin adds Quartz job scheduling features to Grails application.
         }
 
     }
-
-    def doWithDynamicMethods = {ctx ->
-        def random = new Random()
-        Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
-        application.jobClasses.each {GrailsJobClass tc ->
-            def mc = tc.metaClass
-            def jobName = tc.getFullName()
-            def jobGroup = tc.getGroup()
-
-            def generateTriggerName = {->
-                long r = random.nextLong()
-                if (r < 0) {
-                    r = -r;
-                }
-                return "GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7));
-            }
-
-            mc.'static'.schedule = { String cronExpression, Map params = null ->
+	
+	private def generateTriggerName(){
+		long r = random.nextLong()
+		if (r < 0) {
+			r = -r
+		}
+		"GRAILS_" + Long.toString(r, 30 + (int) (System.currentTimeMillis() % 7))
+	}
+	
+	private void addMethods(tc , ctx) {
+		Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
+		def mc = tc.metaClass
+		def jobName = tc.getFullName()
+		def jobGroup = tc.getGroup()		
+		mc.'static'.schedule = { String cronExpression, Map params = null ->
                 Trigger trigger = newTrigger()
                         .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
                         .withPriority(6)
@@ -134,69 +133,74 @@ This plugin adds Quartz job scheduling features to Grails application.
 
                 if (params) trigger.jobDataMap.putAll(params)
                 quartzScheduler.scheduleJob(trigger)
-            }
+        }
+        mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
 
-            mc.'static'.schedule = {Long interval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-
-                Trigger trigger = newTrigger()
-                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
-                        .withPriority(6)
-                        .forJob(jobName,jobGroup)
-                        .withSchedule(simpleSchedule()
-                        .withIntervalInMilliseconds(interval)
-                        .repeatForever())
-                        .build();
-
-
-                if (params) trigger.jobDataMap.putAll(params)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Date scheduleDate ->
-
-                Trigger trigger = newTrigger()
-                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
-                        .withPriority(6)
-                        .forJob(jobName,jobGroup)
-                        .startAt(scheduleDate)
-                        .build();
-
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Date scheduleDate, Map params ->
-
-                Trigger trigger = newTrigger()
-                        .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
-                        .withPriority(6)
-                        .forJob(jobName,jobGroup)
-                        .startAt(scheduleDate)
-                        .build();
+            Trigger trigger = newTrigger()
+                    .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                    .withPriority(6)
+                    .forJob(jobName,jobGroup)
+                    .withSchedule(simpleSchedule()
+                    .withIntervalInMilliseconds(interval)
+                    .repeatForever())
+                    .build();
 
 
+            if (params) trigger.jobDataMap.putAll(params)
+            quartzScheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Date scheduleDate ->
 
-                if (params) trigger.jobDataMap.putAll(params)
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.schedule = {Trigger trigger ->
-                trigger.jobName = jobName
-                trigger.jobGroup = jobGroup
-                quartzScheduler.scheduleJob(trigger)
-            }
-            mc.'static'.triggerNow = { Map params = null ->
-                quartzScheduler.triggerJob(new JobKey(jobName, jobGroup), params ? new JobDataMap(params) : null)
-            }
-            mc.'static'.removeJob = {
-                quartzScheduler.deleteJob(new JobKey(jobName, jobGroup))
-            }
+            Trigger trigger = newTrigger()
+                    .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                    .withPriority(6)
+                    .forJob(jobName,jobGroup)
+                    .startAt(scheduleDate)
+                    .build();
 
-            mc.'static'.reschedule = { Trigger trigger ->
-                trigger.jobName = jobName
-                trigger.jobGroup = jobGroup
-                quartzScheduler.rescheduleJob(trigger.getKey(), trigger)
-            }
+            quartzScheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Date scheduleDate, Map params ->
 
-            mc.'static'.unschedule = { String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
-                quartzScheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
-            }
+            Trigger trigger = newTrigger()
+                    .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
+                    .withPriority(6)
+                    .forJob(jobName,jobGroup)
+                    .startAt(scheduleDate)
+                    .build();
+
+
+
+            if (params) trigger.jobDataMap.putAll(params)
+            quartzScheduler.scheduleJob(trigger)
+        }
+        mc.'static'.schedule = {Trigger trigger ->
+            trigger.jobName = jobName
+            trigger.jobGroup = jobGroup
+            quartzScheduler.scheduleJob(trigger)
+        }
+        mc.'static'.triggerNow = { Map params = null ->
+            quartzScheduler.triggerJob(new JobKey(jobName, jobGroup), params ? new JobDataMap(params) : null)
+        }
+        mc.'static'.removeJob = {
+            quartzScheduler.deleteJob(new JobKey(jobName, jobGroup))
+        }
+
+        mc.'static'.reschedule = { Trigger trigger ->
+            trigger.jobName = jobName
+            trigger.jobGroup = jobGroup
+            quartzScheduler.rescheduleJob(trigger.getKey(), trigger)
+        }
+
+        mc.'static'.unschedule = { String triggerName, String triggerGroup = Constants.DEFAULT_TRIGGERS_GROUP ->
+            quartzScheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
+        }
+		
+	}
+
+    def doWithDynamicMethods = {ctx ->        
+        application.jobClasses.each {GrailsJobClass tc ->            
+			addMethods(tc , ctx)
         }
     }
 
@@ -213,10 +217,16 @@ This plugin adds Quartz job scheduling features to Grails application.
             log.debug("Job ${event.source} changed. Reloading...")
             def context = event.ctx
             def scheduler = context?.getBean("quartzScheduler")
+			
+			def jobClass = application.getJobClass(event.source?.name)
+			
+			if(context && jobClass){
+				addMethods(jobClass , context)
+			}
+			
             // get quartz scheduler
             if (context && scheduler) {
-                // if job already exists, delete it from scheduler
-                def jobClass = application.getJobClass(event.source?.name)
+                // if job already exists, delete it from scheduler                
                 if (jobClass) {
 					def jobKey = new org.quartz.JobKey(jobClass.fullName, jobClass.group) 
                     scheduler.deleteJob(jobKey)

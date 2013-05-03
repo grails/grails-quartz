@@ -17,3 +17,6 @@ target
 .settings
 .target-eclipse/**
 target-eclipse
+
+# Unused grails files
+grails-app/i18n/

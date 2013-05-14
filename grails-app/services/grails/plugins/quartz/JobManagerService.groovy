@@ -19,6 +19,8 @@ package grails.plugins.quartz
 import org.quartz.Scheduler
 
 /**
+ * TODO: Use JobKey
+ *
  * JobManagerService simplifies interaction with the Quartz Scheduler from Grails application. 
  *
  * @author Marco Mornati (mmornati@byte-code.com)

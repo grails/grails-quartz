@@ -35,6 +35,7 @@ class JobDescriptor {
 
     static build(JobDetail jobDetail, Scheduler scheduler) {
         def job = new JobDescriptor(jobDetail: jobDetail)
+        // TODO: Change to JobKey
         job.triggerDescriptors = scheduler.getTriggersOfJob(job.name, job.group).collect { Trigger trigger ->
             TriggerDescriptor.build(job, trigger, scheduler)
         }

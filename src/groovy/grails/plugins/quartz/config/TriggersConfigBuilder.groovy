@@ -109,6 +109,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
         new Expando(clazz: CustomTriggerFactoryBean, triggerClass: triggerClass, triggerAttributes: triggerAttributes)
     }
 
+    // TODO: Change HashMap to Map
     private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
         if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
         if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP.toString()
@@ -122,6 +123,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     }
 
+    // TODO: Change HashMap to Map
     private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
         if (triggerAttributes[Constants.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")

@@ -35,18 +35,17 @@ class JobDescriptor {
 
     static build(JobDetail jobDetail, Scheduler scheduler) {
         def job = new JobDescriptor(jobDetail: jobDetail)
-        // TODO: Change to JobKey
-        job.triggerDescriptors = scheduler.getTriggersOfJob(job.name, job.group).collect { Trigger trigger ->
+        job.triggerDescriptors = scheduler.getTriggersOfJob(jobDetail.key).collect { Trigger trigger ->
             TriggerDescriptor.build(job, trigger, scheduler)
         }
-        job
+        return job
     }
 
     String getName() {
-        jobDetail.name
+        jobDetail.key.name
     }
 
     String getGroup() {
-        jobDetail.group
+        jobDetail.key.group
     }
 }

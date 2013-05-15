@@ -16,7 +16,9 @@
 
 package grails.plugins.quartz
 
+import org.quartz.JobKey
 import org.quartz.Scheduler
+import org.quartz.impl.matchers.GroupMatcher
 
 /**
  * TODO: Use JobKey
@@ -40,7 +42,7 @@ class JobManagerService {
      * @return Map <String , List<JobDescriptor>> with job group names as keys
      */
     def getAllJobs() {
-        quartzScheduler.jobGroupNames.inject([:]) { acc, group -> acc[group] = getJobs(group) }
+        quartzScheduler.jobGroupNames.collectEntries([:]) { group -> [(group):getJobs(group)]}
     }
 
     /**
@@ -49,10 +51,15 @@ class JobManagerService {
      * @param group — the jobs group name
      * @return a list of corresponding JobDescriptor objects
      */
-    def getJobs(String group) {
-        quartzScheduler.getJobNames(group).collect { jobName ->
-            JobDescriptor.build(quartzScheduler.getJobDetail(jobName, group), quartzScheduler)
+    List<JobDescriptor> getJobs(String group) {
+        List<JobDescriptor> list = new ArrayList<JobDescriptor>()
+        quartzScheduler.getJobKeys(GroupMatcher.groupEquals(group)).each { jobKey ->
+            def jobDetail = quartzScheduler.getJobDetail(jobKey)
+            if(jobDetail!=null){
+                list.add(JobDescriptor.build(jobDetail, quartzScheduler))
+            }
         }
+        return list
     }
 
     /**

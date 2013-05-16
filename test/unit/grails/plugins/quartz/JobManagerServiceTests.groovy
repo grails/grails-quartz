@@ -29,7 +29,10 @@ class JobManagerServiceTests {
         JobDetail job1 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job1", "group1")).build()
         JobDetail job2 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job2", "group1")).build()
         JobDetail job3 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job1", "group2")).build()
-        JobDetail job4 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job2", "group2")).storeDurably().build()
+        JobDetail job4 = JobBuilder.newJob(SimpleJob.class)
+                .withIdentity(new JobKey("job2", "group2"))
+                .storeDurably()
+                .build()
 
         Trigger trigger1 = TriggerBuilder.newTrigger()
                 .withIdentity(new TriggerKey("trigger1", "tgroup1"))
@@ -77,13 +80,22 @@ class JobManagerServiceTests {
         assert jobs.size() == 2
 
         assert jobs.containsKey("group1")
-        assert jobs['group1'].size() == 1
-        assert jobs['group1'][0].name == 'job2'
+        //assert jobs['group1'].size() == 1
+        assert jobs['group1']*.name.contains('job2')
 
         assert jobs.containsKey("group2")
         assert jobs['group2'].size() == 2
         assert jobs['group2']*.name.contains('job1')
         assert jobs['group2']*.name.contains('job2')
+    }
+
+    @Test
+    public void testGetJobs(){
+        assert service.getJobs('group1')*.name.contains('job2')
+
+        def names = service.getJobs('group2')*.name
+        assert names.contains('job1')
+        assert names.contains('job2')
     }
 }
 

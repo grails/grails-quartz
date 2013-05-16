@@ -97,6 +97,11 @@ class JobManagerServiceTests {
         assert names.contains('job1')
         assert names.contains('job2')
     }
+
+    @Test
+    public void testGetRunningJobs(){
+        service.getRunningJobs()
+    }
 }
 
 /**

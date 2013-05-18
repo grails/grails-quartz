@@ -109,8 +109,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
         new Expando(clazz: CustomTriggerFactoryBean, triggerClass: triggerClass, triggerAttributes: triggerAttributes)
     }
 
-    // TODO: Change HashMap to Map
-    private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
+    private prepareCommonTriggerAttributes(Map triggerAttributes) {
         if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
         if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP.toString()
         if (triggerAttributes[Constants.START_DELAY] == null) triggerAttributes[Constants.START_DELAY] = Constants.DEFAULT_START_DELAY
@@ -123,8 +122,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     }
 
-    // TODO: Change HashMap to Map
-    private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
+    private def prepareSimpleTriggerAttributes(Map triggerAttributes) {
         if (triggerAttributes[Constants.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
 
@@ -152,7 +150,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
         }
     }
 
-    private def prepareCronTriggerAttributes(HashMap triggerAttributes) {
+    private def prepareCronTriggerAttributes(Map triggerAttributes) {
         if (!triggerAttributes?.cronExpression) triggerAttributes[Constants.CRON_EXPRESSION] = Constants.DEFAULT_CRON_EXPRESSION
         if (!CronExpression.isValidExpression(triggerAttributes[Constants.CRON_EXPRESSION].toString())) {
             throw new IllegalArgumentException("Cron expression '${triggerAttributes[Constants.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");

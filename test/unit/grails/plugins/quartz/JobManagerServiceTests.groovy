@@ -147,6 +147,12 @@ class JobManagerServiceTests {
     public void testInterruptJob(){
         service.interruptJob('group1', 'job2')
     }
+
+    @Test
+    public void testPauseAndResumeAll(){
+        service.pauseAll()
+        service.resumeAll()
+    }
 }
 
 /**

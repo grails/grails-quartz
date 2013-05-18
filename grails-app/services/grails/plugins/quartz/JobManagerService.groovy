@@ -102,6 +102,14 @@ class JobManagerService {
         quartzScheduler.resumeJobs(GroupMatcher.groupEquals(group))
     }
 
+    def pauseAll(){
+        quartzScheduler.pauseAll()
+    }
+
+    def resumeAll(){
+        quartzScheduler.resumeAll()
+    }
+
     def removeJob(String group, String name) {
         quartzScheduler.deleteJob(new JobKey(name, group))
     }

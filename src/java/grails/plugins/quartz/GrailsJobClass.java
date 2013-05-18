@@ -41,6 +41,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return timeout between job executions (repeat interval) in milliseconds
      */
+    @Deprecated
     public long getTimeout();
 
     /**
@@ -48,6 +49,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return delay between job's registering and first execution in milliseconds
      */
+    @Deprecated
     public long getStartDelay();
 
     /**
@@ -55,6 +57,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return maximum job's executions count
      */
+    @Deprecated
     public int getRepeatCount();
 
     /**
@@ -62,6 +65,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return cron expression configured for this job
      */
+    @Deprecated
     public String getCronExpression();
 
     /**
@@ -69,6 +73,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return jobs group name for this job
      */
+    @Deprecated
     public String getGroup();
 
     /**
@@ -76,6 +81,7 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return true, if cron expression is configured for this job, false overwise
      */
+    @Deprecated
     public boolean isCronExpressionConfigured();
 
     /**
@@ -97,14 +103,14 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      *
      * @return true if this job is durable
      */
-    public boolean getDurability();
+    public boolean isDurability();
 
     /**
      * If job should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.
      *
      * @return true if this job requests recovery
      */
-    public boolean getRequestsRecovery();
+    public boolean isRequestsRecovery();
 
     public Map getTriggers();
 }

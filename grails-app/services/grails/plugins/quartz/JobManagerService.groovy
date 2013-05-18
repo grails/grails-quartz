@@ -109,7 +109,7 @@ class JobManagerService {
     }
 
     def unscheduleJob(String group, String name) {
-        quartzScheduler.unscheduleJob(name, group)
+        quartzScheduler.unscheduleJobs(quartzScheduler.getTriggersOfJob(new JobKey(name, group))*.key)
     }
 
     def interruptJob(String group, String name) {

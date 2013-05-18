@@ -20,7 +20,7 @@ class JobManagerServiceTests {
      * Create the quartz scheduler and prepare a few jobs and triggers.
      */
     @Before
-    public void createScheduler(){
+    public void createScheduler() {
         scheduler = StdSchedulerFactory.getDefaultScheduler()
 
         scheduler.start()
@@ -58,7 +58,7 @@ class JobManagerServiceTests {
 
         scheduler.scheduleJob(job1, trigger1)
         scheduler.scheduleJob(job2, trigger2)
-        scheduler.scheduleJobs([(job3):[trigger3, trigger4]], false)
+        scheduler.scheduleJobs([(job3): [trigger3, trigger4]], false)
         scheduler.addJob(job4, false)
     }
 
@@ -66,12 +66,12 @@ class JobManagerServiceTests {
      * Shutdown the scheduler
      */
     @After
-    public void shutdownScheduler(){
+    public void shutdownScheduler() {
         scheduler.shutdown()
     }
 
     @Test
-    public void testGetAllJobs(){
+    public void testGetAllJobs() {
         Map<String, ? extends List<? extends JobDescriptor>> jobs = service.getAllJobs()
 
         assertNotNull(jobs)
@@ -90,7 +90,7 @@ class JobManagerServiceTests {
     }
 
     @Test
-    public void testGetJobs(){
+    public void testGetJobs() {
         assert service.getJobs('group1')*.name.contains('job2')
 
         def names = service.getJobs('group2')*.name
@@ -99,39 +99,48 @@ class JobManagerServiceTests {
     }
 
     @Test
-    public void testGetRunningJobs(){
+    public void testGetRunningJobs() {
         service.getRunningJobs()
     }
 
     @Test
-    public void testPauseAndResumeJob(){
+    public void testPauseAndResumeJob() {
         service.pauseJob('group1', 'job2')
         service.resumeJob('group1', 'job2')
     }
 
     @Test
-    public void PauseAndResumeTrigger(){
+    public void PauseAndResumeTrigger() {
         service.pauseTrigger('tgroup1', 'trigger1')
         service.resumeTrigger('tgroup1', 'trigger1')
     }
 
     @Test
-    public void testPauseAndResumeJobGroup(){
+    public void testPauseAndResumeJobGroup() {
         service.pauseJobGroup('group1');
         service.resumeJobGroup('group1');
     }
 
     @Test
-    public void testPauseAndResumeTriggerGroup(){
+    public void testPauseAndResumeTriggerGroup() {
         service.pauseTriggerGroup('tgroup1');
         service.resumeTriggerGroup('tgroup1');
     }
 
     @Test
-    public void testRemoveJob(){
+    public void testRemoveJob() {
         assertTrue(service.getJobs('group1')*.name.contains('job2'))
         service.removeJob('group1', 'job2')
         assertFalse(service.getJobs('group1')*.name.contains('job2'))
+    }
+
+    @Test
+    public void testUnscheduleJob() {
+        def key = new JobKey('job2', 'group1')
+        assert scheduler.getTriggersOfJob(key)?.size() > 0
+        service.unscheduleJob('group1', 'job2')
+        List<? extends Trigger> triggers = scheduler.getTriggersOfJob(key)
+        assert triggers == null || triggers.size() == 0
     }
 }
 

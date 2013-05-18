@@ -46,5 +46,4 @@ class TriggerDescriptor {
     String getGroup() {
         trigger.key.group
     }
-
 }

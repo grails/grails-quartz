@@ -1,8 +1,6 @@
 package grails.plugins.quartz
 
 import grails.test.mixin.TestFor
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.junit.*
 import org.quartz.*
 import org.quartz.impl.StdSchedulerFactory
@@ -26,10 +24,10 @@ class JobManagerServiceTests {
         scheduler.start()
         service.quartzScheduler = scheduler
 
-        JobDetail job1 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job1", "group1")).build()
-        JobDetail job2 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job2", "group1")).build()
-        JobDetail job3 = JobBuilder.newJob(SimpleJob.class).withIdentity(new JobKey("job1", "group2")).build()
-        JobDetail job4 = JobBuilder.newJob(SimpleJob.class)
+        JobDetail job1 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(new JobKey("job1", "group1")).build()
+        JobDetail job2 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(new JobKey("job2", "group1")).build()
+        JobDetail job3 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(new JobKey("job1", "group2")).build()
+        JobDetail job4 = JobBuilder.newJob(SimpleTestJob.class)
                 .withIdentity(new JobKey("job2", "group2"))
                 .storeDurably()
                 .build()
@@ -152,22 +150,5 @@ class JobManagerServiceTests {
     public void testPauseAndResumeAll(){
         service.pauseAll()
         service.resumeAll()
-    }
-}
-
-/**
- * The job for tests. Do nothing.
- */
-class SimpleJob implements Job, InterruptableJob {
-    private final Log log = LogFactory.getLog(SimpleJob)
-
-    @Override
-    void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.trace("Executing simple job. Thread=${Thread.currentThread().id}.")
-    }
-
-    @Override
-    void interrupt() throws UnableToInterruptJobException {
-        log.trace("Interrupt simple job. Thread=${Thread.currentThread().id}.")
     }
 }

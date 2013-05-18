@@ -22,9 +22,7 @@ import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
 
 /**
- * TODO: Use JobKey
- *
- * JobManagerService simplifies interaction with the Quartz Scheduler from Grails application. 
+ * JobManagerService simplifies interaction with the Quartz Scheduler from Grails application.
  *
  * @author Marco Mornati (mmornati@byte-code.com)
  * @author Sergey Nebolsin (nebolsin@gmail.com)
@@ -113,6 +111,6 @@ class JobManagerService {
     }
 
     def interruptJob(String group, String name) {
-        quartzScheduler.interrupt(name, group)
+        quartzScheduler.interrupt(new JobKey(name, group))
     }
 }

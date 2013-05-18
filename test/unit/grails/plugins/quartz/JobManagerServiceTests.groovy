@@ -142,16 +142,26 @@ class JobManagerServiceTests {
         List<? extends Trigger> triggers = scheduler.getTriggersOfJob(key)
         assert triggers == null || triggers.size() == 0
     }
+
+    @Test
+    public void testInterruptJob(){
+        service.interruptJob('group1', 'job2')
+    }
 }
 
 /**
  * The job for tests. Do nothing.
  */
-class SimpleJob implements Job {
+class SimpleJob implements Job, InterruptableJob {
     private final Log log = LogFactory.getLog(SimpleJob)
 
     @Override
     void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.trace("Executing simple job. Thread=${Thread.currentThread().id}.")
+    }
+
+    @Override
+    void interrupt() throws UnableToInterruptJobException {
+        log.trace("Interrupt simple job. Thread=${Thread.currentThread().id}.")
     }
 }

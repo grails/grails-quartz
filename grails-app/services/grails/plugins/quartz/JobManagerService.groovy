@@ -42,7 +42,7 @@ class JobManagerService {
      *
      * @return Map <String , List<JobDescriptor>> with job group names as keys
      */
-    def getAllJobs() {
+    Map <String , List<JobDescriptor>> getAllJobs() {
         quartzScheduler.jobGroupNames.collectEntries([:]) { group -> [(group):getJobs(group)]}
     }
 
@@ -105,7 +105,7 @@ class JobManagerService {
     }
 
     def removeJob(String group, String name) {
-        quartzScheduler.deleteJob(name, group)
+        quartzScheduler.deleteJob(new JobKey(name, group))
     }
 
     def unscheduleJob(String group, String name) {

@@ -126,6 +126,13 @@ class JobManagerServiceTests {
         service.pauseTriggerGroup('tgroup1');
         service.resumeTriggerGroup('tgroup1');
     }
+
+    @Test
+    public void testRemoveJob(){
+        assertTrue(service.getJobs('group1')*.name.contains('job2'))
+        service.removeJob('group1', 'job2')
+        assertFalse(service.getJobs('group1')*.name.contains('job2'))
+    }
 }
 
 /**

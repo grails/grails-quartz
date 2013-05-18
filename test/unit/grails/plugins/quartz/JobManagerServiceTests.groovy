@@ -102,6 +102,30 @@ class JobManagerServiceTests {
     public void testGetRunningJobs(){
         service.getRunningJobs()
     }
+
+    @Test
+    public void testPauseAndResumeJob(){
+        service.pauseJob('group1', 'job2')
+        service.resumeJob('group1', 'job2')
+    }
+
+    @Test
+    public void PauseAndResumeTrigger(){
+        service.pauseTrigger('tgroup1', 'trigger1')
+        service.resumeTrigger('tgroup1', 'trigger1')
+    }
+
+    @Test
+    public void testPauseAndResumeJobGroup(){
+        service.pauseJobGroup('group1');
+        service.resumeJobGroup('group1');
+    }
+
+    @Test
+    public void testPauseAndResumeTriggerGroup(){
+        service.pauseTriggerGroup('tgroup1');
+        service.resumeTriggerGroup('tgroup1');
+    }
 }
 
 /**

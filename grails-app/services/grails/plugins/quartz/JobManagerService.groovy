@@ -18,6 +18,7 @@ package grails.plugins.quartz
 
 import org.quartz.JobKey
 import org.quartz.Scheduler
+import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
 
 /**
@@ -72,35 +73,35 @@ class JobManagerService {
     }
 
     def pauseJob(String group, String name) {
-        quartzScheduler.pauseJob(name, group)
+        quartzScheduler.pauseJob(new JobKey(name, group))
     }
 
     def resumeJob(String group, String name) {
-        quartzScheduler.resumeJob(name, group)
+        quartzScheduler.resumeJob(new JobKey(name, group))
     }
 
     def pauseTrigger(String group, String name) {
-        quartzScheduler.pauseTrigger(name, group)
+        quartzScheduler.pauseTrigger(new TriggerKey(name, group))
     }
 
     def resumeTrigger(String group, String name) {
-        quartzScheduler.resumeTrigger(name, group)
+        quartzScheduler.resumeTrigger(new TriggerKey(name, group))
     }
 
     def pauseTriggerGroup(String group) {
-        quartzScheduler.pauseTriggerGroup(group)
+        quartzScheduler.pauseTriggers(GroupMatcher.groupEquals(group))
     }
 
     def resumeTriggerGroup(String group) {
-        quartzScheduler.resumeTriggerGroup(group)
+        quartzScheduler.resumeTriggers(GroupMatcher.groupEquals(group))
     }
 
     def pauseJobGroup(String group) {
-        quartzScheduler.pauseJobGroup(group)
+        quartzScheduler.pauseJobs(GroupMatcher.groupEquals(group))
     }
 
     def resumeJobGroup(String group) {
-        quartzScheduler.resumeJobGroup(group)
+        quartzScheduler.resumeJobs(GroupMatcher.groupEquals(group))
     }
 
     def removeJob(String group, String name) {

@@ -259,7 +259,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     }
 
     def scheduleJob = {GrailsJobClass jobClass, ApplicationContext ctx ->
-        def scheduler = ctx.getBean("quartzScheduler")
+        Scheduler scheduler = ctx.getBean("quartzScheduler")
         if (scheduler) {
             def fullName = jobClass.fullName
             // add job to scheduler, and associate triggers with it

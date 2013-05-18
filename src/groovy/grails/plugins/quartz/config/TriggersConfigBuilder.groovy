@@ -21,9 +21,10 @@ import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.plugins.quartz.CustomTriggerFactoryBean
 import grails.util.GrailsUtil
 import org.quartz.CronExpression
-import org.quartz.CronTrigger
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
+import org.quartz.impl.triggers.CronTriggerImpl
+import org.quartz.impl.triggers.SimpleTriggerImpl
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -70,11 +71,11 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
         switch (triggerType) {
             case 'simple':
-                triggerClass = SimpleTrigger
+                triggerClass = SimpleTriggerImpl
                 prepareSimpleTriggerAttributes(triggerAttributes)
                 break
             case 'cron':
-                triggerClass = CronTrigger
+                triggerClass = CronTriggerImpl
                 prepareCronTriggerAttributes(triggerAttributes)
                 break
             case 'custom':

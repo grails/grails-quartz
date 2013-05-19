@@ -23,7 +23,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Method;
 
 /**
- * Grails artefact handler for job classes.
+ * Grails artifact handler for job classes.
  *
  * @author Marc Palmer (marc@anyware.co.uk)
  * @author Sergey Nebolsin (nebolsin@gmail.com)

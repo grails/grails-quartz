@@ -30,7 +30,7 @@ import static grails.plugins.quartz.GrailsJobClassConstants.*;
 
 
 /**
- * Grails artefact class which represents a Quartz job.
+ * Grails artifact class which represents a Quartz job.
  *
  * @author Micha?? K??ujszo
  * @author Marcel Overdijk
@@ -78,6 +78,7 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
     }
 
     // TODO: ============== start of deprecated methods =================
+    @Deprecated
     public long getTimeout() {
         Object obj = getPropertyValue(TIMEOUT);
         if (obj == null) return DEFAULT_TIMEOUT;
@@ -90,6 +91,7 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         return ((Number) obj).longValue();
     }
 
+    @Deprecated
     public long getStartDelay() {
         Object obj = getPropertyValue(START_DELAY);
         if (obj == null) return DEFAULT_START_DELAY;
@@ -102,6 +104,7 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         return ((Number) obj).longValue();
     }
 
+    @Deprecated
     public int getRepeatCount() {
         Object obj = getPropertyValue(REPEAT_COUNT);
         if (obj == null) return DEFAULT_REPEAT_COUNT;
@@ -114,12 +117,14 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         return ((Number) obj).intValue();
     }
 
+    @Deprecated
     public String getCronExpression() {
         String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
         if (cronExpression == null || "".equals(cronExpression)) return DEFAULT_CRON_EXPRESSION;
         return cronExpression;
     }
 
+    @Deprecated
     public String getGroup() {
         String group = (String) getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
         if (group == null || "".equals(group)) return DEFAULT_GROUP;
@@ -127,6 +132,7 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
     }
 
     // not certain about this... feels messy
+    @Deprecated
     public boolean isCronExpressionConfigured() {
         String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
         return cronExpression != null;
@@ -134,22 +140,22 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
     // TODO: ============== end of deprecated methods =================
 
     public boolean isConcurrent() {
-        Boolean concurrent = (Boolean) getPropertyValue(CONCURRENT, Boolean.class);
+        Boolean concurrent = getPropertyValue(CONCURRENT, Boolean.class);
         return concurrent == null ? DEFAULT_CONCURRENT : concurrent;
     }
 
     public boolean isSessionRequired() {
-        Boolean sessionRequired = (Boolean) getPropertyValue(SESSION_REQUIRED, Boolean.class);
+        Boolean sessionRequired = getPropertyValue(SESSION_REQUIRED, Boolean.class);
         return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired;
     }
 
-    public boolean getDurability() {
-        Boolean durability = (Boolean) getPropertyValue(DURABILITY, Boolean.class);
+    public boolean isDurability() {
+        Boolean durability = getPropertyValue(DURABILITY, Boolean.class);
         return durability == null ? DEFAULT_DURABILITY : durability;
     }
 
-    public boolean getRequestsRecovery() {
-        Boolean requestsRecovery = (Boolean) getPropertyValue(REQUESTS_RECOVERY, Boolean.class);
+    public boolean isRequestsRecovery() {
+        Boolean requestsRecovery = getPropertyValue(REQUESTS_RECOVERY, Boolean.class);
         return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
     }
 

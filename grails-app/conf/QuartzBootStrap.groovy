@@ -28,6 +28,7 @@ class QuartzBootStrap {
     def quartzScheduler
 
     def init = {servletContext ->
+        // TODO: Move to plugin class
         if(ConfigurationHolder.config?.quartz?.autoStartup) quartzScheduler.start()
     }
     def destroy = {}

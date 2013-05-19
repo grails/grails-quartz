@@ -12,6 +12,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
     }
 
+    // TODO: Are this dependencies needed?
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 		if(grailsVersion.startsWith("1.")) {
@@ -19,18 +20,13 @@ grails.project.dependency.resolution = {
 	            excludes 'ehcache', 'xml-apis', 'commons-logging', 'slf4j-api'
 	        }
 			
-		}
-		else {
+		} else {
 	        compile('org.hibernate:hibernate-core:3.6.10.Final', "org.quartz-scheduler:quartz:2.1.5") {
 	            excludes 'ehcache', 'xml-apis', 'commons-logging', 'slf4j-api'
 	        }
             runtime "hsqldb:hsqldb:1.8.0.10"
-			
 		}
         // the following library makes accomodations for quartz2 but this is not packaged with Grails yet
         //compile('org.springframework:org.springframework.context.support:3.2.0.RELEASE')
     }
-
-
-
 }

@@ -1,4 +1,5 @@
 environments {
+    // TODO: Is it needed?
     test {
     	dataSource {
         	driverClassName = "org.hsqldb.jdbcDriver"

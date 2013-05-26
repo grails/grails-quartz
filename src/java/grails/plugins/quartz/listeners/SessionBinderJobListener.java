@@ -49,12 +49,18 @@ public class SessionBinderJobListener extends JobListenerSupport {
         this.persistenceInterceptor = persistenceInterceptor;
     }
 
+    /**
+     * Before job executing. Init persistence context.
+     */
     public void jobToBeExecuted(JobExecutionContext context) {
         if (persistenceInterceptor != null) {
             persistenceInterceptor.init();
         }
     }
 
+    /**
+     * After job executing. Flush and destroy persistence context.
+     */
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
         if (persistenceInterceptor != null) {
             try {

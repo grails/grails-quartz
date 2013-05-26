@@ -31,20 +31,19 @@ class TriggerDescriptor {
 
     Trigger trigger
 
-    int state
+    Trigger.TriggerState state
 
     static build(JobDescriptor jobDescriptor, Trigger trigger, Scheduler scheduler) {
         def result = new TriggerDescriptor(jobDescriptor: jobDescriptor, trigger: trigger)
-        result.state = scheduler.getTriggerState(trigger.name, trigger.group)
-        result
+        result.state = scheduler.getTriggerState(trigger.key)
+        return result
     }
 
     String getName() {
-        trigger.name
+        trigger.key.name
     }
 
     String getGroup() {
-        trigger.group
+        trigger.key.group
     }
-
 }

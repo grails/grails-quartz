@@ -21,9 +21,10 @@ import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.plugins.quartz.CustomTriggerFactoryBean
 import grails.util.GrailsUtil
 import org.quartz.CronExpression
-import org.quartz.CronTrigger
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
+import org.quartz.impl.triggers.CronTriggerImpl
+import org.quartz.impl.triggers.SimpleTriggerImpl
 
 /**
  * Groovy Builder for parsing triggers configuration info.
@@ -43,38 +44,63 @@ public class TriggersConfigBuilder extends BuilderSupport {
         this.jobName = jobName
     }
 
+    /**
+     * Evaluate triggers closure
+     */
     public build(closure) {
         closure.delegate = this
         closure.call()
         return triggers
     }
 
-    protected void setParent(parent, child) {}
-
-    protected createNode(name) {
-        createNode(name, null, null)
-    }
-
-    protected createNode(name, value) {
-        createNode(name, null, value)
-    }
-
-    protected createNode(name, Map attributes) {
-        createNode(name, attributes, null)
-    }
-
-    protected Object createNode(name, Map attributes, Object value) {
-        def trigger = createTrigger(name, attributes, value)
-        triggers[trigger.triggerAttributes.name.toString()] = trigger
-        trigger
-    }
-
-    public Expando createTrigger(name, Map attributes, value) {
+    /**
+     * Create a trigger.
+     *
+     * @param name the name of the method to create trigger. It's trigger type: simple, cron, custom.
+     * @param attributes trigger attributes
+     * @return trigger definitions
+     */
+    public Expando createTrigger(def name, Map attributes) {
         def triggerClass
+
         def triggerAttributes = attributes ? new HashMap(attributes) : [:]
 
         prepareCommonTriggerAttributes(triggerAttributes)
 
+        String triggerType = normalizeTriggerType(name)
+
+        switch (triggerType) {
+            case 'simple':
+                triggerClass = SimpleTriggerImpl
+                prepareSimpleTriggerAttributes(triggerAttributes)
+                break
+            case 'cron':
+                triggerClass = CronTriggerImpl
+                prepareCronTriggerAttributes(triggerAttributes)
+                break
+            case 'custom':
+                if (!triggerAttributes?.triggerClass) {
+                    throw new Exception("Custom trigger must have 'triggerClass' attribute")
+                }
+                triggerClass = (Class) triggerAttributes.remove('triggerClass')
+                if (!Trigger.isAssignableFrom(triggerClass)){
+                    throw new Exception("Custom trigger class must implement org.quartz.Trigger class.")
+                }
+                break
+            default:
+                throw new Exception("Invalid format")
+        }
+
+        new Expando(clazz: CustomTriggerFactoryBean, triggerClass: triggerClass, triggerAttributes: triggerAttributes)
+    }
+
+    /**
+     * Convert old trigger types' names
+     *
+     * @param old or new trigger type
+     * @return new trigger type
+     */
+    private String normalizeTriggerType(name) {
         def triggerType = name
 
         if (triggerType == 'simpleTrigger') {
@@ -87,29 +113,10 @@ public class TriggersConfigBuilder extends BuilderSupport {
             GrailsUtil.deprecated("You're using deprecated 'customTrigger' construction in the ${jobName}, use 'custom' instead.")
             triggerType = 'custom'
         }
-
-        switch (triggerType) {
-            case 'simple':
-                triggerClass = SimpleTrigger
-                prepareSimpleTriggerAttributes(triggerAttributes)
-                break
-            case 'cron':
-                triggerClass = CronTrigger
-                prepareCronTriggerAttributes(triggerAttributes)
-                break
-            case 'custom':
-                if (!triggerAttributes?.triggerClass) throw new Exception("Custom trigger must have 'triggerClass' attribute")
-                triggerClass = (Class) triggerAttributes.remove('triggerClass')
-                if (!Trigger.isAssignableFrom(triggerClass)) throw new Exception("Custom trigger class must implement org.quartz.Trigger class.")
-                break
-            default:
-                throw new Exception("Invalid format")
-        }
-
-        new Expando(clazz: CustomTriggerFactoryBean, triggerClass: triggerClass, triggerAttributes: triggerAttributes)
+        triggerType
     }
 
-    private prepareCommonTriggerAttributes(HashMap triggerAttributes) {
+    private prepareCommonTriggerAttributes(Map triggerAttributes) {
         if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
         if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP.toString()
         if (triggerAttributes[Constants.START_DELAY] == null) triggerAttributes[Constants.START_DELAY] = Constants.DEFAULT_START_DELAY
@@ -122,7 +129,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
 
     }
 
-    private def prepareSimpleTriggerAttributes(HashMap triggerAttributes) {
+    private def prepareSimpleTriggerAttributes(Map triggerAttributes) {
         if (triggerAttributes[Constants.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
 
@@ -150,19 +157,63 @@ public class TriggersConfigBuilder extends BuilderSupport {
         }
     }
 
-    private def prepareCronTriggerAttributes(HashMap triggerAttributes) {
+    private def prepareCronTriggerAttributes(Map triggerAttributes) {
         if (!triggerAttributes?.cronExpression) triggerAttributes[Constants.CRON_EXPRESSION] = Constants.DEFAULT_CRON_EXPRESSION
         if (!CronExpression.isValidExpression(triggerAttributes[Constants.CRON_EXPRESSION].toString())) {
             throw new IllegalArgumentException("Cron expression '${triggerAttributes[Constants.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
         }
     }
 
-
+    /**
+     * It's needed for old API for realize embedded triggers.
+     */
+    @Deprecated
     public Map createEmbeddedSimpleTrigger(startDelay, timeout, repeatCount) {
-        return [(jobName): createTrigger('simple', [name: jobName, startDelay: startDelay, repeatInterval: timeout, repeatCount: repeatCount], null)]
+        return [(jobName): createTrigger('simple', [name: jobName, startDelay: startDelay, repeatInterval: timeout, repeatCount: repeatCount])]
     }
 
+    /**
+     * It's needed for old API for realize embedded triggers.
+     */
+    @Deprecated
     public Map createEmbeddedCronTrigger(startDelay, cronExpression) {
-        return [(jobName): createTrigger('cron', [name: jobName, startDelay: startDelay, cronExpression: cronExpression], null)]
+        return [(jobName): createTrigger('cron', [name: jobName, startDelay: startDelay, cronExpression: cronExpression])]
+    }
+
+    /**
+     * Does nothing. Implements the BuilderSupport method.
+     */
+    protected void setParent(parent, child) {
+        // Nothing!
+    }
+
+    /**
+     * Implements the BuilderSupport method.
+     */
+    protected createNode(name) {
+        createNode(name, null, null)
+    }
+
+    /**
+     * Implements the BuilderSupport method.
+     */
+    protected createNode(name, value) {
+        createNode(name, null, value)
+    }
+
+    /**
+     * Implements the BuilderSupport method.
+     */
+    protected createNode(name, Map attributes) {
+        createNode(name, attributes, null)
+    }
+
+    /**
+     * Create a trigger. Implements the BuilderSupport method.
+     */
+    protected Object createNode(name, Map attributes, Object value) {
+        def trigger = createTrigger(name, attributes)
+        triggers[trigger.triggerAttributes.name.toString()] = trigger
+        trigger
     }
 }

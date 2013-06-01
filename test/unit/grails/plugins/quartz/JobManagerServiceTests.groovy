@@ -4,6 +4,9 @@ import grails.test.mixin.TestFor
 import org.junit.*
 import org.quartz.*
 import org.quartz.impl.StdSchedulerFactory
+import org.quartz.impl.matchers.GroupMatcher
+
+import static org.quartz.Trigger.TriggerState.*
 
 /**
  * Tests for JobManagerService
@@ -103,26 +106,56 @@ class JobManagerServiceTests {
 
     @Test
     public void testPauseAndResumeJob() {
+        def triggerKeys = scheduler.getTriggersOfJob(new JobKey('job2', 'group1'))*.key
+
+        assertTriggersState(triggerKeys, NORMAL)
         service.pauseJob('group1', 'job2')
+        assertTriggersState(triggerKeys, PAUSED)
         service.resumeJob('group1', 'job2')
+        assertTriggersState(triggerKeys, NORMAL)
+    }
+
+    private void assertTriggersState(Iterable<TriggerKey> triggerKeys, Trigger.TriggerState state) {
+        for (TriggerKey key : triggerKeys) {
+            assert scheduler.getTriggerState(key) == state
+        }
     }
 
     @Test
     public void PauseAndResumeTrigger() {
-        service.pauseTrigger('tgroup1', 'trigger1')
-        service.resumeTrigger('tgroup1', 'trigger1')
+        TriggerKey key = new TriggerKey('trigger2', 'tgroup1')
+
+        assert scheduler.getTriggerState(key) == NORMAL
+        service.pauseTrigger('tgroup1', 'trigger2')
+        assert scheduler.getTriggerState(key) == PAUSED
+        service.resumeTrigger('tgroup1', 'trigger2')
+        assert scheduler.getTriggerState(key) == NORMAL
     }
 
     @Test
     public void testPauseAndResumeJobGroup() {
-        service.pauseJobGroup('group1');
-        service.resumeJobGroup('group1');
+        def jobKeys = scheduler.getJobKeys(GroupMatcher.groupEquals('group2'))
+        def keys = []
+        jobKeys.each {
+            keys += scheduler.getTriggersOfJob(it)*.key
+        }
+
+        assertTriggersState(keys, NORMAL)
+        service.pauseJobGroup('group2');
+        assertTriggersState(keys, PAUSED)
+        service.resumeJobGroup('group2');
+        assertTriggersState(keys, NORMAL)
     }
 
     @Test
     public void testPauseAndResumeTriggerGroup() {
-        service.pauseTriggerGroup('tgroup1');
-        service.resumeTriggerGroup('tgroup1');
+        def keys = scheduler.getTriggerKeys(GroupMatcher.groupEquals('tgroup2'))
+
+        assertTriggersState(keys, NORMAL)
+        service.pauseTriggerGroup('tgroup2');
+        assertTriggersState(keys, PAUSED)
+        service.resumeTriggerGroup('tgroup2');
+        assertTriggersState(keys, NORMAL)
     }
 
     @Test
@@ -148,7 +181,12 @@ class JobManagerServiceTests {
 
     @Test
     public void testPauseAndResumeAll(){
+        def keys = scheduler.getTriggerKeys(GroupMatcher.groupEquals('tgroup2'))
+
+        assertTriggersState(keys, NORMAL)
         service.pauseAll()
+        assertTriggersState(keys, PAUSED)
         service.resumeAll()
+        assertTriggersState(keys, NORMAL)
     }
 }

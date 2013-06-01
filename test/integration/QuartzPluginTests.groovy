@@ -59,7 +59,6 @@ class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAwar
 
         def ctx = springConfig.applicationContext
         assertTrue "Bean 'TestJob' is not registered in application context", ctx.containsBean('TestJob')
-        assertTrue "Bean 'TestJobTrigger' is not registered in application context", ctx.containsBean('TestJobTrigger')
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) {

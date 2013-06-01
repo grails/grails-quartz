@@ -165,22 +165,6 @@ public class TriggersConfigBuilder extends BuilderSupport {
     }
 
     /**
-     * It's needed for old API for realize embedded triggers.
-     */
-    @Deprecated
-    public Map createEmbeddedSimpleTrigger(startDelay, timeout, repeatCount) {
-        return [(jobName): createTrigger('simple', [name: jobName, startDelay: startDelay, repeatInterval: timeout, repeatCount: repeatCount])]
-    }
-
-    /**
-     * It's needed for old API for realize embedded triggers.
-     */
-    @Deprecated
-    public Map createEmbeddedCronTrigger(startDelay, cronExpression) {
-        return [(jobName): createTrigger('cron', [name: jobName, startDelay: startDelay, cronExpression: cronExpression])]
-    }
-
-    /**
      * Does nothing. Implements the BuilderSupport method.
      */
     protected void setParent(parent, child) {

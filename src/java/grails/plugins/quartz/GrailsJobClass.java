@@ -37,52 +37,11 @@ public interface GrailsJobClass extends InjectableGrailsClass {
     public void execute();
 
     /**
-     * Get job timeout between executions.
-     *
-     * @return timeout between job executions (repeat interval) in milliseconds
-     */
-    @Deprecated
-    public long getTimeout();
-
-    /**
-     * Get start delay before first execution after starting scheduler.
-     *
-     * @return delay between job's registering and first execution in milliseconds
-     */
-    @Deprecated
-    public long getStartDelay();
-
-    /**
-     * Get the number of times the job should repeat, after which it will be automatically deleted
-     *
-     * @return maximum job's executions count
-     */
-    @Deprecated
-    public int getRepeatCount();
-
-    /**
-     * Get cron expression used for configuring scheduler.
-     *
-     * @return cron expression configured for this job
-     */
-    @Deprecated
-    public String getCronExpression();
-
-    /**
      * Get group name used for configuring scheduler.
      *
      * @return jobs group name for this job
      */
-    @Deprecated
     public String getGroup();
-
-    /**
-     * If cronExpression property is set returns true.
-     *
-     * @return true, if cron expression is configured for this job, false overwise
-     */
-    @Deprecated
-    public boolean isCronExpressionConfigured();
 
     /**
      * If jobs can be executed concurrently returns true.

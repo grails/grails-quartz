@@ -16,44 +16,45 @@
 
 /**
  * Gant script that creates a Grails Quartz job
- * 
+ *
  * @author Graeme Rocher
  *
  * @since 0.2
  */
 
-Ant.property(environment:"env")                             
-grailsHome = Ant.antProject.properties."env.GRAILS_HOME"    
+Ant.property(environment: "env")
+grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
 
 
 
-if(grails.util.GrailsUtil.grailsVersion.startsWith("1.0")) {
-	includeTargets << new File ( "${grailsHome}/scripts/Init.groovy" )  
-	includeTargets << new File( "${grailsHome}/scripts/CreateIntegrationTest.groovy")
+if (grails.util.GrailsUtil.grailsVersion.startsWith("1.0")) {
+    includeTargets << new File("${grailsHome}/scripts/Init.groovy")
+    includeTargets << new File("${grailsHome}/scripts/CreateIntegrationTest.groovy")
 
-	target('default': "Creates a new Quartz scheduled job") {
-	    depends(checkVersion)
+    target('default': "Creates a new Quartz scheduled job") {
+        depends(checkVersion)
 
-		typeName = "Job" 
-		artifactName = "Job" 	
-		artifactPath = "grails-app/jobs"
+        typeName = "Job"
+        artifactName = "Job"
+        artifactPath = "grails-app/jobs"
 
-		createArtifact()
-		createTestSuite() 
-	}	
-}
-else {
-	includeTargets << grailsScript("_GrailsInit")
-	includeTargets << grailsScript("_GrailsCreateArtifacts")
+        createArtifact()
+        createTestSuite()
+    }
+} else {
+    includeTargets << grailsScript("_GrailsInit")
+    includeTargets << grailsScript("_GrailsCreateArtifacts")
 
-	target('default': "Creates a new Quartz scheduled job") {
-	    depends(checkVersion, parseArguments)
-	
-	    def type = "Job"
-	    promptForName(type: type)
+    target('default': "Creates a new Quartz scheduled job") {
+        depends(checkVersion, parseArguments)
 
-	    def name = argsMap["params"][0]
-		createArtifact(name: name, suffix: type, type: type, path: "grails-app/jobs")	
-		createUnitTest(name: name, suffix: type)			
-	}	
+        def type = "Job"
+        promptForName(type: type)
+
+        for (name in argsMap["params"]) {
+            name = purgeRedundantArtifactSuffix(name, type)
+            createArtifact(name: name, suffix: type, type: type, path: "grails-app/jobs")
+            createUnitTest(name: name, suffix: type)
+        }
+    }
 }

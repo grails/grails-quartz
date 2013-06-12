@@ -30,6 +30,8 @@ import java.lang.reflect.Method;
 /**
  * Job factory which retrieves Job instances from ApplicationContext.
  *
+ * It is used by the quartz scheduler to create an instance of the job class for executing.
+ *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.3.2
  */

@@ -228,7 +228,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             if (context && scheduler) {
                 // if job already exists, delete it from scheduler                
                 if (jobClass) {
-					def jobKey = new org.quartz.JobKey(jobClass.fullName, jobClass.group) 
+					def jobKey = new JobKey(jobClass.fullName, jobClass.group)
                     scheduler.deleteJob(jobKey)
                     log.debug("Job ${jobClass.fullName} deleted from the scheduler")
                 }

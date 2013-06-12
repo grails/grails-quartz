@@ -18,8 +18,6 @@
 
 package grails.plugins.quartz
 
-import org.quartz.SimpleTrigger
-
 class DefaultGrailsJobClassTests extends GroovyTestCase {
     protected GroovyClassLoader gcl = new GroovyClassLoader()
 

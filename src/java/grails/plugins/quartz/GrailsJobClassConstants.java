@@ -64,9 +64,6 @@ public final class GrailsJobClassConstants {
 
     public static final long DEFAULT_REPEAT_INTERVAL = 60000l;    // one minute
 
-    // TODO: deprecated, remove in the next release
-    public static final long DEFAULT_TIMEOUT = DEFAULT_REPEAT_INTERVAL;    // one minute
-
     public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
 
     public static final int DEFAULT_REPEAT_COUNT = SimpleTrigger.REPEAT_INDEFINITELY;

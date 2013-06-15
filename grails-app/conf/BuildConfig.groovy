@@ -12,11 +12,9 @@ grails.project.dependency.resolution = {
         mavenCentral()
     }
 
-    // TODO: Are this dependencies needed?
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
         compile("org.quartz-scheduler:quartz:2.1.5") {
-            excludes 'slf4j-api', 'c3p0'
+            excludes 'slf4j-api', 'c3p0', 'jta'
         }
     }
 }

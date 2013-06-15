@@ -91,6 +91,11 @@ This plugin adds Quartz job scheduling features to Grails application.
         quartzScheduler(SchedulerFactoryBean) {
             quartzProperties = config._properties
 
+            // Use the instanceName property to set the name of the scheduler
+            if (quartzProperties['org.quartz.scheduler.instanceName']) {
+                schedulerName = quartzProperties['org.quartz.scheduler.instanceName']
+            }
+
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
             if (config.jdbcStore) {

@@ -73,7 +73,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     def doWithSpring = { context ->
         def config = loadQuartzConfig(application.config)
 
-        application.jobClasses.each { jobClass ->
+        application.jobClasses.each { GrailsJobClass jobClass ->
             configureJobBeans.delegate = delegate
             configureJobBeans(jobClass, manager.hasGrailsPlugin("hibernate"))
         }
@@ -190,7 +190,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     }
 
     def doWithApplicationContext = { applicationContext ->
-        application.jobClasses.each { jobClass ->
+        application.jobClasses.each { GrailsJobClass jobClass ->
             scheduleJob.delegate = delegate
             scheduleJob(jobClass, applicationContext)
         }

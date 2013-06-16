@@ -1,6 +1,5 @@
-import grails.plugins.quartz.JobDescriptor
-import grails.plugins.quartz.JobManagerService
-import grails.plugins.quartz.SimpleTestJob
+package grails.plugins.quartz
+
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -40,8 +39,6 @@ class JobManagerServiceTests extends GroovyTestCase {
 
     @Before
     void setUp(){
-        //quartzScheduler.start()
-
         JobDetail job1 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_11).build()
         JobDetail job2 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_21).build()
         JobDetail job3 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_12).build()
@@ -80,8 +77,6 @@ class JobManagerServiceTests extends GroovyTestCase {
 
     @After
     void tearDown(){
-        //quartzScheduler.shutdown();
-
         quartzScheduler.deleteJob(JOB_KEY_11)
         quartzScheduler.deleteJob(JOB_KEY_12)
         quartzScheduler.deleteJob(JOB_KEY_21)
@@ -144,7 +139,7 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void PauseAndResumeTrigger() {
+    public void testPauseAndResumeTrigger() {
         TriggerKey key = new TriggerKey('trigger2', 'tgroup1')
 
         assert quartzScheduler.getTriggerState(key) == NORMAL

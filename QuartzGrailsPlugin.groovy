@@ -18,8 +18,6 @@ import grails.plugins.quartz.GrailsJobClassConstants as Constants
 
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
-import grails.util.GrailsUtil
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
@@ -28,6 +26,7 @@ import org.quartz.*
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import grails.util.Environment
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -40,8 +39,8 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-RC7"
-    def grailsVersion = "1.2 > *"
+    def version = "1.0-SNAPSHOT"
+    def grailsVersion = "2.0 > *"
 
     def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"
     def authorEmail = "rvanderwerf@gmail.com"
@@ -66,9 +65,11 @@ This plugin adds Quartz job scheduling features to Grails application.
 	
 	private def random = new Random()
 
+    /**
+     * Configures The Spring context.
+     */
     def doWithSpring = { context ->
-
-        def config = loadQuartzConfig()
+        def config = loadQuartzConfig(application.config)
 
         application.jobClasses.each { jobClass ->
             configureJobBeans.delegate = delegate
@@ -132,7 +133,7 @@ This plugin adds Quartz job scheduling features to Grails application.
                         .withIdentity(generateTriggerName(),Constants.DEFAULT_TRIGGERS_GROUP)
                         .withPriority(6)
                         .forJob(jobName,jobGroup)
-                        .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression))
+                        .withSchedule(cronSchedule(cronExpression))
                         .build();
 
 
@@ -346,20 +347,24 @@ This plugin adds Quartz job scheduling features to Grails application.
      * 3. QuartzConfig is loaded and overwrites anything from DQC or AppConfig
      * 4. quartz.properties are loaded into config as quartz._props
      */
-    private ConfigObject loadQuartzConfig() {
-        def config = ConfigurationHolder.config
+    private ConfigObject loadQuartzConfig(config) {
         def classLoader = new GroovyClassLoader(getClass().classLoader)
+        String environment = Environment.current.toString()
 
         // Note here the order of objects when calling merge - merge OVERWRITES values in the target object
         // Load default Quartz config as a basis
-        def newConfig = new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('DefaultQuartzConfig'))
+        def newConfig = new ConfigSlurper(environment).parse(
+                classLoader.loadClass('DefaultQuartzConfig')
+        )
 
 		// Overwrite defaults with what Config.groovy has supplied, perhaps from external files        
         newConfig.merge(config)
 
         // Overwrite with contents of QuartzConfig
         try {
-            newConfig.merge(new ConfigSlurper(GrailsUtil.environment).parse(classLoader.loadClass('QuartzConfig')))
+            newConfig.merge(new ConfigSlurper(environment).parse(
+                    classLoader.loadClass('QuartzConfig'))
+            )
         } catch (Exception ignored) {
             // ignore, just use the defaults
         }

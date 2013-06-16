@@ -15,6 +15,7 @@
  */
 
 
+
 import grails.plugins.quartz.GrailsJobClass
 import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.plugins.quartz.GrailsJobFactory
@@ -24,6 +25,7 @@ import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import grails.util.Environment
 import org.quartz.*
+import org.quartz.spi.MutableTrigger
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
@@ -149,8 +151,18 @@ This plugin adds Quartz job scheduling features to Grails application.
 
         // Schedule the job with trigger
         mc.'static'.schedule = { Trigger trigger, Map params = null ->
-            if (params) trigger.jobDataMap.putAll(params)
-            quartzScheduler.scheduleJob(quartzScheduler.getJobDetail(new JobKey(jobName, jobGroup)), trigger)
+            JobKey jobKey = new JobKey(jobName, jobGroup)
+            if(trigger.jobKey != jobKey && trigger instanceof MutableTrigger){
+                trigger.setJobKey(jobKey)
+            } else {
+                throw new IllegalArgumentException(
+                        "The trigger job key is not equals the job key and trigger is immutable."
+                )
+            }
+            if (params) {
+                trigger.jobDataMap.putAll(params)
+            }
+            quartzScheduler.scheduleJob(trigger)
         }
 
         mc.'static'.triggerNow = { Map params = null ->

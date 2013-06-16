@@ -347,7 +347,7 @@ This plugin adds Quartz job scheduling features to Grails application.
      * 3. QuartzConfig is loaded and overwrites anything from DQC or AppConfig
      * 4. quartz.properties are loaded into config as quartz._props
      */
-    private ConfigObject loadQuartzConfig(config) {
+    private ConfigObject loadQuartzConfig(ConfigObject config) {
         def classLoader = new GroovyClassLoader(getClass().classLoader)
         String environment = Environment.current.toString()
 

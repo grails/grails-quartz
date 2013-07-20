@@ -18,16 +18,12 @@ package grails.plugins.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.quartz.*;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
@@ -40,15 +36,12 @@ import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
 public class JobDetailFactoryBean implements FactoryBean<JobDetail>, InitializingBean {
     public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName";
 
-    private Log log = LogFactory.getLog(JobDetailFactoryBean.class);
-
     // Properties
     private String name;
     private String group;
     private boolean concurrent;
     private boolean durability;
     private boolean requestsRecovery;
-    private String[] jobListenerNames;
 
     // Returned object
     private JobDetail jobDetail;
@@ -72,20 +65,6 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
      */
     public void setGroup(final String group) {
         this.group = group;
-    }
-
-    /**
-     * Set a list of JobListener names for this job, referring to
-     * JobListeners registered with the Scheduler.
-     * <p>A JobListener name always refers to the name returned
-     * by the JobListener implementation.
-     *
-     * @param names array of job listener names which should be applied to the job
-     * @see SchedulerFactoryBean#setJobListeners
-     * @see org.quartz.JobListener#getName
-     */
-    public void setJobListenerNames(final String[] names) {
-        this.jobListenerNames = names;
     }
 
     @Required
@@ -128,26 +107,6 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
         jd.setRequestsRecovery(requestsRecovery);
         jd.getJobDataMap().put(JOB_NAME_PARAMETER, name);
         jobDetail = jd;
-
-        // TODO: Move from here.
-        // Register job listener names.
-        if (jobListenerNames != null) {
-            ApplicationContext ctx =
-                    (ApplicationContext) ApplicationHolder.getApplication().getMainContext();
-            Scheduler quartzScheduler = (Scheduler)ctx.getBean("quartzScheduler");
-            try {
-                ListenerManager manager =  quartzScheduler.getListenerManager();
-                for (String jobListenerName : jobListenerNames) {
-
-                    // no matcher == match all jobs
-
-                    manager.addJobListener(manager.getJobListener(jobListenerName),allJobs());
-
-                }
-            } catch (SchedulerException e) {
-                log.error("Error adding job listener to scheduler:",e);
-            }
-        }
     }
 
     private static class GrailsJobDetail extends JobDetailImpl{

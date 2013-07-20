@@ -273,8 +273,6 @@ This plugin adds Quartz job scheduling features to Grails application.
         def fullName = jobClass.fullName
 
         try {
-
-
             "${fullName}Class"(MethodInvokingFactoryBean) {
                 targetObject = ref("grailsApplication", true)
                 targetMethod = "getArtefact"
@@ -293,10 +291,6 @@ This plugin adds Quartz job scheduling features to Grails application.
                 concurrent = jobClass.concurrent
                 durability = jobClass.durability
                 requestsRecovery = jobClass.requestsRecovery
-
-                if (hasHibernate && jobClass.sessionRequired) {
-                    jobListenerNames = ["${SessionBinderJobListener.NAME}"] as String[]
-                }
             }
         } catch (Exception e) {
             log.error("Error declaring ${fullName}Detail bean in context", e)

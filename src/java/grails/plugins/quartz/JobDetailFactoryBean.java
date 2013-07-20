@@ -19,19 +19,14 @@ package grails.plugins.quartz;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.codehaus.groovy.grails.web.context.ServletContextHolder;
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
-import org.quartz.JobDetail;
-import org.quartz.ListenerManager;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import static org.quartz.JobBuilder.*;
+
 import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
 
 /**
@@ -42,24 +37,27 @@ import static org.quartz.impl.matchers.EverythingMatcher.allJobs;
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.3.2
  */
-public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
+public class JobDetailFactoryBean implements FactoryBean<JobDetail>, InitializingBean {
     public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName";
 
+    private Log log = LogFactory.getLog(JobDetailFactoryBean.class);
+
+    // Properties
     private String name;
     private String group;
     private boolean concurrent;
     private boolean durability;
     private boolean requestsRecovery;
     private String[] jobListenerNames;
+
+    // Returned object
     private JobDetail jobDetail;
-    private static Log log = LogFactory.getLog(JobDetailFactoryBean.class);
 
     /**
      * Set the name of the job.
      * <p>Default is the bean name of this FactoryBean.
      *
      * @param name name of the job
-     * @see org.quartz.JobDetail#setName
      */
     public void setName(final String name) {
         this.name = name;
@@ -70,7 +68,6 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
      * <p>Default is the default group of the Scheduler.
      *
      * @param group group name of the job
-     * @see org.quartz.JobDetail#setGroup
      * @see org.quartz.Scheduler#DEFAULT_GROUP
      */
     public void setGroup(final String group) {
@@ -121,19 +118,18 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
             throw new IllegalStateException("group is required");
         }
 
-        // Consider the concurrent flag to choose between stateful and stateless job.
-        Class jobClass = (concurrent ? GrailsJobFactory.GrailsJob.class : GrailsJobFactory.StatefulGrailsJob.class);
-
         // Build JobDetail instance.
-        jobDetail = newJob(jobClass)
-                .withIdentity(name,group)
-                .storeDurably(durability)
-                .requestRecovery(requestsRecovery)
-                .usingJobData(JOB_NAME_PARAMETER, name)
-                .build();
+        GrailsJobDetail jd = new GrailsJobDetail();
+        jd.setJobClass(GrailsJobFactory.GrailsJob.class);
+        // Consider the concurrent flag to choose between stateful and stateless job.
+        jd.setConcurrent(concurrent);
+        jd.setDurability(durability);
+        jd.setKey(new JobKey(name, group));
+        jd.setRequestsRecovery(requestsRecovery);
+        jd.getJobDataMap().put(JOB_NAME_PARAMETER, name);
+        jobDetail = jd;
 
-
-
+        // TODO: Move from here.
         // Register job listener names.
         if (jobListenerNames != null) {
             ApplicationContext ctx =
@@ -154,12 +150,31 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
         }
     }
 
+    private static class GrailsJobDetail extends JobDetailImpl{
+        private boolean concurrent;
+
+        @Override
+        public boolean isPersistJobDataAfterExecution() {
+            return !concurrent;
+        }
+
+        @Override
+        public boolean isConcurrentExectionDisallowed() {
+            return !concurrent;
+        }
+
+        private void setConcurrent(boolean concurrent) {
+            this.concurrent = concurrent;
+        }
+    }
+
     /**
      * {@inheritDoc}
      *
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
-    public Object getObject() {
+    @Override
+    public JobDetail getObject() {
         return jobDetail;
     }
 
@@ -168,7 +183,8 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
      *
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
-    public Class getObjectType() {
+    @Override
+    public Class<JobDetail> getObjectType() {
         return JobDetail.class;
     }
 
@@ -177,6 +193,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
      *
      * @see org.springframework.beans.factory.FactoryBean#isSingleton()
      */
+    @Override
     public boolean isSingleton() {
         return true;
     }

@@ -26,6 +26,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 
 /**
  * Job factory which retrieves Job instances from ApplicationContext.
@@ -38,37 +39,41 @@ import java.lang.reflect.Method;
 public class GrailsJobFactory extends AdaptableJobFactory implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
+    @Override
     protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
-        String grailsJobName = (String) bundle.getJobDetail().getJobDataMap().get(JobDetailFactoryBean.JOB_NAME_PARAMETER);
+        String grailsJobName = (String) bundle.getJobDetail().getJobDataMap().get(
+                JobDetailFactoryBean.JOB_NAME_PARAMETER
+        );
         if (grailsJobName != null) {
-            Object job = applicationContext.getBean(grailsJobName);
-            if (bundle.getJobDetail().getJobClass().equals(StatefulGrailsJob.class)) {
-                return new StatefulGrailsJob(job);
-            }
-            return new GrailsJob(job);
+            return new GrailsJob(applicationContext.getBean(grailsJobName));
         } else {
             return super.createJobInstance(bundle);
         }
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
     /**
      * Quartz Job implementation that invokes execute() on the application's job class.
      */
-    public class GrailsJob implements InterruptableJob {
-        Object job;
-        Method executeMethod;
-        Method interruptMethod;
+    public static class GrailsJob implements InterruptableJob {
+        private Object job;
+        private Method executeMethod;
+        private Method interruptMethod;
         boolean passExecutionContext;
 
         public GrailsJob(Object job) {
             this.job = job;
-            this.executeMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassConstants.EXECUTE, (Class<?>[]) null);
+
+            // Finds an execute method with zero or one parameter.
+            this.executeMethod = ReflectionUtils.findMethod(
+                    job.getClass(), GrailsJobClassConstants.EXECUTE, (Class<?>[]) null
+            );
             if (executeMethod == null) {
-                throw new IllegalArgumentException(job.getClass().getName() + " should declare #execute() method");
+                throw new IllegalArgumentException(
+                        MessageFormat.format(
+                                "{0} should declare #{1}() method",
+                                job.getClass().getName(), GrailsJobClassConstants.EXECUTE
+                        )
+                );
             }
             switch (executeMethod.getParameterTypes().length) {
                 case 0:
@@ -78,11 +83,19 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                     passExecutionContext = true;
                     break;
                 default:
-                    throw new IllegalArgumentException(job.getClass().getName() + "#execute() method should take either no arguments or one argument of type JobExecutionContext");
+                    throw new IllegalArgumentException(
+                            MessageFormat.format(
+                                    "{0}#{1}() method should take either no arguments or one argument of type JobExecutionContext",
+                                    job.getClass().getName(), GrailsJobClassConstants.EXECUTE
+                            )
+                    );
             }
+
+            // Find interrupt method
             this.interruptMethod = ReflectionUtils.findMethod(job.getClass(), GrailsJobClassConstants.INTERRUPT);
         }
 
+        // Execute Job
         public void execute(final JobExecutionContext context) throws JobExecutionException {
             try {
                 if (passExecutionContext) {
@@ -98,12 +111,19 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                     throw new JobExecutionException(targetException);
                 }
             } catch (IllegalAccessException iae) {
-                JobExecutionException criticalError = new JobExecutionException("Cannot invoke " + job.getClass().getName() + "#execute() method", iae);
+                JobExecutionException criticalError = new JobExecutionException(
+                        MessageFormat.format(
+                                "Cannot invoke {0}#{1}() method",
+                                job.getClass().getName(), executeMethod.getName()
+                        ),
+                        iae
+                );
                 criticalError.setUnscheduleAllTriggers(true);
                 throw criticalError;
             }
         }
 
+        // Interrupt Job
         public void interrupt() throws UnableToInterruptJobException {
             if (interruptMethod != null) {
                 try {
@@ -115,24 +135,20 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
                 throw new UnableToInterruptJobException(job.getClass().getName() + " doesn't support interruption");
             }
 		}
-		
+
+        /**
+         * @return the GrailsJobClass object.
+         */
 		public Object getJob() {
 			return job;
 		}
     }
 
     /**
-     * Extension of the GrailsJob, implementing the StatefulJob interface.
-     * Quartz checks whether or not jobs are stateful and if so,
-     * won't let jobs interfere with each other.
+     * Override from ApplicationContextAware.
      */
-    public class StatefulGrailsJob extends GrailsJob implements StatefulJob {
-        // No implementation, just an addition of the tag interface StatefulJob
-        // in order to allow stateful jobs.
-
-        public StatefulGrailsJob(Object job) {
-            super(job);
-        }
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
-
 }

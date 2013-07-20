@@ -16,8 +16,6 @@
 
 package grails.plugins.quartz;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.impl.JobDetailImpl;

@@ -78,12 +78,12 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
 
         @Override
         public boolean isPersistJobDataAfterExecution() {
-            return !concurrent;
+            return !concurrent || super.isPersistJobDataAfterExecution();
         }
 
         @Override
         public boolean isConcurrentExectionDisallowed() {
-            return !concurrent;
+            return !concurrent || super.isConcurrentExectionDisallowed();
         }
 
         private void setConcurrent(boolean concurrent) {

@@ -35,49 +35,14 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
     public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName";
 
     // Properties
-    private String name;
-    private String group;
-    private boolean concurrent;
-    private boolean durability;
-    private boolean requestsRecovery;
+    private GrailsJobClass jobClass;
 
     // Returned object
     private JobDetail jobDetail;
 
-    /**
-     * Set the name of the job.
-     * <p>Default is the bean name of this FactoryBean.
-     *
-     * @param name name of the job
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * Set the group of the job.
-     * <p>Default is the default group of the Scheduler.
-     *
-     * @param group group name of the job
-     * @see org.quartz.Scheduler#DEFAULT_GROUP
-     */
-    public void setGroup(final String group) {
-        this.group = group;
-    }
-
     @Required
-    public void setConcurrent(final boolean concurrent) {
-        this.concurrent = concurrent;
-    }
-
-    @Required
-    public void setDurability(boolean durability) {
-        this.durability = durability;
-    }
-
-    @Required
-    public void setRequestsRecovery(boolean requestsRecovery) {
-        this.requestsRecovery = requestsRecovery;
+    public void setJobClass(GrailsJobClass jobClass) {
+        this.jobClass = jobClass;
     }
 
     /**
@@ -86,11 +51,12 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() {
-
+        String name = jobClass.getFullName();
         if (name == null) {
             throw new IllegalStateException("name is required");
         }
 
+        String group = jobClass.getGroup();
         if (group == null) {
             throw new IllegalStateException("group is required");
         }
@@ -99,10 +65,10 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
         GrailsJobDetail jd = new GrailsJobDetail();
         jd.setJobClass(GrailsJobFactory.GrailsJob.class);
         // Consider the concurrent flag to choose between stateful and stateless job.
-        jd.setConcurrent(concurrent);
-        jd.setDurability(durability);
+        jd.setConcurrent(jobClass.isConcurrent());
+        jd.setDurability(jobClass.isDurability());
         jd.setKey(new JobKey(name, group));
-        jd.setRequestsRecovery(requestsRecovery);
+        jd.setRequestsRecovery(jobClass.isRequestsRecovery());
         jd.getJobDataMap().put(JOB_NAME_PARAMETER, name);
         jobDetail = jd;
     }

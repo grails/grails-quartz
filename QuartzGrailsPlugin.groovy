@@ -241,11 +241,7 @@ This plugin adds Quartz job scheduling features to Grails application.
 
             // Creates job details
             JobDetailFactoryBean jdfb = new JobDetailFactoryBean();
-            jdfb.name = fullName
-            jdfb.group = jobClass.group
-            jdfb.concurrent = jobClass.concurrent
-            jdfb.durability = jobClass.durability
-            jdfb.requestsRecovery = jobClass.requestsRecovery
+            jdfb.jobClass = jobClass
             jdfb.afterPropertiesSet()
             JobDetail jobDetail = jdfb.object
 
@@ -289,7 +285,10 @@ This plugin adds Quartz job scheduling features to Grails application.
     }
 
     def onChange = { event ->
-        if (application.isArtefactOfType(JobArtefactHandler.TYPE, event.source as Class)) {
+        if (
+                event.source instanceof Class &&
+                application.isArtefactOfType(JobArtefactHandler.TYPE, event.source as Class)
+        ) {
             log.debug("Job ${event.source} changed. Reloading...")
 
             GrailsApplicationContext context = event.ctx

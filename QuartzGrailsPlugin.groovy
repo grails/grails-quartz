@@ -27,6 +27,7 @@ import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import grails.util.Environment
 import org.quartz.*
+import org.quartz.impl.matchers.KeyMatcher
 import org.quartz.spi.MutableTrigger
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
@@ -119,11 +120,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             jobFactory = quartzJobFactory
 
             // Global listeners on each job.
-            if (manager?.hasGrailsPlugin("hibernate")) {
-                globalJobListeners = [ref("${SessionBinderJobListener.NAME}"), ref("${ExceptionPrinterJobListener.NAME}")]
-            } else {
-                globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
-            }
+            globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
         }
     }
 
@@ -253,6 +250,18 @@ This plugin adds Quartz job scheduling features to Grails application.
             // adds the job to the scheduler, and associates triggers with it
             scheduler.addJob(jobDetail, true);
 
+            // The session listener if is needed
+            if (manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
+                SessionBinderJobListener listener =
+                    ctx.getBean("${SessionBinderJobListener.NAME}") as SessionBinderJobListener
+                if(listener!=null){
+                    scheduler.getListenerManager().addJobListener(
+                            listener, KeyMatcher.keyEquals(jobDetail.key)
+                    )
+                } else {
+                    log.error("The SessionBinderJobListener has not been initialized.")
+                }
+            }
             // Creates and schedules triggers
             jobClass.triggers.each { name, Expando descriptor ->
                 CustomTriggerFactoryBean factory = new CustomTriggerFactoryBean();

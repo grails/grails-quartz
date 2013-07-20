@@ -71,15 +71,16 @@ This plugin adds Quartz job scheduling features to Grails application.
      */
     def doWithSpring = { context ->
         def config = loadQuartzConfig(application.config)
+        boolean hasHibernate = manager?.hasGrailsPlugin("hibernate")
 
         // Configure job beans
         application.jobClasses.each { GrailsJobClass jobClass ->
             configureJobBeans.delegate = delegate
-            configureJobBeans(jobClass, manager.hasGrailsPlugin("hibernate"))
+            configureJobBeans(jobClass, hasHibernate)
         }
 
         // Configure the session listener if there is the Hibernate
-        if (manager?.hasGrailsPlugin("hibernate")) {
+        if (hasHibernate) {
             // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
             "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) { bean ->
                 bean.autowire = "byName"
@@ -94,6 +95,11 @@ This plugin adds Quartz job scheduling features to Grails application.
         quartzJobFactory(GrailsJobFactory)
 
         // Configure Scheduler
+        configureScheduler.delegate = delegate
+        configureScheduler(config)
+    }
+
+    def configureScheduler = {config->
         quartzScheduler(SchedulerFactoryBean) {
             quartzProperties = config._properties
 
@@ -220,8 +226,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     // Schedule jobs
     def doWithApplicationContext = { applicationContext ->
         application.jobClasses.each { GrailsJobClass jobClass ->
-            scheduleJob.delegate = delegate
-            scheduleJob(jobClass, applicationContext)
+            scheduleJob(jobClass, applicationContext, manager?.hasGrailsPlugin("hibernate"))
         }
         log.debug("Scheduled Job Classes count: " + application.jobClasses.size())
     }
@@ -229,7 +234,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     /**
      * Schedules jobs. Creates job details and trigger beans. And schedules them.
      */
-    def scheduleJob = { GrailsJobClass jobClass, ApplicationContext ctx ->
+    static def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
         Scheduler scheduler = ctx.getBean("quartzScheduler") as Scheduler
         if (scheduler) {
             def fullName = jobClass.fullName
@@ -248,10 +253,10 @@ This plugin adds Quartz job scheduling features to Grails application.
             scheduler.addJob(jobDetail, true);
 
             // The session listener if is needed
-            if (manager?.hasGrailsPlugin("hibernate") && jobClass.sessionRequired) {
+            if (hasHibernate && jobClass.sessionRequired) {
                 SessionBinderJobListener listener =
                     ctx.getBean("${SessionBinderJobListener.NAME}") as SessionBinderJobListener
-                if(listener!=null){
+                if (listener != null) {
                     scheduler.getListenerManager().addJobListener(
                             listener, KeyMatcher.keyEquals(jobDetail.key)
                     )
@@ -271,7 +276,7 @@ This plugin adds Quartz job scheduling features to Grails application.
 
                 TriggerKey key = trigger.key
                 log.debug("Scheduling $fullName with trigger $key: ${trigger}")
-                if (scheduler.getTrigger(key)!=null) {
+                if (scheduler.getTrigger(key) != null) {
                     scheduler.rescheduleJob(key, trigger)
                 } else {
                     scheduler.scheduleJob(trigger)
@@ -290,7 +295,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             GrailsApplicationContext context = event.ctx
             def scheduler = context?.getBean("quartzScheduler")
 
-            def jobClass = application.getJobClass(event.source?.name)
+            GrailsJobClass jobClass = application.getJobClass(event.source?.name)
 
             if (context && jobClass) {
                 addMethods(jobClass, context)
@@ -306,20 +311,22 @@ This plugin adds Quartz job scheduling features to Grails application.
                 }
 
                 // add job artifact to application
-                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source as Class)
+                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source as Class) as GrailsJobClass
+
+                def fullName = jobClass.fullName
+                boolean hasHibernate = manager?.hasGrailsPlugin("hibernate")
 
                 // configure and register job beans
-                def fullName = jobClass.fullName
                 BeanBuilder beans = beans {
                     configureJobBeans.delegate = delegate
-                    configureJobBeans(jobClass, manager.hasGrailsPlugin("hibernate"))
+                    configureJobBeans(jobClass, hasHibernate)
                 }
 
                 context.registerBeanDefinition("${fullName}Class", beans.getBeanDefinition("${fullName}Class"))
                 context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
 
                 // Reschedule jobs
-                scheduleJob(jobClass as GrailsJobClass, event.ctx as ApplicationContext)
+                scheduleJob(jobClass as GrailsJobClass, event.ctx as ApplicationContext, hasHibernate)
             } else {
                 log.error("Application context or Quartz Scheduler not found. Can't reload Quartz plugin.")
             }

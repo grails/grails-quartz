@@ -102,7 +102,7 @@ class DynamicMethodsTests extends GroovyTestCase {
         def plugin = pluginManager.getGrailsPlugin("quartz")
         plugin.doWithDynamicMethods(grailsApplication.mainContext)
         GrailsJobClass jobClass = grailsApplication.getJobClass(IntegrationTestJob.name)
-        jobDetail = newJob().withIdentity(jobClass.getFullName(), jobClass.getGroup()).storeDurably().build()
+        jobDetail = newJob(SimpleTestJob).withIdentity(jobClass.getFullName(), jobClass.getGroup()).storeDurably().build()
         quartzScheduler.addJob(jobDetail, true)
     }
 

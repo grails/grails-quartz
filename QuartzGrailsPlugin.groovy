@@ -249,10 +249,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             scheduler.addJob(jobDetail, true);
 
             // The session listener if is needed
-            log.debug("Has Hibernate = ${hasHibernate}")
-            log.debug("Session required = ${jobClass.sessionRequired}")
             if (hasHibernate && jobClass.sessionRequired) {
-                log.debug("Add listener.")
                 SessionBinderJobListener listener =
                     ctx.getBean("${SessionBinderJobListener.NAME}") as SessionBinderJobListener
                 if (listener != null) {

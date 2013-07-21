@@ -57,7 +57,7 @@ class JobManagerServiceTests extends GroovyTestCase {
 
         quartzScheduler.scheduleJob(job1, trigger1)
         quartzScheduler.scheduleJob(job2, trigger2)
-        quartzScheduler.scheduleJobs([(job3): [trigger3, trigger4]], false)
+        quartzScheduler.scheduleJobs([(job3): [trigger3, trigger4] as Set], false)
         quartzScheduler.addJob(job4, false)
     }
 

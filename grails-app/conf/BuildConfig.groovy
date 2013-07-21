@@ -13,7 +13,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        compile("org.quartz-scheduler:quartz:2.1.7") {
+        compile("org.quartz-scheduler:quartz:2.2.0") {
             excludes 'slf4j-api', 'c3p0'
         }
     }

@@ -30,7 +30,7 @@ class JobDescriptorTests {
 
         scheduler.start()
 
-        job = JobBuilder.newJob().withIdentity(new JobKey("job", "group")).build()
+        job = JobBuilder.newJob(TestQuartzJob).withIdentity(new JobKey("job", "group")).build()
         trigger = TriggerBuilder.newTrigger()
                 .withIdentity(new TriggerKey("trigger", "group"))
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(2).repeatForever())

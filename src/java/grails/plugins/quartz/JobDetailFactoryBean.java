@@ -17,11 +17,11 @@
 package grails.plugins.quartz;
 
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.impl.JobDetailImpl;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
+
+import static org.quartz.JobBuilder.newJob;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
@@ -61,34 +61,18 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
             throw new IllegalStateException("group is required");
         }
 
-        // Build JobDetail instance.
-        GrailsJobDetail jd = new GrailsJobDetail();
-        jd.setJobClass(GrailsJobFactory.GrailsJob.class);
         // Consider the concurrent flag to choose between stateful and stateless job.
-        jd.setConcurrent(jobClass.isConcurrent());
-        jd.setDurability(jobClass.isDurability());
-        jd.setKey(new JobKey(name, group));
-        jd.setRequestsRecovery(jobClass.isRequestsRecovery());
-        jd.getJobDataMap().put(JOB_NAME_PARAMETER, name);
-        jobDetail = jd;
-    }
+        Class<? extends GrailsJobFactory.GrailsJob> clazz =
+                jobClass.isConcurrent() ? GrailsJobFactory.GrailsJob.class : GrailsJobFactory.StatefulGrailsJob.class;
 
-    private static class GrailsJobDetail extends JobDetailImpl{
-        private boolean concurrent;
-
-        @Override
-        public boolean isPersistJobDataAfterExecution() {
-            return !concurrent || super.isPersistJobDataAfterExecution();
-        }
-
-        @Override
-        public boolean isConcurrentExectionDisallowed() {
-            return !concurrent || super.isConcurrentExectionDisallowed();
-        }
-
-        private void setConcurrent(boolean concurrent) {
-            this.concurrent = concurrent;
-        }
+        // Build JobDetail instance.
+        jobDetail =
+                newJob(clazz)
+                        .withIdentity(name, group)
+                        .storeDurably(jobClass.isDurability())
+                        .requestRecovery(jobClass.isRequestsRecovery())
+                        .usingJobData(JOB_NAME_PARAMETER, name)
+                        .build();
     }
 
     /**

@@ -137,11 +137,21 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
 		}
 
         /**
+         * It's needed for the quartz-monitor plugin.
          * @return the GrailsJobClass object.
          */
-		public Object getJob() {
+		@SuppressWarnings("UnusedDeclaration")
+        public Object getJob() {
 			return job;
 		}
+    }
+
+    @PersistJobDataAfterExecution
+    @DisallowConcurrentExecution
+    public static class StatefulGrailsJob extends GrailsJob{
+        public StatefulGrailsJob(Object job) {
+            super(job);
+        }
     }
 
     /**

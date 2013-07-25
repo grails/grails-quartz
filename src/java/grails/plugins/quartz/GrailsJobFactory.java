@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 
 /**
  * Job factory which retrieves Job instances from ApplicationContext.
- *
+ * <p/>
  * It is used by the quartz scheduler to create an instance of the job class for executing.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
@@ -134,21 +134,27 @@ public class GrailsJobFactory extends AdaptableJobFactory implements Application
             } else {
                 throw new UnableToInterruptJobException(job.getClass().getName() + " doesn't support interruption");
             }
-		}
+        }
 
         /**
          * It's needed for the quartz-monitor plugin.
+         *
          * @return the GrailsJobClass object.
          */
-		@SuppressWarnings("UnusedDeclaration")
+        @SuppressWarnings("UnusedDeclaration")
         public Object getJob() {
-			return job;
-		}
+            return job;
+        }
     }
 
+    /**
+     * Extension of the GrailsJob, has concurrent annotations.
+     * Quartz checks whether or not jobs are stateful and if so,
+     * won't let jobs interfere with each other.
+     */
     @PersistJobDataAfterExecution
     @DisallowConcurrentExecution
-    public static class StatefulGrailsJob extends GrailsJob{
+    public static class StatefulGrailsJob extends GrailsJob {
         public StatefulGrailsJob(Object job) {
             super(job);
         }

@@ -99,7 +99,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             // delay scheduler startup to after-bootstrap stage
             autoStartup = false
             if (config.jdbcStore) {
-                dataSource = ref('dataSource')
+                dataSource = ref(config.jdbcStoreDataSource ?: 'dataSource')
                 transactionManager = ref('transactionManager')
             }
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown

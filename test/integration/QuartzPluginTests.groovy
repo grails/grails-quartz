@@ -15,7 +15,6 @@
  */
 
 import org.codehaus.groovy.grails.commons.spring.DefaultRuntimeSpringConfiguration
-import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import org.springframework.context.ApplicationContextAware
 import org.springframework.context.ApplicationContext
 import grails.plugins.quartz.JobArtefactHandler
@@ -29,7 +28,6 @@ class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAwar
     def applicationContext
 
     void setUp() {
-        pluginManager = PluginManagerHolder.pluginManager
     }
 
     void testLoading() {
@@ -59,7 +57,6 @@ class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAwar
 
         def ctx = springConfig.applicationContext
         assertTrue "Bean 'TestJob' is not registered in application context", ctx.containsBean('TestJob')
-        assertTrue "Bean 'TestJobTrigger' is not registered in application context", ctx.containsBean('TestJobTrigger')
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) {

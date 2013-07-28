@@ -74,6 +74,7 @@ public class SessionBinderJobListener extends JobListenerSupport {
         if (persistenceInterceptor != null) {
             try {
                 persistenceInterceptor.flush();
+                persistenceInterceptor.clear();
                 LOG.debug("Persistence session is flushed.");
             } catch (Exception e) {
                 LOG.error("Failed to flush session after job: " + context.getJobDetail().getDescription(), e);

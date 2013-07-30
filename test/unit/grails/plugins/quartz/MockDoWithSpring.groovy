@@ -21,7 +21,7 @@ package grails.plugins.quartz
 class MockDoWithSpring {
 
     def quartzProperties
-    def application = [jobClasses: null]
+    def application = [jobClasses: null, config: new ConfigObject()]
     def manager
 
     def ref( def whatever ) {

@@ -49,7 +49,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 name:triggerName,
                 group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: Constants.DEFAULT_START_DELAY,
-                repeatInterval: Constants.DEFAULT_TIMEOUT,
+                repeatInterval: Constants.DEFAULT_REPEAT_INTERVAL,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
@@ -71,7 +71,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 name:triggerName,
                 group: Constants.DEFAULT_TRIGGERS_GROUP,
                 startDelay: 500,
-                repeatInterval: Constants.DEFAULT_TIMEOUT,
+                repeatInterval: Constants.DEFAULT_REPEAT_INTERVAL,
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
@@ -151,7 +151,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
         )
     }
 
-    private assertPropertiesEquals(expected, actual) {
+    private static assertPropertiesEquals(expected, actual) {
         expected.properties.each { entry ->
             assert actual[entry.key] == entry.value, "Unexpected value for property: ${entry.key}" 
         }

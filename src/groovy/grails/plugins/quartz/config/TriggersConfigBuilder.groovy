@@ -117,67 +117,104 @@ public class TriggersConfigBuilder extends BuilderSupport {
     }
 
     private prepareCommonTriggerAttributes(Map triggerAttributes) {
-        if (triggerAttributes[Constants.NAME] == null) triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
-        if (triggerAttributes[Constants.GROUP] == null) triggerAttributes[Constants.GROUP] = Constants.DEFAULT_TRIGGERS_GROUP.toString()
-        if (triggerAttributes[Constants.START_DELAY] == null) triggerAttributes[Constants.START_DELAY] = Constants.DEFAULT_START_DELAY
-        if (!(triggerAttributes[Constants.START_DELAY] instanceof Integer || triggerAttributes[Constants.START_DELAY] instanceof Long)) {
-            throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} must be Integer or Long");
-        }
-        if (((Number) triggerAttributes[Constants.START_DELAY]).longValue() < 0) {
-            throw new IllegalArgumentException("startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)");
+        def prepare = prepareTriggerAttribute.curry(triggerAttributes)
+
+        if(triggerAttributes[Constants.NAME] == null) {
+            triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
         }
 
+        prepare(Constants.GROUP, Constants.DEFAULT_TRIGGERS_GROUP.toString())
+        prepare(
+                Constants.START_DELAY,
+                Constants.DEFAULT_START_DELAY,
+                {
+                    if (!(it instanceof Integer || it instanceof Long)) {
+                        throw new IllegalArgumentException(
+                                "startDelay trigger property in the job class ${jobName} must be Integer or Long"
+                        );
+                    }
+                    if (((Number) it).longValue() < 0) {
+                        throw new IllegalArgumentException(
+                                "startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)"
+                        );
+                    }
+                }
+        )
     }
 
     private def prepareSimpleTriggerAttributes(Map triggerAttributes) {
+        def prepare = prepareTriggerAttribute.curry(triggerAttributes)
+
+        // Process the old deprecated property "timeout"
         if (triggerAttributes[Constants.TIMEOUT] != null) {
             GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
 
             if (!(triggerAttributes[Constants.TIMEOUT] instanceof Integer || triggerAttributes[Constants.TIMEOUT] instanceof Long)) {
-                throw new IllegalArgumentException("timeout trigger property in the job class ${jobName} must be Integer or Long");
+                throw new IllegalArgumentException(
+                        "timeout trigger property in the job class ${jobName} must be Integer or Long"
+                );
             }
             if (((Number) triggerAttributes[Constants.TIMEOUT]).longValue() < 0) {
-                throw new IllegalArgumentException("timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+                throw new IllegalArgumentException(
+                        "timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)"
+                );
             }
             triggerAttributes[Constants.REPEAT_INTERVAL] = triggerAttributes.remove(Constants.TIMEOUT)
         }
-        if (triggerAttributes[Constants.REPEAT_INTERVAL] == null) triggerAttributes[Constants.REPEAT_INTERVAL] = Constants.DEFAULT_REPEAT_INTERVAL
-        if (!(triggerAttributes[Constants.REPEAT_INTERVAL] instanceof Integer || triggerAttributes[Constants.REPEAT_INTERVAL] instanceof Long)) {
-            throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long");
-        }
-        if (((Number) triggerAttributes[Constants.REPEAT_INTERVAL]).longValue() < 0) {
-            throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
-        }
-        if (triggerAttributes[Constants.REPEAT_COUNT] == null) triggerAttributes[Constants.REPEAT_COUNT] = Constants.DEFAULT_REPEAT_COUNT
-        if (!(triggerAttributes[Constants.REPEAT_COUNT] instanceof Integer || triggerAttributes[Constants.REPEAT_COUNT] instanceof Long)) {
-            throw new IllegalArgumentException("repeatCount trigger property in the job class ${jobName} must be Integer or Long");
-        }
-        if (((Number) triggerAttributes[Constants.REPEAT_COUNT]).longValue() < 0 && ((Number) triggerAttributes[Constants.REPEAT_COUNT]).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
-            throw new IllegalArgumentException("repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)");
-        }
+
+        // Validate repeat interval
+        prepare(
+                Constants.REPEAT_INTERVAL,
+                Constants.DEFAULT_REPEAT_INTERVAL,
+                {
+                    if (!(it instanceof Integer || it instanceof Long)) {
+                        throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long");
+                    }
+                    if (((Number) it).longValue() < 0) {
+                        throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+                    }
+                }
+        )
+
+        // Validate repeat count
+        prepare(
+                Constants.REPEAT_COUNT,
+                Constants.DEFAULT_REPEAT_COUNT,
+                {
+                    if (!(it instanceof Integer || it instanceof Long)) {
+                        throw new IllegalArgumentException(
+                                "repeatCount trigger property in the job class ${jobName} must be Integer or Long"
+                        );
+                    }
+                    if (((Number) it).longValue() < 0 && ((Number) it).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
+                        throw new IllegalArgumentException(
+                                "repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)"
+                        );
+                    }
+                }
+        )
     }
 
     private def prepareCronTriggerAttributes(Map triggerAttributes) {
-        if (!triggerAttributes?.cronExpression) triggerAttributes[Constants.CRON_EXPRESSION] = Constants.DEFAULT_CRON_EXPRESSION
-        if (!CronExpression.isValidExpression(triggerAttributes[Constants.CRON_EXPRESSION].toString())) {
-            throw new IllegalArgumentException("Cron expression '${triggerAttributes[Constants.CRON_EXPRESSION]}' in the job class ${jobName} is not a valid cron expression");
+        prepareTriggerAttribute(
+                triggerAttributes,
+                Constants.CRON_EXPRESSION,
+                Constants.DEFAULT_CRON_EXPRESSION,
+                {
+                    if (!CronExpression.isValidExpression(it.toString())) {
+                        throw new IllegalArgumentException(
+                                "Cron expression '${it}' in the job class ${jobName} is not a valid cron expression"
+                        );
+                    }
+                }
+        )
+    }
+
+    private prepareTriggerAttribute = {Map attributes, String name, def defaultValue, validate = {} ->
+        if(attributes[name] == null){
+            attributes[name] = defaultValue
         }
-    }
-
-    /**
-     * It's needed for old API for realize embedded triggers.
-     */
-    @Deprecated
-    public Map createEmbeddedSimpleTrigger(startDelay, timeout, repeatCount) {
-        return [(jobName): createTrigger('simple', [name: jobName, startDelay: startDelay, repeatInterval: timeout, repeatCount: repeatCount])]
-    }
-
-    /**
-     * It's needed for old API for realize embedded triggers.
-     */
-    @Deprecated
-    public Map createEmbeddedCronTrigger(startDelay, cronExpression) {
-        return [(jobName): createTrigger('cron', [name: jobName, startDelay: startDelay, cronExpression: cronExpression])]
+        validate(attributes[name])
     }
 
     /**

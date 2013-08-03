@@ -113,7 +113,7 @@ This plugin adds Quartz job scheduling features to Grails application.
 
             // Store
             if (config.jdbcStore) {
-                dataSource = ref('dataSource')
+                dataSource = ref(config.jdbcStoreDataSource ?: 'dataSource')
                 transactionManager = ref('transactionManager')
             }
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown

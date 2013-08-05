@@ -44,7 +44,7 @@ class MockDoWithSpring {
         def data = [:]
         props.delegate = data
         props.resolveStrategy = Closure.DELEGATE_FIRST
-        props.call()
+        props.call([:])
         println "xxxxxxxx=$data"
         this.quartzProperties = data.quartzProperties
     }

@@ -100,7 +100,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     }
 
     def configureScheduler = {config->
-        quartzScheduler(SchedulerFactoryBean) {
+        quartzScheduler(SchedulerFactoryBean) { bean ->
             quartzProperties = config._properties
 
             // Use the instanceName property to set the name of the scheduler
@@ -122,6 +122,9 @@ This plugin adds Quartz job scheduling features to Grails application.
 
             // Global listeners on each job.
             globalJobListeners = [ref("${ExceptionPrinterJobListener.NAME}")]
+
+            // Destroys the scheduler before the application will stop.
+            bean.destroyMethod = 'destroy'
         }
     }
 

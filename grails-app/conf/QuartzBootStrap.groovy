@@ -35,6 +35,5 @@ class QuartzBootStrap {
     }
 
     def destroy = {
-        quartzScheduler.shutdown()
     }
 }

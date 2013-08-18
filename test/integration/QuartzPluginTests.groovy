@@ -33,11 +33,11 @@ class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAwar
     void testLoading() {
         assertNotNull 'Plugin manager is null', pluginManager
         assertTrue 'Core plugin is not loaded', pluginManager.hasGrailsPlugin('core')
-        assertTrue 'Hibernate plugin is not loaded', pluginManager.hasGrailsPlugin('hibernate')
+        //assertTrue 'Hibernate plugin is not loaded', pluginManager.hasGrailsPlugin('hibernate')
         assertTrue 'Quartz plugin is not loaded', pluginManager.hasGrailsPlugin('quartz')
 
         assertTrue "Bean 'quartzScheduler' is not registered in application context", applicationContext.containsBean('quartzScheduler')
-        assertTrue "Bean '${SessionBinderJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${SessionBinderJobListener.NAME}")
+//        assertTrue "Bean '${SessionBinderJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${SessionBinderJobListener.NAME}")
         assertTrue "Bean '${ExceptionPrinterJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${ExceptionPrinterJobListener.NAME}")
     }
 

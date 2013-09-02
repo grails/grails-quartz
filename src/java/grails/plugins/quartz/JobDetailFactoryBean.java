@@ -47,6 +47,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
 
     private String name;
     private String group;
+    private String description;
     private boolean concurrent;
     private boolean durability;
     private boolean requestsRecovery;
@@ -107,6 +108,14 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
     }
 
     /**
+     * Sets the description on the Quartz JobDetail object
+     * @param description the description on the Quartz JobDetail object
+     */
+    public void setJobDetailDescription(String description) {
+        this.description = description;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -127,6 +136,7 @@ public class JobDetailFactoryBean implements FactoryBean, InitializingBean {
         // Build JobDetail instance.
         jobDetail = newJob(jobClass)
                 .withIdentity(name,group)
+                .withDescription(description)
                 .storeDurably(durability)
                 .requestRecovery(requestsRecovery)
                 .usingJobData(JOB_NAME_PARAMETER, name)

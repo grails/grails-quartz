@@ -45,6 +45,8 @@ public final class GrailsJobClassConstants {
 
     public static final String GROUP = "group";
 
+    public static final String DESCRIPTION = "description";
+
     public static final String CONCURRENT = "concurrent";
 
     public static final String SESSION_REQUIRED = "sessionRequired";
@@ -74,6 +76,8 @@ public final class GrailsJobClassConstants {
     public static final String DEFAULT_CRON_EXPRESSION = "0 0 6 * * ?";
 
     public static final String DEFAULT_GROUP = "GRAILS_JOBS";
+
+    public static final String DEFAULT_DESCRIPTION = "Grails Job";
 
     public static final boolean DEFAULT_CONCURRENT = true;
 

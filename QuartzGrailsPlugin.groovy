@@ -43,7 +43,7 @@ class QuartzGrailsPlugin {
     def version = "1.0-RC10"
     def grailsVersion = "1.2 > *"
 
-    def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"
+    def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf, Vitalii Samolovskikh"
     def authorEmail = "rvanderwerf@gmail.com"
     def title = "Quartz plugin for Grails"
     def description = '''\

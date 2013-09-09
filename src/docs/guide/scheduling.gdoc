@@ -8,6 +8,7 @@ class MyJob {
     simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000  
   }
   def group = "MyGroup"
+  def description = "Example job with Simple Trigger"
 
   def execute(){
     print "Job run!"
@@ -30,6 +31,7 @@ class MyJob  {
     cron name: 'myTrigger', cronExpression: "0 0 6 * * ?"
   }
  def group = "MyGroup"
+ def description = "Example job with Cron Trigger"
 
  def execute(){
    print "Job run!"

@@ -310,6 +310,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             "${fullName}Detail"(JobDetailFactoryBean) {
                 name = fullName
                 group = jobClass.group
+                jobDetailDescription = jobClass.description
                 concurrent = jobClass.concurrent
                 durability = jobClass.durability
                 requestsRecovery = jobClass.requestsRecovery

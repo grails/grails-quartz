@@ -72,6 +72,7 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
                         .storeDurably(jobClass.isDurability())
                         .requestRecovery(jobClass.isRequestsRecovery())
                         .usingJobData(JOB_NAME_PARAMETER, name)
+                        .withDescription(jobClass.getDescription())
                         .build();
     }
 

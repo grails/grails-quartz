@@ -16,6 +16,7 @@ import org.springframework.beans.BeanWrapper
 class JobDetailFactoryBeanTests {
     private static final String JOB_NAME = 'jobName'
     private static final String JOB_GROUP = 'jobGroup'
+    private static final String JOB_DESCRIPTION = 'The job description'
     JobDetailFactoryBean factory
 
     @Before
@@ -32,7 +33,8 @@ class JobDetailFactoryBeanTests {
                         concurrent:true,
                         durability:true,
                         sessionRequired:true,
-                        requestsRecovery:true
+                        requestsRecovery:true,
+                        description: JOB_DESCRIPTION
                 ]
         )
         factory.afterPropertiesSet()
@@ -43,6 +45,7 @@ class JobDetailFactoryBeanTests {
         Assert.assertFalse(jobDetail.concurrentExectionDisallowed)
         Assert.assertFalse(jobDetail.persistJobDataAfterExecution)
         Assert.assertTrue(jobDetail.requestsRecovery())
+        Assert.assertEquals(JOB_DESCRIPTION, jobDetail.description)
     }
 
     @Test
@@ -65,6 +68,7 @@ class JobDetailFactoryBeanTests {
         Assert.assertTrue(jobDetail.concurrentExectionDisallowed)
         Assert.assertTrue(jobDetail.persistJobDataAfterExecution)
         Assert.assertFalse(jobDetail.requestsRecovery())
+        Assert.assertNull(jobDetail.description)
     }
 }
 
@@ -75,6 +79,7 @@ class GrailsJobClassMock implements GrailsJobClass {
     boolean durability
     boolean sessionRequired
     boolean requestsRecovery
+    String description
 
     @Override
     void execute() {

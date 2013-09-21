@@ -93,6 +93,12 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
     }
 
+    public String getDescription() {
+        String description = (String) getPropertyOrStaticPropertyOrFieldValue(DESCRIPTION, String.class);
+        if (description == null || "".equals(description)) return DEFAULT_DESCRIPTION;
+        return description;
+    }
+
     public Map getTriggers() {
         return triggers;
     }

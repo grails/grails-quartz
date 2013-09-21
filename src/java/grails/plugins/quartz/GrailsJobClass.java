@@ -71,5 +71,12 @@ public interface GrailsJobClass extends InjectableGrailsClass {
      */
     public boolean isRequestsRecovery();
 
+    /**
+     * Get job's description used for configuring job details.
+     *
+     * @return description for this job
+     */
+    public String getDescription();
+
     public Map getTriggers();
 }

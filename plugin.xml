@@ -1,4 +1,4 @@
-<plugin name='quartz' version='1.0-RC7' grailsVersion='2.2.1 &gt; *'>
+<plugin name='quartz' version='1.0-SNAPSHOT' grailsVersion='2.0 &gt; *'>
   <author>Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf</author>
   <authorEmail>rvanderwerf@gmail.com</authorEmail>
   <title>Quartz plugin for Grails</title>
@@ -20,19 +20,7 @@
       <dependency group='org.quartz-scheduler' name='quartz' version='2.2.0' />
     </compile>
   </dependencies>
-  <plugins>
-    <compile>
-      <plugin group='org.grails.plugins' name='cache' version='1.0.1' />
-    </compile>
-    <runtime>
-      <plugin group='org.grails.plugins' name='jquery' version='1.8.3' />
-      <plugin group='org.grails.plugins' name='hibernate' version='2.2.1' />
-      <plugin group='org.grails.plugins' name='resources' version='1.1.6' />
-    </runtime>
-    <build>
-      <plugin group='org.grails.plugins' name='tomcat' version='2.2.1' />
-    </build>
-  </plugins>
+  <plugins />
   <runtimePluginRequirements />
   <behavior />
 </plugin>

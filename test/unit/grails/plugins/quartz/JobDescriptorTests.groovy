@@ -3,6 +3,7 @@ package grails.plugins.quartz
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
 import org.quartz.JobKey
@@ -29,7 +30,7 @@ class JobDescriptorTests {
 
         scheduler.start()
 
-        job = JobBuilder.newJob(SimpleTestJob.class).withIdentity(new JobKey("job", "group")).build()
+        job = JobBuilder.newJob(TestQuartzJob).withIdentity(new JobKey("job", "group")).build()
         trigger = TriggerBuilder.newTrigger()
                 .withIdentity(new TriggerKey("trigger", "group"))
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(2).repeatForever())

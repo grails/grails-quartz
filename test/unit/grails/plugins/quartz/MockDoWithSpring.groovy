@@ -21,7 +21,7 @@ package grails.plugins.quartz
 class MockDoWithSpring {
 
     def quartzProperties
-    def application = [jobClasses: null]
+    def application = [jobClasses: null, config: new ConfigObject()]
     def manager
 
     def ref( def whatever ) {
@@ -44,7 +44,7 @@ class MockDoWithSpring {
         def data = [:]
         props.delegate = data
         props.resolveStrategy = Closure.DELEGATE_FIRST
-        props.call()
+        props.call([:])
         println "xxxxxxxx=$data"
         this.quartzProperties = data.quartzProperties
     }

@@ -41,10 +41,18 @@ public class SessionBinderJobListener extends JobListenerSupport {
         return NAME;
     }
 
+    /**
+     * It is used by the Spring to inject a persistence interceptor.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public PersistenceContextInterceptor getPersistenceInterceptor() {
         return persistenceInterceptor;
     }
 
+    /**
+     * It is used by the Spring to inject a persistence interceptor.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     public void setPersistenceInterceptor(PersistenceContextInterceptor persistenceInterceptor) {
         this.persistenceInterceptor = persistenceInterceptor;
     }
@@ -55,6 +63,7 @@ public class SessionBinderJobListener extends JobListenerSupport {
     public void jobToBeExecuted(JobExecutionContext context) {
         if (persistenceInterceptor != null) {
             persistenceInterceptor.init();
+            LOG.debug("Persistence session is opened.");
         }
     }
 
@@ -65,6 +74,8 @@ public class SessionBinderJobListener extends JobListenerSupport {
         if (persistenceInterceptor != null) {
             try {
                 persistenceInterceptor.flush();
+                persistenceInterceptor.clear();
+                LOG.debug("Persistence session is flushed.");
             } catch (Exception e) {
                 LOG.error("Failed to flush session after job: " + context.getJobDetail().getDescription(), e);
             } finally {

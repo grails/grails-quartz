@@ -24,11 +24,13 @@ import org.codehaus.groovy.grails.commons.spring.GrailsApplicationContext
 import org.quartz.*
 import org.quartz.impl.matchers.KeyMatcher
 import org.quartz.spi.MutableTrigger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 
-import static grails.plugins.quartz.TriggerUtils.*
+import grails.plugins.quartz.TriggerUtils
 
 /**
  * A plug-in that configures Quartz job support for Grails.
@@ -65,6 +67,9 @@ This plugin adds Quartz job scheduling features to Grails application.
     ]
 
     def artefacts = [new JobArtefactHandler()]
+
+    // The logger for the plugin class
+    private Logger log = LoggerFactory.getLogger('grails.plugins.quartz.QuartzGrailsPlugin')
 
     /**
      * Configures The Spring context.
@@ -178,18 +183,18 @@ This plugin adds Quartz job scheduling features to Grails application.
 
         // Schedule with job with cron trigger
         mc.'static'.schedule = { String cronExpression, Map params = null ->
-            scheduleTrigger(buildCronTrigger(jobName, jobGroup, cronExpression), params)
+            scheduleTrigger(TriggerUtils.buildCronTrigger(jobName, jobGroup, cronExpression), params)
         }
 
         // Schedule the job with simple trigger
         mc.'static'.schedule = {
             Long repeatInterval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null ->
-                scheduleTrigger(buildSimpleTrigger(jobName, jobGroup, repeatInterval, repeatCount), params)
+                scheduleTrigger(TriggerUtils.buildSimpleTrigger(jobName, jobGroup, repeatInterval, repeatCount), params)
         }
 
         // Schedule the job at specified time
         mc.'static'.schedule = { Date scheduleDate, Map params = null ->
-            scheduleTrigger(buildDateTrigger(jobName, jobGroup, scheduleDate), params)
+            scheduleTrigger(TriggerUtils.buildDateTrigger(jobName, jobGroup, scheduleDate), params)
         }
 
         // Schedule the job with trigger
@@ -237,7 +242,7 @@ This plugin adds Quartz job scheduling features to Grails application.
     /**
      * Schedules jobs. Creates job details and trigger beans. And schedules them.
      */
-    static def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
+    def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
         Scheduler scheduler = ctx.getBean("quartzScheduler") as Scheduler
         if (scheduler) {
             def fullName = jobClass.fullName

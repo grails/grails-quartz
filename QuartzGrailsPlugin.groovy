@@ -44,7 +44,7 @@ import grails.plugins.quartz.TriggerUtils
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-SNAPSHOT"
+    def version = "1.0-RC11"
     def grailsVersion = "2.0 > *"
 
     def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"

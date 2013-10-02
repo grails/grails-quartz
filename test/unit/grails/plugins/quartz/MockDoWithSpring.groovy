@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 package grails.plugins.quartz
 
 class MockDoWithSpring {
@@ -24,23 +22,23 @@ class MockDoWithSpring {
     def application = [jobClasses: null, config: new ConfigObject()]
     def manager
 
-    def ref( def whatever ) {
+    def ref(whatever) {
         null
     }
 
-    def quartzJobFactory( def whatever ) {
+    def quartzJobFactory(whatever) {
         null
     }
 
-    def exceptionPrinterListener( def whatever ) {
+    def exceptionPrinterListener(whatever) {
         null
     }
 
-    def sessionBinderListener( def something, def whatever ) {
+    def sessionBinderListener(something, whatever) {
         null
     }
 
-    void quartzScheduler( def whatever, Closure props ) {
+    void quartzScheduler(whatever, Closure props) {
         def data = [:]
         props.delegate = data
         props.resolveStrategy = Closure.DELEGATE_FIRST

@@ -23,4 +23,4 @@
  */
 
 // ensure that there are 'jobs' directory under application 'grails-app'
-Ant.mkdir(dir:"${basedir}/grails-app/jobs")
+ant.mkdir(dir:"${basedir}/grails-app/jobs")

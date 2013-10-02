@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-import org.codehaus.groovy.grails.commons.spring.DefaultRuntimeSpringConfiguration
-import org.springframework.context.ApplicationContextAware
-import org.springframework.context.ApplicationContext
 import grails.plugins.quartz.JobArtefactHandler
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
-import grails.plugins.quartz.listeners.SessionBinderJobListener
+
+import org.codehaus.groovy.grails.commons.spring.DefaultRuntimeSpringConfiguration
+import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationContextAware
 
 class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAware {
-    def transactional = false
+    boolean transactional = false
     def grailsApplication
     def pluginManager
-    def applicationContext
-
-    void setUp() {
-    }
+    ApplicationContext applicationContext
 
     void testLoading() {
         assertNotNull 'Plugin manager is null', pluginManager
@@ -57,9 +54,5 @@ class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAwar
 
         def ctx = springConfig.applicationContext
         assertTrue "Bean 'TestJob' is not registered in application context", ctx.containsBean('TestJob')
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext
     }
 }

@@ -22,4 +22,4 @@
  * @since 0.2
  */
 
-Ant.mkdir(dir:"${basedir}/grails-app/jobs")
+ant.mkdir(dir:"${basedir}/grails-app/jobs")

@@ -1,7 +1,8 @@
 package grails.plugins.quartz
 
 import grails.plugins.quartz.config.TriggersConfigBuilder
-import org.junit.*
+
+import org.junit.Test
 import org.quartz.CronTrigger
 import org.quartz.DailyTimeIntervalTrigger
 import org.quartz.DateBuilder
@@ -21,7 +22,7 @@ class CustomTriggerFactoryBeanTests {
     private static final TimeOfDay END_TIME = new TimeOfDay(11, 30)
 
     @Test
-    public void testFactory() {
+    void testFactory() {
         def builder = new TriggersConfigBuilder('TestJob')
         def closure = {
             simple name: 'simple', group:'group', startDelay: 500, repeatInterval: 1000, repeatCount: 3
@@ -32,7 +33,7 @@ class CustomTriggerFactoryBeanTests {
         }
         builder.build(closure)
 
-        Map<String, Trigger> triggers = [:];
+        Map<String, Trigger> triggers = [:]
 
         builder.triggers.values().each {
             CustomTriggerFactoryBean factory = new CustomTriggerFactoryBean()

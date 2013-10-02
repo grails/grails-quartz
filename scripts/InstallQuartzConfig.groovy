@@ -22,24 +22,14 @@
  * @since 0.3
  */
 
-if(grails.util.GrailsUtil.grailsVersion.startsWith("1.0")) {
-    includeTargets << new File ( "${grailsHome}/scripts/Init.groovy" )
-    includeTargets << new File( "${grailsHome}/scripts/CreateIntegrationTest.groovy")
-} else {
-    includeTargets << grailsScript("_GrailsInit")
-    includeTargets << grailsScript("_GrailsCreateArtifacts")
+includeTargets << grailsScript("_GrailsInit")
+includeTargets << grailsScript("_GrailsCreateArtifacts")
 
-}
-
-target('default': "Installs Quartz config in the /grails-app/conf/ directory") {
-    installQuartzConfig()
-}
-
-target(installQuartzConfig: "The implementation task") {
+target(installQuartzConfig: "Installs Quartz config in the /grails-app/conf/ directory") {
     depends(checkVersion)
     def configFile = "${basedir}/grails-app/conf/QuartzConfig.groovy"
     if(!(configFile as File).exists() || confirmInput("Quartz config file already exists in your project. Overwrite it?")) {
-        Ant.copy(
+        ant.copy(
                 file:"${quartzPluginDir}/grails-app/conf/DefaultQuartzConfig.groovy",
                 tofile:configFile,
                 overwrite: true
@@ -50,6 +40,8 @@ target(installQuartzConfig: "The implementation task") {
 }
 
 confirmInput = {String message ->
-    Ant.input(message: message, addproperty: "confirm.message", validargs: "y,n")
-    Ant.antProject.properties."confirm.message" == "y"
+    ant.input(message: message, addproperty: "confirm.message", validargs: "y,n")
+    ant.antProject.properties."confirm.message" == "y"
 }
+
+setDefaultTarget 'installQuartzConfig'

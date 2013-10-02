@@ -1,7 +1,16 @@
 package grails.plugins.quartz
 
-import org.junit.*
-import org.quartz.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.quartz.JobBuilder
+import org.quartz.JobDetail
+import org.quartz.JobKey
+import org.quartz.Scheduler
+import org.quartz.SimpleScheduleBuilder
+import org.quartz.Trigger
+import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import org.quartz.impl.StdSchedulerFactory
 
 /**
@@ -15,7 +24,7 @@ class TriggerDescriptorTests {
     private Trigger trigger
 
     @Before
-    public void prepare(){
+    void prepare(){
         scheduler = StdSchedulerFactory.getDefaultScheduler()
 
         scheduler.start()
@@ -31,12 +40,12 @@ class TriggerDescriptorTests {
     }
 
     @After
-    public void dispose(){
+    void dispose(){
         scheduler.shutdown()
     }
 
     @Test
-    public void testBuild(){
+    void testBuild(){
         TriggerDescriptor descriptor =
             TriggerDescriptor.build(JobDescriptor.build(job, scheduler), trigger, scheduler)
         assert descriptor.name == 'trigger'

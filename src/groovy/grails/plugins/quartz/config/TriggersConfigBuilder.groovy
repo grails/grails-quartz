@@ -16,10 +16,10 @@
 
 package grails.plugins.quartz.config
 
-import grails.plugins.quartz.GrailsJobClassConstants as Constants
-
 import grails.plugins.quartz.CustomTriggerFactoryBean
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.util.GrailsUtil
+
 import org.quartz.CronExpression
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
@@ -33,21 +33,20 @@ import org.quartz.impl.triggers.SimpleTriggerImpl
  *
  * @since 0.3
  */
-public class TriggersConfigBuilder extends BuilderSupport {
+class TriggersConfigBuilder extends BuilderSupport {
     private triggerNumber = 0
     private jobName
 
     def triggers = [:]
 
-    public TriggersConfigBuilder(String jobName) {
-        super()
+    TriggersConfigBuilder(String jobName) {
         this.jobName = jobName
     }
 
     /**
      * Evaluate triggers closure
      */
-    public build(closure) {
+    def build(closure) {
         closure.delegate = this
         closure.call()
         return triggers
@@ -60,7 +59,7 @@ public class TriggersConfigBuilder extends BuilderSupport {
      * @param attributes trigger attributes
      * @return trigger definitions
      */
-    public Expando createTrigger(def name, Map attributes) {
+    Expando createTrigger(name, Map attributes) {
         def triggerClass
 
         def triggerAttributes = attributes ? new HashMap(attributes) : [:]
@@ -131,18 +130,18 @@ public class TriggersConfigBuilder extends BuilderSupport {
                     if (!(it instanceof Integer || it instanceof Long)) {
                         throw new IllegalArgumentException(
                                 "startDelay trigger property in the job class ${jobName} must be Integer or Long"
-                        );
+                        )
                     }
                     if (((Number) it).longValue() < 0) {
                         throw new IllegalArgumentException(
                                 "startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)"
-                        );
+                        )
                     }
                 }
         )
     }
 
-    private def prepareSimpleTriggerAttributes(Map triggerAttributes) {
+    private prepareSimpleTriggerAttributes(Map triggerAttributes) {
         def prepare = prepareTriggerAttribute.curry(triggerAttributes)
 
         // Process the old deprecated property "timeout"
@@ -152,12 +151,12 @@ public class TriggersConfigBuilder extends BuilderSupport {
             if (!(triggerAttributes[Constants.TIMEOUT] instanceof Integer || triggerAttributes[Constants.TIMEOUT] instanceof Long)) {
                 throw new IllegalArgumentException(
                         "timeout trigger property in the job class ${jobName} must be Integer or Long"
-                );
+                )
             }
             if (((Number) triggerAttributes[Constants.TIMEOUT]).longValue() < 0) {
                 throw new IllegalArgumentException(
                         "timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)"
-                );
+                )
             }
             triggerAttributes[Constants.REPEAT_INTERVAL] = triggerAttributes.remove(Constants.TIMEOUT)
         }
@@ -168,10 +167,10 @@ public class TriggersConfigBuilder extends BuilderSupport {
                 Constants.DEFAULT_REPEAT_INTERVAL,
                 {
                     if (!(it instanceof Integer || it instanceof Long)) {
-                        throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long");
+                        throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long")
                     }
                     if (((Number) it).longValue() < 0) {
-                        throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)");
+                        throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)")
                     }
                 }
         )
@@ -184,18 +183,18 @@ public class TriggersConfigBuilder extends BuilderSupport {
                     if (!(it instanceof Integer || it instanceof Long)) {
                         throw new IllegalArgumentException(
                                 "repeatCount trigger property in the job class ${jobName} must be Integer or Long"
-                        );
+                        )
                     }
                     if (((Number) it).longValue() < 0 && ((Number) it).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
                         throw new IllegalArgumentException(
                                 "repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)"
-                        );
+                        )
                     }
                 }
         )
     }
 
-    private def prepareCronTriggerAttributes(Map triggerAttributes) {
+    private prepareCronTriggerAttributes(Map triggerAttributes) {
         prepareTriggerAttribute(
                 triggerAttributes,
                 Constants.CRON_EXPRESSION,
@@ -204,13 +203,13 @@ public class TriggersConfigBuilder extends BuilderSupport {
                     if (!CronExpression.isValidExpression(it.toString())) {
                         throw new IllegalArgumentException(
                                 "Cron expression '${it}' in the job class ${jobName} is not a valid cron expression"
-                        );
+                        )
                     }
                 }
         )
     }
 
-    private prepareTriggerAttribute = {Map attributes, String name, def defaultValue, validate = {} ->
+    private prepareTriggerAttribute = {Map attributes, String name, defaultValue, validate = {} ->
         if(attributes[name] == null){
             attributes[name] = defaultValue
         }

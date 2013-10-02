@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-
-
 package grails.plugins.quartz
 
 import grails.test.GrailsUnitTestCase
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
-import org.codehaus.groovy.grails.commons.GrailsApplication
 
 class QuartzConfigTests extends GrailsUnitTestCase {
 

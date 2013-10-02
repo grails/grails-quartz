@@ -17,7 +17,6 @@
 package grails.plugins.quartz;
 
 import grails.plugins.quartz.config.TriggersConfigBuilder;
-import grails.util.GrailsUtil;
 import groovy.lang.Closure;
 import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
@@ -57,15 +56,6 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         if (triggersClosure != null) {
             builder.build(triggersClosure);
             triggers = (Map) builder.getTriggers();
-        } else {
-            // backward compatibility
-            if (isCronExpressionConfigured()) {
-                GrailsUtil.deprecated("You're using deprecated 'def cronExpression = ...' parameter in the " + getFullName() + ", use 'static triggers = { cron cronExpression: ...} instead.");
-                triggers = builder.createEmbeddedCronTrigger(getStartDelay(), getCronExpression());
-            } else {
-                GrailsUtil.deprecated("You're using deprecated 'def startDelay = ...; def timeout = ...' parameters in the" + getFullName() + ", use 'static triggers = { simple startDelay: ..., repeatInterval: ...} instead.");
-                triggers = builder.createEmbeddedSimpleTrigger(getStartDelay(), getTimeout(), getRepeatCount());
-            }
         }
     }
 
@@ -77,67 +67,11 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
         getMetaClass().invokeMethod(getReferenceInstance(), EXECUTE, new Object[]{context});
     }
 
-    // TODO: ============== start of deprecated methods =================
-    @Deprecated
-    public long getTimeout() {
-        Object obj = getPropertyValue(TIMEOUT);
-        if (obj == null) return DEFAULT_TIMEOUT;
-        else if (!(obj instanceof Number)) {
-            throw new IllegalArgumentException(
-                    "timeout trigger property in the job class " +
-                            getShortName() + " must be Integer or Long");
-        }
-
-        return ((Number) obj).longValue();
-    }
-
-    @Deprecated
-    public long getStartDelay() {
-        Object obj = getPropertyValue(START_DELAY);
-        if (obj == null) return DEFAULT_START_DELAY;
-        else if (!(obj instanceof Number)) {
-            throw new IllegalArgumentException(
-                    "startDelay trigger property in the job class " +
-                            getShortName() + " must be Integer or Long");
-        }
-
-        return ((Number) obj).longValue();
-    }
-
-    @Deprecated
-    public int getRepeatCount() {
-        Object obj = getPropertyValue(REPEAT_COUNT);
-        if (obj == null) return DEFAULT_REPEAT_COUNT;
-        else if (!(obj instanceof Number)) {
-            throw new IllegalArgumentException(
-                    "repeatCount trigger property in the job class " +
-                            getShortName() + " must be Integer or Long");
-        }
-
-        return ((Number) obj).intValue();
-    }
-
-    @Deprecated
-    public String getCronExpression() {
-        String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
-        if (cronExpression == null || "".equals(cronExpression)) return DEFAULT_CRON_EXPRESSION;
-        return cronExpression;
-    }
-
-    @Deprecated
     public String getGroup() {
         String group = (String) getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
         if (group == null || "".equals(group)) return DEFAULT_GROUP;
         return group;
     }
-
-    // not certain about this... feels messy
-    @Deprecated
-    public boolean isCronExpressionConfigured() {
-        String cronExpression = (String) getPropertyOrStaticPropertyOrFieldValue(CRON_EXPRESSION, String.class);
-        return cronExpression != null;
-    }
-    // TODO: ============== end of deprecated methods =================
 
     public boolean isConcurrent() {
         Boolean concurrent = getPropertyValue(CONCURRENT, Boolean.class);

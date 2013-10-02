@@ -16,6 +16,7 @@
 
 package grails.plugins.quartz;
 
+import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.AbstractTrigger;
@@ -35,10 +36,10 @@ import java.util.Map;
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
-public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
+public class CustomTriggerFactoryBean implements FactoryBean<Trigger>, InitializingBean {
     private Class<Trigger> triggerClass;
     private Trigger customTrigger;
-    private JobDetailImpl jobDetail;
+    private JobDetail jobDetail;
 
     private Map triggerAttributes;
 
@@ -73,7 +74,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
      *
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
-    public Object getObject() throws Exception {
+    public Trigger getObject() throws Exception {
         return customTrigger;
     }
 
@@ -82,7 +83,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
      *
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
-    public Class getObjectType() {
+    public Class<? extends Trigger> getObjectType() {
         return triggerClass;
     }
 
@@ -95,7 +96,7 @@ public class CustomTriggerFactoryBean implements FactoryBean, InitializingBean {
         return true;
     }
 
-    public void setJobDetail(JobDetailImpl jobDetail) {
+    public void setJobDetail(JobDetail jobDetail) {
         this.jobDetail = jobDetail;
     }
 

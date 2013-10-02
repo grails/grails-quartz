@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import org.codehaus.groovy.grails.commons.ApplicationAttributes
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.quartz.Scheduler
 
 /**
  * Bootstrap class which turns on scheduler if autoStartup config parameter is set to true.
@@ -25,11 +25,15 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  * @since 0.3
  */
 class QuartzBootStrap {
-    def quartzScheduler
+    GrailsApplication grailsApplication
+    Scheduler quartzScheduler
 
-    def init = {servletContext ->
-        // TODO: Move to plugin class
-        if(ConfigurationHolder.config?.quartz?.autoStartup) quartzScheduler.start()
+    def init = { servletContext ->
+        if (grailsApplication.config?.quartz?.autoStartup) {
+            quartzScheduler.start()
+        }
     }
-    def destroy = {}
+
+    def destroy = {
+    }
 }

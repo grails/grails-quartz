@@ -31,6 +31,7 @@ import org.quartz.JobDetail
 import org.quartz.JobKey
 import org.quartz.ListenerManager
 import org.quartz.Scheduler
+import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import org.quartz.TriggerKey
 import org.quartz.impl.matchers.KeyMatcher

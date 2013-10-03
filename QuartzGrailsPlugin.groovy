@@ -53,10 +53,10 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-RC12"
+    def version = "1.0-RC13"
     def grailsVersion = "2.0 > *"
 
-    def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"
+    def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf, Vitalii Samolovskikh"
     def authorEmail = "rvanderwerf@gmail.com"
     def title = "Quartz plugin for Grails"
     def description = 'Adds Quartz job scheduling features'

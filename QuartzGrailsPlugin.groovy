@@ -52,7 +52,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean
  */
 class QuartzGrailsPlugin {
 
-    def version = "1.0-RC11"
+    def version = "1.0-RC12"
     def grailsVersion = "2.0 > *"
 
     def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf"

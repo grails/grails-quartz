@@ -40,7 +40,7 @@ The above example will call the 'execute' method every second.
 Currently plugin supports three types of {triggers}[http://www.opensymphony.com/quartz/wikidocs/TutorialLesson2.html]:
 * <b>simple trigger</b> — executes once per defined interval (ex. "every 10 seconds");
 * <b>cron trigger</b> — executes job with cron expression (ex. "at 8:00am every Monday through Friday");
-* <b>custom trigeer</b> — your implementation of {Trigger}[http://www.opensymphony.com/quartz/api/org/quartz/Trigger.html] interface.
+* <b>custom trigger</b> — your implementation of {Trigger}[http://www.opensymphony.com/quartz/api/org/quartz/Trigger.html] interface.
 
 Multiple triggers per job are allowed.
 

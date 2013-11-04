@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-import grails.plugins.quartz.*
-import grails.plugins.quartz.GrailsJobClassConstants as Constants
+import grails.plugins.quartz.CustomTriggerFactoryBean
+import grails.plugins.quartz.GrailsJobClass
+import grails.plugins.quartz.GrailsJobFactory
+import grails.plugins.quartz.JobArtefactHandler
+import grails.plugins.quartz.JobDetailFactoryBean
+import grails.plugins.quartz.TriggerUtils
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import grails.spring.BeanBuilder
 import grails.util.Environment
+
 import org.codehaus.groovy.grails.commons.spring.GrailsApplicationContext
-import org.quartz.*
+import org.quartz.JobDataMap
+import org.quartz.JobDetail
+import org.quartz.JobKey
+import org.quartz.ListenerManager
+import org.quartz.Scheduler
+import org.quartz.SimpleTrigger
+import org.quartz.Trigger
+import org.quartz.TriggerKey
 import org.quartz.impl.matchers.KeyMatcher
 import org.quartz.spi.MutableTrigger
 import org.slf4j.Logger
@@ -30,11 +42,8 @@ import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 
-import grails.plugins.quartz.TriggerUtils
-
 /**
- * A plug-in that configures Quartz job support for Grails.
- *
+ * Configures Quartz job support.
  *
  * @author Graeme Rocher
  * @author Marcel Overdijk
@@ -50,14 +59,16 @@ class QuartzGrailsPlugin {
     def author = "Sergey Nebolsin, Graeme Rocher, Ryan Vanderwerf, Vitalii Samolovskikh"
     def authorEmail = "rvanderwerf@gmail.com"
     def title = "Quartz plugin for Grails"
-    def description = '''\
-This plugin adds Quartz job scheduling features to Grails application.
-'''
+    def description = 'Adds Quartz job scheduling features'
     def documentation = "http://grails.org/plugin/quartz"
-    def pluginExcludes = ['grails-app/jobs/**']
+    def pluginExcludes = [
+        'grails-app/jobs/**',
+        'src/docs/**',
+        'web-app/**'
+    ]
 
     def license = "APACHE"
-    def issueManagement = [system: "GitHub Issues", url: "http://jira.grails.org/browse/GPQUARTZ"]
+    def issueManagement = [system: "JIRA", url: "http://jira.grails.org/browse/GPQUARTZ"]
     def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
 
     def loadAfter = ['core', 'hibernate', 'datasources']
@@ -169,7 +180,7 @@ This plugin adds Quartz job scheduling features to Grails application.
      * Adds schedule methods for job classes.
      */
     private static void addMethods(tc, ctx) {
-        Scheduler quartzScheduler = ctx.getBean('quartzScheduler')
+        Scheduler quartzScheduler = ctx.quartzScheduler
         def mc = tc.metaClass
         String jobName = tc.getFullName()
         String jobGroup = tc.getGroup()
@@ -243,23 +254,22 @@ This plugin adds Quartz job scheduling features to Grails application.
      * Schedules jobs. Creates job details and trigger beans. And schedules them.
      */
     def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
-        Scheduler scheduler = ctx.getBean("quartzScheduler") as Scheduler
+        Scheduler scheduler = ctx.quartzScheduler
         if (scheduler) {
             def fullName = jobClass.fullName
 
             // Creates job details
-            JobDetailFactoryBean jdfb = new JobDetailFactoryBean();
+            JobDetailFactoryBean jdfb = new JobDetailFactoryBean()
             jdfb.jobClass = jobClass
             jdfb.afterPropertiesSet()
             JobDetail jobDetail = jdfb.object
 
             // adds the job to the scheduler, and associates triggers with it
-            scheduler.addJob(jobDetail, true);
+            scheduler.addJob(jobDetail, true)
 
             // The session listener if is needed
             if (hasHibernate && jobClass.sessionRequired) {
-                SessionBinderJobListener listener =
-                    ctx.getBean("${SessionBinderJobListener.NAME}") as SessionBinderJobListener
+                SessionBinderJobListener listener = ctx.getBean(SessionBinderJobListener.NAME)
                 if (listener != null) {
                     ListenerManager listenerManager = scheduler.getListenerManager()
                     KeyMatcher<JobKey> matcher = KeyMatcher.keyEquals(jobDetail.key)
@@ -275,7 +285,7 @@ This plugin adds Quartz job scheduling features to Grails application.
 
             // Creates and schedules triggers
             jobClass.triggers.each { name, Expando descriptor ->
-                CustomTriggerFactoryBean factory = new CustomTriggerFactoryBean();
+                CustomTriggerFactoryBean factory = new CustomTriggerFactoryBean()
                 factory.triggerClass = descriptor.triggerClass
                 factory.triggerAttributes = descriptor.triggerAttributes
                 factory.jobDetail = jobDetail
@@ -304,7 +314,7 @@ This plugin adds Quartz job scheduling features to Grails application.
             log.debug("Job ${event.source} changed. Reloading...")
 
             GrailsApplicationContext context = event.ctx
-            def scheduler = context?.getBean("quartzScheduler")
+            def scheduler = context?.quartzScheduler
 
             GrailsJobClass jobClass = application.getJobClass(event.source?.name)
 
@@ -314,7 +324,7 @@ This plugin adds Quartz job scheduling features to Grails application.
 
             // get quartz scheduler
             if (context && scheduler) {
-                // if job already exists, delete it from scheduler                
+                // if job already exists, delete it from scheduler
                 if (jobClass) {
                     def jobKey = new JobKey(jobClass.fullName, jobClass.group)
                     scheduler.deleteJob(jobKey)
@@ -322,7 +332,7 @@ This plugin adds Quartz job scheduling features to Grails application.
                 }
 
                 // add job artifact to application
-                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source as Class) as GrailsJobClass
+                jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source as Class)
 
                 def fullName = jobClass.fullName
                 boolean hasHibernate = manager?.hasGrailsPlugin("hibernate")
@@ -337,7 +347,7 @@ This plugin adds Quartz job scheduling features to Grails application.
                 context.registerBeanDefinition("${fullName}", beans.getBeanDefinition("${fullName}"))
 
                 // Reschedule jobs
-                scheduleJob(jobClass as GrailsJobClass, event.ctx as ApplicationContext, hasHibernate)
+                scheduleJob(jobClass, event.ctx, hasHibernate)
             } else {
                 log.error("Application context or Quartz Scheduler not found. Can't reload Quartz plugin.")
             }
@@ -345,17 +355,17 @@ This plugin adds Quartz job scheduling features to Grails application.
     }
 
     /*
-     * Load the various configs. 
+     * Load the various configs.
      * Order of priority has been "fixed" in 1.0-RC2 to be:
      *
-     * 1. DefaultQuartzConfig is loaded 
+     * 1. DefaultQuartzConfig is loaded
      * 2. App's Config.groovy is loaded in and overwrites anything from DQC
      * 3. QuartzConfig is loaded and overwrites anything from DQC or AppConfig
      * 4. quartz.properties are loaded into config as quartz._props
      */
     private ConfigObject loadQuartzConfig(ConfigObject config) {
         def classLoader = new GroovyClassLoader(getClass().classLoader)
-        String environment = Environment.current.toString()
+        String environment = Environment.current.name
 
         // Note here the order of objects when calling merge - merge OVERWRITES values in the target object
         // Load default Quartz config as a basis

@@ -53,7 +53,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob1'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -64,7 +64,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob2'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -75,7 +75,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob3'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -86,7 +86,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob4'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -97,7 +97,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: 3,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'everySecond'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -108,7 +108,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 repeatCount: Constants.DEFAULT_REPEAT_COUNT,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob5'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -118,7 +118,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 cronExpression: Constants.DEFAULT_CRON_EXPRESSION,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'TestJob6'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -128,7 +128,7 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
                 startDelay: Constants.DEFAULT_START_DELAY,
             ), builder.triggers[triggerName].triggerAttributes
         )
-        
+
         triggerName = 'myTrigger'
         assert builder.triggers[triggerName]?.clazz == CustomTriggerFactoryBean
         assertPropertiesEquals(new Expando(
@@ -153,9 +153,8 @@ class TriggersConfigBuilderTests extends GroovyTestCase {
 
     private static assertPropertiesEquals(expected, actual) {
         expected.properties.each { entry ->
-            assert actual[entry.key] == entry.value, "Unexpected value for property: ${entry.key}" 
+            assert actual[entry.key] == entry.value, "Unexpected value for property: ${entry.key}"
         }
         assert actual.size() == expected.properties?.size(), 'Different number of properties'
     }
-
 }

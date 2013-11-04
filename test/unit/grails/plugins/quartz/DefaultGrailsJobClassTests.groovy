@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 package grails.plugins.quartz
 
 class DefaultGrailsJobClassTests extends GroovyTestCase {
@@ -34,7 +32,7 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
         assertTrue "Job should require Hibernate session by default", grailsJobClass.sessionRequired
         assertTrue "Job should be concurrent by default", grailsJobClass.concurrent
     }
-    
+
     void testJobClassExecute() {
         boolean wasExecuted = false
         def testClosure = { wasExecuted = true }

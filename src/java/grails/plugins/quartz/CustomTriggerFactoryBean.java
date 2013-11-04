@@ -16,20 +16,19 @@
 
 package grails.plugins.quartz;
 
+import java.beans.PropertyEditorSupport;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Map;
+
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.AbstractTrigger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-
-import java.beans.PropertyEditorSupport;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * The factory bean to create and register trigger beans in Spring context.

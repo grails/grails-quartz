@@ -1,5 +1,8 @@
 package grails.plugins.quartz
 
+import static org.quartz.JobBuilder.newJob
+import static org.quartz.TriggerBuilder.*
+
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager
 import org.junit.After
@@ -12,9 +15,6 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import org.quartz.TriggerKey
-
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.*;
 
 /**
  * Tests the dynamic methods of jobs.
@@ -91,7 +91,7 @@ class DynamicMethodsTests extends GroovyTestCase {
                 .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build()
         IntegrationTestJob.schedule(trigger)
         assertLength(1, quartzScheduler.getTriggersOfJob(jobDetail.key))
-        IntegrationTestJob.unschedule(trigger.key.name, trigger.key.group);
+        IntegrationTestJob.unschedule(trigger.key.name, trigger.key.group)
         assertEquals(0, quartzScheduler.getTriggersOfJob(jobDetail.key).size())
     }
 

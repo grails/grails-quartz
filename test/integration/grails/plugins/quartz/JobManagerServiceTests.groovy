@@ -1,13 +1,20 @@
 package grails.plugins.quartz
 
+import static org.quartz.Trigger.TriggerState.NORMAL
+import static org.quartz.Trigger.TriggerState.PAUSED
+
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.quartz.*
+import org.quartz.JobBuilder
+import org.quartz.JobDetail
+import org.quartz.JobKey
+import org.quartz.Scheduler
+import org.quartz.SimpleScheduleBuilder
+import org.quartz.Trigger
+import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
-
-import static org.quartz.Trigger.TriggerState.NORMAL
-import static org.quartz.Trigger.TriggerState.PAUSED
 
 /**
  * Tests for the JobManagerService.
@@ -25,10 +32,10 @@ class JobManagerServiceTests extends GroovyTestCase {
 
     @Before
     void setUp(){
-        JobDetail job1 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_11).build()
-        JobDetail job2 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_21).build()
-        JobDetail job3 = JobBuilder.newJob(SimpleTestJob.class).withIdentity(JOB_KEY_12).build()
-        JobDetail job4 = JobBuilder.newJob(SimpleTestJob.class)
+        JobDetail job1 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_11).build()
+        JobDetail job2 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_21).build()
+        JobDetail job3 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_12).build()
+        JobDetail job4 = JobBuilder.newJob(SimpleTestJob)
                 .withIdentity(JOB_KEY_22)
                 .storeDurably()
                 .build()
@@ -75,7 +82,7 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void testGetAllJobs() {
+    void testGetAllJobs() {
         Map<String, ? extends List<? extends JobDescriptor>> jobs = jobManagerService.getAllJobs()
 
         assertNotNull(jobs)
@@ -94,7 +101,7 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void testGetJobs() {
+    void testGetJobs() {
         assert jobManagerService.getJobs('group1')*.name.contains('job2')
 
         def names = jobManagerService.getJobs('group2')*.name
@@ -103,12 +110,12 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void testGetRunningJobs() {
+    void testGetRunningJobs() {
         jobManagerService.getRunningJobs()
     }
 
     @Test
-    public void testPauseAndResumeJob() {
+    void testPauseAndResumeJob() {
         def triggerKeys = quartzScheduler.getTriggersOfJob(new JobKey('job2', 'group1'))*.key
 
         assertTriggersState(triggerKeys, NORMAL)
@@ -125,7 +132,7 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void testPauseAndResumeTrigger() {
+    void testPauseAndResumeTrigger() {
         TriggerKey key = new TriggerKey('trigger2', 'tgroup1')
 
         assert quartzScheduler.getTriggerState(key) == NORMAL
@@ -136,54 +143,54 @@ class JobManagerServiceTests extends GroovyTestCase {
     }
 
     @Test
-    public void testPauseAndResumeJobGroup() {
+    void testPauseAndResumeJobGroup() {
         def jobKeys = quartzScheduler.getJobKeys(GroupMatcher.groupEquals('group2'))
         def keys = []
         jobKeys.each {
-            keys += quartzScheduler.getTriggersOfJob(it)*.key
+            keys.addAll quartzScheduler.getTriggersOfJob(it)*.key
         }
 
         assertTriggersState(keys, NORMAL)
-        jobManagerService.pauseJobGroup('group2');
+        jobManagerService.pauseJobGroup('group2')
         assertTriggersState(keys, PAUSED)
-        jobManagerService.resumeJobGroup('group2');
+        jobManagerService.resumeJobGroup('group2')
         assertTriggersState(keys, NORMAL)
     }
 
     @Test
-    public void testPauseAndResumeTriggerGroup() {
+    void testPauseAndResumeTriggerGroup() {
         def keys = quartzScheduler.getTriggerKeys(GroupMatcher.groupEquals('tgroup2'))
 
         assertTriggersState(keys, NORMAL)
-        jobManagerService.pauseTriggerGroup('tgroup2');
+        jobManagerService.pauseTriggerGroup('tgroup2')
         assertTriggersState(keys, PAUSED)
-        jobManagerService.resumeTriggerGroup('tgroup2');
+        jobManagerService.resumeTriggerGroup('tgroup2')
         assertTriggersState(keys, NORMAL)
     }
 
     @Test
-    public void testRemoveJob() {
+    void testRemoveJob() {
         assertTrue(jobManagerService.getJobs('group1')*.name.contains('job2'))
         jobManagerService.removeJob('group1', 'job2')
         assertFalse(jobManagerService.getJobs('group1')*.name.contains('job2'))
     }
 
     @Test
-    public void testUnscheduleJob() {
+    void testUnscheduleJob() {
         def key = new JobKey('job2', 'group1')
         assert quartzScheduler.getTriggersOfJob(key)?.size() > 0
         jobManagerService.unscheduleJob('group1', 'job2')
         List<? extends Trigger> triggers = quartzScheduler.getTriggersOfJob(key)
-        assert triggers == null || triggers.size() == 0
+        assert !triggers
     }
 
     @Test
-    public void testInterruptJob(){
+    void testInterruptJob(){
         jobManagerService.interruptJob('group1', 'job2')
     }
 
     @Test
-    public void testPauseAndResumeAll(){
+    void testPauseAndResumeAll(){
         def keys = quartzScheduler.getTriggerKeys(GroupMatcher.groupEquals('tgroup2'))
 
         assertTriggersState(keys, NORMAL)

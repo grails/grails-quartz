@@ -60,7 +60,7 @@ class QuartzGrailsPlugin {
     def authorEmail = "rvanderwerf@gmail.com"
     def title = "Quartz plugin for Grails"
     def description = 'Adds Quartz job scheduling features'
-    def documentation = "http://grails.org/plugin/quartz"
+    def documentation = "http://grails-plugins.github.io/grails-quartz/"
     def pluginExcludes = [
         'grails-app/jobs/**',
         'src/docs/**',

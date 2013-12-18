@@ -1,6 +1,8 @@
 # Grails Quartz Plugin 
 ![](http://stillmaintained.com/nebolsin/grails-quartz.png)
 
+**Full documentation can be found [here](http://grails-plugins.github.io/grails-quartz/)**
+
 This plugin has been updated to run on Quartz 2.2.x and no longer runs on Quartz 1.8.x. The newer
 version of Quartz will also allow it to be used With Terrcotta 3.6 or later (I tested on 3.7) - Ryan
 

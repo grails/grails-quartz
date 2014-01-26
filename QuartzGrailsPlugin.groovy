@@ -22,6 +22,7 @@ import grails.plugins.quartz.JobDetailFactoryBean
 import grails.plugins.quartz.TriggerUtils
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.spring.BeanBuilder
 import grails.util.Environment
 

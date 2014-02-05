@@ -117,6 +117,11 @@ class QuartzGrailsPlugin {
     }
 
     def configureScheduler = {config->
+        if (config.workManager) {
+            quartzJobExecutor(org.springframework.scheduling.commonj.WorkManagerTaskExecutor) {
+               workManagerName=config.workManagerName
+            }
+        }
         quartzScheduler(SchedulerFactoryBean) { bean ->
             quartzProperties = config._properties
 
@@ -133,6 +138,10 @@ class QuartzGrailsPlugin {
                 dataSource = ref(config.jdbcStoreDataSource ?: 'dataSource')
                 transactionManager = ref('transactionManager')
             }
+            if (config.workManager) {
+                taskExecutor=ref('quartzJobExecutor')
+            }
+            
             waitForJobsToCompleteOnShutdown = config.waitForJobsToCompleteOnShutdown
             exposeSchedulerInRepository = config.exposeSchedulerInRepository
             jobFactory = quartzJobFactory

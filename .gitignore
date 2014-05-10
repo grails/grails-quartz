@@ -6,7 +6,6 @@
 *.log
 
 # Libraries and others
-*.jar
 *.zip
 
 #unused directories

@@ -1,6 +1,13 @@
 language: groovy
-
 jdk:
-  - openjdk6
-
-script: ./grailsw clean; ./grailsw "test-app -unit -integration" 
+- openjdk7
+- openjdk6
+- oraclejdk7
+before_script:
+- rm -rf target
+script: ./travis-build.sh
+env:
+  global:
+  - secure: LrVonKDVyNsS3GrErpKeqicnRlwiXQi/LylPL0now266SM1E3clBGyZxA89g7ItqFpqQivwANysTpRL0nO8gd+EkyVG5B19P9Fq0eELLglhinU4T/T5MmWl0a2GFQSyewZDjJDrQQl1zMG3ejbl9QrFauwM4NfPcVMpyON3wjOY=
+  - secure: eqMOkrSZOS44IZj6cK5i8/JCneWyMRCuhq7Gq+AMSIJFiw6c9ZMkooco/LLL2OV7D9f6yYmZXSDXWLv1scy9/YqrQftYrI7VyVA4Zwb4+MGag2kJ/T7jRtQ/FkYmSBex6VRuzGPN+ZyTdjuaJm3TJoCZwWfGE3Sw9OPYRRLEZAA=
+  - secure: Ieprqq+UrMPivvu4cZXK4h+Vwl6QTTv/RYKFJddoN7FxHYoSqxXNNz3MBB0OS3DDM3jyHPLapvolWh8/4zis9hKl8R3C2Al00hiNBRtH0urx+IamvUcki6VEl/NSd99QQGCxqZn+zCH//N4nO5bS/u4fVnP5LfC+KBshdbPFrkU=

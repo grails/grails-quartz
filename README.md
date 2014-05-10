@@ -1,5 +1,5 @@
 # Grails Quartz Plugin 
-![](http://stillmaintained.com/nebolsin/grails-quartz.png)
+![](http://stillmaintained.com/nebolsin/grails-quartz.png)[![Build Status](https://travis-ci.org/grails-plugins/grails-quartz.svg)](https://travis-ci.org/grails-plugins/grails-quartz)
 
 **Full documentation can be found [here](http://grails-plugins.github.io/grails-quartz/)**
 

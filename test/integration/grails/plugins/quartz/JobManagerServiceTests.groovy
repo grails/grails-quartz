@@ -15,13 +15,18 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
+import grails.test.mixin.integration.IntegrationTestMixin
+import grails.test.mixin.*
+import org.junit.*
+import static org.junit.Assert.*
 
 /**
  * Tests for the JobManagerService.
  *
  * @author Vitalii Samolovskikh aka Kefir
  */
-class JobManagerServiceTests extends GroovyTestCase {
+@TestMixin(IntegrationTestMixin)
+class JobManagerServiceTests  {
     private static final JobKey JOB_KEY_11 = new JobKey("job1", "group1")
     private static final JobKey JOB_KEY_21 = new JobKey("job2", "group1")
     private static final JobKey JOB_KEY_12 = new JobKey("job1", "group2")

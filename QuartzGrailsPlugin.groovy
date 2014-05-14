@@ -72,7 +72,7 @@ class QuartzGrailsPlugin {
     def issueManagement = [system: "JIRA", url: "http://jira.grails.org/browse/GPQUARTZ"]
     def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
 
-    def loadAfter = ['core', 'hibernate', 'datasources']
+    def loadAfter = ['core', 'hibernate', 'hibernate4', 'datasources']
     def watchedResources = [
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
@@ -88,7 +88,7 @@ class QuartzGrailsPlugin {
      */
     def doWithSpring = { context ->
         def config = loadQuartzConfig(application.config)
-        boolean hasHibernate = manager?.hasGrailsPlugin("hibernate")
+        boolean hasHibernate = hasHibernate(manager)
 
         // Configure job beans
         application.jobClasses.each { GrailsJobClass jobClass ->
@@ -98,6 +98,8 @@ class QuartzGrailsPlugin {
 
         // Configure the session listener if there is the Hibernate
         if (hasHibernate) {
+            log.debug("Registering hibernate SessionBinderJobListener")
+
             // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
             "${SessionBinderJobListener.NAME}"(SessionBinderJobListener) { bean ->
                 bean.autowire = "byName"
@@ -246,7 +248,7 @@ class QuartzGrailsPlugin {
     // Schedule jobs
     def doWithApplicationContext = { applicationContext ->
         application.jobClasses.each { GrailsJobClass jobClass ->
-            scheduleJob(jobClass, applicationContext, manager?.hasGrailsPlugin("hibernate"))
+            scheduleJob(jobClass, applicationContext, hasHibernate(manager))
         }
         log.debug("Scheduled Job Classes count: " + application.jobClasses.size())
     }
@@ -308,10 +310,7 @@ class QuartzGrailsPlugin {
     }
 
     def onChange = { event ->
-        if (
-                event.source instanceof Class &&
-                application.isArtefactOfType(JobArtefactHandler.TYPE, event.source as Class)
-        ) {
+        if (event.source instanceof Class && application.isArtefactOfType(JobArtefactHandler.TYPE, event.source as Class)) {
             log.debug("Job ${event.source} changed. Reloading...")
 
             GrailsApplicationContext context = event.ctx
@@ -336,7 +335,7 @@ class QuartzGrailsPlugin {
                 jobClass = application.addArtefact(JobArtefactHandler.TYPE, event.source as Class)
 
                 def fullName = jobClass.fullName
-                boolean hasHibernate = manager?.hasGrailsPlugin("hibernate")
+                boolean hasHibernate = hasHibernate(manager)
 
                 // configure and register job beans
                 BeanBuilder beans = beans {
@@ -403,5 +402,9 @@ class QuartzGrailsPlugin {
         config.quartz._properties = properties
 
         return config.quartz
+    }
+
+    private boolean hasHibernate(manager) {
+        manager?.hasGrailsPlugin("hibernate") || manager?.hasGrailsPlugin("hibernate4")
     }
 }

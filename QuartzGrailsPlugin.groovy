@@ -216,7 +216,7 @@ class QuartzGrailsPlugin {
             JobKey jobKey = new JobKey(jobName, jobGroup)
             if(trigger.jobKey != jobKey && trigger instanceof MutableTrigger){
                 trigger.setJobKey(jobKey)
-            } else {
+            } else if(trigger.jobKey != jobKey) {
                 throw new IllegalArgumentException(
                         "The trigger job key is not equals the job key and trigger is immutable."
                 )

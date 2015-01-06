@@ -69,7 +69,7 @@ class QuartzGrailsPlugin {
     def license = "APACHE"
     def issueManagement = [system: "JIRA", url: "http://jira.grails.org/browse/GPQUARTZ"]
     def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
-    def loadAfter = ['core', 'hibernate', 'hibernate4', 'datasources']
+    def loadAfter = ['core', 'hibernate', 'hibernate4', 'datasources','databaseMigration']
     def watchedResources = [
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
@@ -252,29 +252,32 @@ class QuartzGrailsPlugin {
      */
     private void scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
         Scheduler scheduler = ctx.quartzScheduler
-        if (!scheduler) {
-            log.error("Failed to schedule job details and job triggers: 'quartzScheduler' bean not found.")
-            return
-        }
+        if (scheduler) {
+            def fullName = jobClass.fullName
 
-        String fullName = jobClass.fullName
+            // Creates job details
+            JobDetailFactoryBean jdfb = new JobDetailFactoryBean()
+            jdfb.jobClass = jobClass
+            jdfb.afterPropertiesSet()
+            JobDetail jobDetail = jdfb.object
 
-        // Creates job details
-        JobDetailFactoryBean jdfb = new JobDetailFactoryBean(jobClass: jobClass)
-        jdfb.afterPropertiesSet()
-        JobDetail jobDetail = jdfb.object
+            // adds the job to the scheduler, and associates triggers with it
+			// Only add if this job does not exists already
+			if(!scheduler.checkExists(jobDetail.key)){
+				scheduler.addJob(jobDetail, true)
+			}
 
-        // adds the job to the scheduler, and associates triggers with it
-        scheduler.addJob(jobDetail, true)
-
-        // The session listener if is needed
-        if (hasHibernate && jobClass.sessionRequired) {
-            SessionBinderJobListener listener = ctx.getBean(SessionBinderJobListener.NAME)
-            if (listener != null) {
-                ListenerManager listenerManager = scheduler.getListenerManager()
-                KeyMatcher<JobKey> matcher = KeyMatcher.keyEquals(jobDetail.key)
-                if (listenerManager.getJobListener(listener.getName()) == null) {
-                    listenerManager.addJobListener(listener, matcher)
+            // The session listener if is needed
+            if (hasHibernate && jobClass.sessionRequired) {
+                SessionBinderJobListener listener = ctx.getBean(SessionBinderJobListener.NAME)
+                if (listener != null) {
+                    ListenerManager listenerManager = scheduler.getListenerManager()
+                    KeyMatcher<JobKey> matcher = KeyMatcher.keyEquals(jobDetail.key)
+                    if(listenerManager.getJobListener(listener.getName())==null){
+                        listenerManager.addJobListener(listener, matcher)
+                    } else {
+                        listenerManager.addJobListenerMatcher(listener.getName(), matcher)
+                    }
                 } else {
                     listenerManager.addJobListenerMatcher(listener.getName(), matcher)
                 }

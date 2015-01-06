@@ -72,7 +72,7 @@ class QuartzGrailsPlugin {
     def issueManagement = [system: "JIRA", url: "http://jira.grails.org/browse/GPQUARTZ"]
     def scm = [url: "http://github.com/grails-plugins/grails-quartz"]
 
-    def loadAfter = ['core', 'hibernate', 'hibernate4', 'datasources']
+    def loadAfter = ['core', 'hibernate', 'hibernate4', 'datasources','databaseMigration']
     def watchedResources = [
             "file:./grails-app/jobs/**/*Job.groovy",
             "file:./plugins/*/grails-app/jobs/**/*Job.groovy"
@@ -268,7 +268,10 @@ class QuartzGrailsPlugin {
             JobDetail jobDetail = jdfb.object
 
             // adds the job to the scheduler, and associates triggers with it
-            scheduler.addJob(jobDetail, true)
+			// Only add if this job does not exists already
+			if(!scheduler.checkExists(jobDetail.key)){
+				scheduler.addJob(jobDetail, true)
+			}
 
             // The session listener if is needed
             if (hasHibernate && jobClass.sessionRequired) {

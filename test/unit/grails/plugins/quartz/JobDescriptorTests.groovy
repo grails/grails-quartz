@@ -14,38 +14,36 @@ import org.quartz.TriggerKey
 import org.quartz.impl.StdSchedulerFactory
 
 /**
- * Unit tests for JobDescriptor.
- *
  * @author Vitalii Samolovskikh aka Kefir
  */
 class JobDescriptorTests {
+
     private Scheduler scheduler
     private JobDetail job
     private Trigger trigger
 
     @Before
-    void prepare(){
+    void prepare() {
         scheduler = StdSchedulerFactory.getDefaultScheduler()
-
         scheduler.start()
 
         job = JobBuilder.newJob(TestQuartzJob).withIdentity(new JobKey("job", "group")).build()
         trigger = TriggerBuilder.newTrigger()
-                .withIdentity(new TriggerKey("trigger", "group"))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(2).repeatForever())
-                .startNow()
-                .build()
+            .withIdentity(new TriggerKey("trigger", "group"))
+            .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(2).repeatForever())
+            .startNow()
+            .build()
 
         scheduler.scheduleJob(job, trigger)
     }
 
     @After
-    void dispose(){
+    void dispose() {
         scheduler.shutdown()
     }
 
     @Test
-    void testBuild(){
+    void testBuild() {
         JobDescriptor descriptor = JobDescriptor.build(job, scheduler)
         assert descriptor.name == 'job'
         assert descriptor.group == 'group'

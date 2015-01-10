@@ -1,4 +1,3 @@
-
 quartz {
     autoStartup = true
     jdbcStore = false
@@ -6,7 +5,9 @@ quartz {
     exposeSchedulerInRepository = false
 
     props {
-        scheduler.skipUpdateCheck = true
+        scheduler {
+            skipUpdateCheck = true
+        }
     }
 }
 

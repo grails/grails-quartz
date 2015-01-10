@@ -57,7 +57,6 @@ Quartz allows for each job to have a short description. This may be configured b
 def description = "Example Job Description"
 {code}
 
-
 h4. Clustering
 
 Quartz plugin doesn't support clustering out-of-the-box now. However, you could use standard Quartz clustering configuration. Take a look at the [example provided by Burt Beckwith|http://docs.codehaus.org/download/attachments/78053/clustering_sample.tar.gz?version=1]. You'll also need to set jdbcStore configuration option to true .

@@ -15,11 +15,11 @@
  */
 
 /**
- * Gant script that creates a Grails Quartz jobs directory
+ * Creates the grails-app/jobs directory
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  *
  * @since 0.2
  */
 
-ant.mkdir(dir:"${basedir}/grails-app/jobs")
+ant.mkdir(dir:"$basedir/grails-app/jobs")

@@ -1,23 +1,20 @@
-# JetBrains IntelliJ IDEA files
+# IDE files
 .idea
 *.iml
-
-# Log files
-*.log
-
-# Libraries and others
-*.zip
-
-#unused directories
-web-app
-target
 .classpath
 .project
-.settings
-.target-eclipse/**
-target-eclipse
+
+*.log
+
+/grails-quartz-*.zip
+/grails-quartz-*.zip.sha1
+/plugin.xml
+
+#unused directories
+/.settings
+/target
+/target-eclipse
+/web-app
 
 # Unused grails files
-grails-app/i18n/
-
-plugin.xml
+/grails-app/i18n

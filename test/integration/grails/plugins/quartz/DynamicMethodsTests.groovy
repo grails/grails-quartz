@@ -1,7 +1,9 @@
 package grails.plugins.quartz
 
 import static org.quartz.JobBuilder.newJob
-import static org.quartz.TriggerBuilder.*
+import static org.quartz.TriggerBuilder.newTrigger
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
 
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager
@@ -15,10 +17,6 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import org.quartz.TriggerKey
-import grails.test.mixin.integration.IntegrationTestMixin
-import grails.test.mixin.*
-import org.junit.*
-import static org.junit.Assert.*
 
 /**
  * Tests the dynamic methods of jobs.
@@ -27,8 +25,9 @@ import static org.junit.Assert.*
  */
 @TestMixin(IntegrationTestMixin)
 class DynamicMethodsTests  {
-    private static final long REPEAT_INTERVAL = 1000l
+    private static final long REPEAT_INTERVAL = 1000
     private static final String CRON_EXPRESSION = '0/20 * * * * ?'
+
     GrailsApplication grailsApplication
     GrailsPluginManager pluginManager
     Scheduler quartzScheduler
@@ -44,9 +43,9 @@ class DynamicMethodsTests  {
         IntegrationTestJob.schedule(REPEAT_INTERVAL)
         List<Trigger> triggers = quartzScheduler.getTriggersOfJob(jobDetail.key)
         assert triggers.size() == 1
-        SimpleTrigger trigger = triggers.get(0) as SimpleTrigger
-        assertEquals(REPEAT_INTERVAL, trigger.repeatInterval)
-        assertEquals(SimpleTrigger.REPEAT_INDEFINITELY, trigger.repeatCount)
+        SimpleTrigger trigger = triggers[0]
+        assert REPEAT_INTERVAL == trigger.repeatInterval
+        assert SimpleTrigger.REPEAT_INDEFINITELY == trigger.repeatCount
     }
 
     @Test
@@ -54,13 +53,13 @@ class DynamicMethodsTests  {
         IntegrationTestJob.schedule(CRON_EXPRESSION)
         List<Trigger> triggers = quartzScheduler.getTriggersOfJob(jobDetail.key)
         assert triggers.size() == 1
-        CronTrigger trigger = triggers.get(0) as CronTrigger
-        assertEquals(CRON_EXPRESSION, trigger.cronExpression)
+        CronTrigger trigger = triggers[0]
+        assert CRON_EXPRESSION == trigger.cronExpression
     }
 
     @Test
     void testScheduleDate() {
-        IntegrationTestJob.schedule(new Date(new Date().getTime() + 60000l))
+        IntegrationTestJob.schedule(new Date(System.currentTimeMillis() + 60000))
         assert quartzScheduler.getTriggersOfJob(jobDetail.key).size() == 1
     }
 
@@ -73,12 +72,12 @@ class DynamicMethodsTests  {
     @Test
     void testRemoveJob() {
         IntegrationTestJob.removeJob()
-        assertNull(quartzScheduler.getJobDetail(jobDetail.key))
+        assert !quartzScheduler.getJobDetail(jobDetail.key)
     }
 
     @Test
     void testRescheduleJob() {
-        assertEquals(0, quartzScheduler.getTriggersOfJob(jobDetail.key).size())
+        assert !quartzScheduler.getTriggersOfJob(jobDetail.key)
         Trigger trigger = newTrigger()
                 .withIdentity(new TriggerKey("trigger", "group"))
                 .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build()
@@ -90,14 +89,14 @@ class DynamicMethodsTests  {
 
     @Test
     void testUnscheduleJob() {
-        assertEquals(0, quartzScheduler.getTriggersOfJob(jobDetail.key).size())
+        assert !quartzScheduler.getTriggersOfJob(jobDetail.key)
         Trigger trigger = newTrigger()
                 .withIdentity(new TriggerKey("trigger", "group"))
                 .withSchedule(SimpleScheduleBuilder.repeatMinutelyForever()).build()
         IntegrationTestJob.schedule(trigger)
         assert quartzScheduler.getTriggersOfJob(jobDetail.key).size() == 1
         IntegrationTestJob.unschedule(trigger.key.name, trigger.key.group)
-        assertEquals(0, quartzScheduler.getTriggersOfJob(jobDetail.key).size())
+        assert !quartzScheduler.getTriggersOfJob(jobDetail.key)
     }
 
     @Before

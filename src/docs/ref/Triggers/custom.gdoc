@@ -8,13 +8,12 @@ h2. Examples
 
 {code}
 class MyJob {
-  static triggers = {
-    custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
-  }
+   static triggers = {
+      custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
+   }
 
-  def execute() {
-    println "Job run!"
-  }
+   void execute() {
+      println "Job run!"
+   }
 }
 {code}
-

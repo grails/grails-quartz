@@ -8,13 +8,12 @@ h2. Examples
 
 {code}
 class MyJob {
-  static triggers = {
-    cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 * 15 * * ?'
-  }
+   static triggers = {
+      cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 * 15 * * ?'
+   }
 
-  def execute() {
-    println "Job run!"
-  }
+   void execute() {
+      println "Job run!"
+   }
 }
 {code}
-

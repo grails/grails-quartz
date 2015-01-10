@@ -4,15 +4,15 @@ To create a new job run the "grails create-job" command and enter the name of th
 
 {code}
 class MyJob {
-  static triggers = {
-    simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000  
-  }
-  def group = "MyGroup"
-  def description = "Example job with Simple Trigger"
+    static triggers = {
+        simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000
+    }
+    def group = "MyGroup"
+    def description = "Example job with Simple Trigger"
 
-  def execute(){
-    print "Job run!"
-  }
+    void execute() {
+        println "Job run!"
+    }
 }
 {code}
 
@@ -27,15 +27,15 @@ Jobs can be scheduled using a cron expression. For those unfamiliar with "cron",
 
 {code}
 class MyJob  {
-  static triggers = {
-    cron name: 'myTrigger', cronExpression: "0 0 6 * * ?"
-  }
- def group = "MyGroup"
- def description = "Example job with Cron Trigger"
+    static triggers = {
+        cron name: 'myTrigger', cronExpression: "0 0 6 * * ?"
+    }
+    def group = "MyGroup"
+    def description = "Example job with Cron Trigger"
 
- def execute(){
-   print "Job run!"
- }
+    void execute() {
+        println "Job run!"
+    }
 }
 {code}
 

@@ -2,10 +2,10 @@
 
 class @artifact.name@ {
     static triggers = {
-      simple repeatInterval: 5000l // execute job once in 5 seconds
+      simple repeatInterval: 5000L // execute job once in 5 seconds
     }
 
-    def execute() {
+    void execute() {
         // execute job
     }
 }

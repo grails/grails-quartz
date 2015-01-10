@@ -19,7 +19,7 @@ package grails.plugins.quartz;
 import org.quartz.SimpleTrigger;
 
 /**
- * <p>Holds plugin constants.</p>
+ * <p>Plugin constants.</p>
  *
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
@@ -64,9 +64,9 @@ public final class GrailsJobClassConstants {
 
     // Default values for Job's properties
 
-    public static final long DEFAULT_REPEAT_INTERVAL = 60000l;    // one minute
+    public static final long DEFAULT_REPEAT_INTERVAL = 60000;    // one minute
 
-    public static final long DEFAULT_START_DELAY = 0l;  // no delay by default
+    public static final long DEFAULT_START_DELAY = 0;  // no delay by default
 
     public static final int DEFAULT_REPEAT_COUNT = SimpleTrigger.REPEAT_INDEFINITELY;
 

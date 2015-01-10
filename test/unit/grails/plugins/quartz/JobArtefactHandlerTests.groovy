@@ -19,32 +19,30 @@ package grails.plugins.quartz
 import org.codehaus.groovy.grails.commons.ArtefactHandler
 
 /**
- * Test case for Job artefact handler.
- *
  * @author Sergey Nebolsin
- * @since 0.2
  */
 class JobArtefactHandlerTests extends GroovyTestCase {
+
     private ArtefactHandler handler = new JobArtefactHandler()
     protected GroovyClassLoader gcl = new GroovyClassLoader()
 
     void testJobClassWithExecuteMethod() {
-        Class c = gcl.parseClass("class TestJob { def execute() { }}\n")
-        assertTrue "Class *Job which defines execute() method should be recognized as a Job class", handler.isArtefact(c)
+        Class c = gcl.parseClass("class TestJob { void execute() {}}")
+        assert handler.isArtefact(c), 'Class *Job which defines execute() method should be recognized as a Job class'
     }
 
     void testJobClassWithExecuteMethodWithParam() {
-        Class c = gcl.parseClass("class TestJob { def execute(param) { }}\n")
-        assertTrue "Class *Job which defines execute(param) method should be recognized as a Job class", handler.isArtefact(c)
+        Class c = gcl.parseClass("class TestJob { void execute(param) {}}")
+        assert handler.isArtefact(c), 'Class *Job which defines execute(param) method should be recognized as a Job class'
     }
 
     void testJobClassWithWrongName() {
-        Class c = gcl.parseClass("class TestController { def execute() { }}\n")
-        assertFalse "Class which name doesn't end with 'Job' shouldn't be recognized as a Job class", handler.isArtefact(c)
+        Class c = gcl.parseClass("class TestController { void execute() {}}")
+        assert !handler.isArtefact(c), "Class which name doesn't end with 'Job' shouldn't be recognized as a Job class"
     }
 
     void testJobClassWithoutExecuteMethod() {
-        Class c = gcl.parseClass("class TestJob { def execute1() { }}\n")
-        assertFalse "Class which doesn't declare 'execute' method shouldn't be recognized as a Job class", handler.isArtefact(c)
+        Class c = gcl.parseClass("class TestJob { void execute1() {}}")
+        assert !handler.isArtefact(c), "Class which doesn't declare 'execute' method shouldn't be recognized as a Job class"
     }
 }

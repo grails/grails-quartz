@@ -15,7 +15,7 @@
  */
 
 /**
- * Upgrade script for Quartz plugin
+ * Upgrade script.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  *
@@ -23,4 +23,4 @@
  */
 
 // ensure that there are 'jobs' directory under application 'grails-app'
-ant.mkdir(dir:"${basedir}/grails-app/jobs")
+ant.mkdir(dir:"$basedir/grails-app/jobs")

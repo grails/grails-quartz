@@ -20,60 +20,50 @@ import grails.test.GrailsUnitTestCase
 
 class QuartzConfigTests extends GrailsUnitTestCase {
 
+    private MockDoWithSpring spring = new MockDoWithSpring()
+
     /**
-     *   If props section of config...quartz is not defined ensure that
-     *   quartzProperties is not called.
+     * If props section of config...quartz is not defined ensure that quartzProperties is not called.
      */
     void testNoQuartzPropertiesPropagation() {
-        MockDoWithSpring spring = new MockDoWithSpring()
-        def gcl = new GroovyClassLoader()
-        def pluginDir = new File('.')
-        gcl.addClasspath(pluginDir.canonicalPath)
-        def pluginClass = gcl.loadClass('QuartzGrailsPlugin')
-        def plugin = pluginClass.newInstance()
-        def beans = plugin.doWithSpring
-        beans.delegate = spring
-        beans.resolveStrategy = Closure.DELEGATE_FIRST
-        beans.call()
-        assertTrue beans.delegate.quartzProperties == null || beans.delegate.quartzProperties.size() == 1
+
+        doWithSpring()
+
+        assert spring.quartzProperties == null || spring.quartzProperties.size() == 1
     }
 
-    /**
-     *
-     */
     void testEmptyQuartzPropertiesPropagation() {
-        MockDoWithSpring spring = new MockDoWithSpring()
         spring.application.config.quartz.getProperty('props')
-        def gcl = new GroovyClassLoader()
-        def pluginDir = new File('.')
-        gcl.addClasspath(pluginDir.canonicalPath)
-        def pluginClass = gcl.loadClass('QuartzGrailsPlugin')
-        def plugin = pluginClass.newInstance()
-        def beans = plugin.doWithSpring
-        beans.delegate = spring
-        beans.resolveStrategy = Closure.DELEGATE_FIRST
-        beans.call()
-        assertTrue beans.delegate.quartzProperties == [:] || beans.delegate.quartzProperties.size() == 1
+
+        doWithSpring()
+
+        assert spring.quartzProperties == [:] || spring.quartzProperties.size() == 1
     }
 
     /**
-     *   Test that properties defined in QuartzConfig.groovy are presented to
-     *   the Spring Quartz management bean.
+     * Test that properties defined in QuartzConfig.groovy are presented to the Spring Quartz management bean.
      */
     void testQuartzConfigPropertyPropagation() {
-        MockDoWithSpring spring = new MockDoWithSpring()
         def config = new ConfigObject()
         config.quartz.props.'threadPool.threadCount' = 5
         spring.application.config = config
+
+        doWithSpring()
+
+        assert spring.quartzProperties.'org.quartz.threadPool.threadCount' == '5'
+    }
+
+    protected newPluginInstance() {
         def gcl = new GroovyClassLoader()
-        def pluginDir = new File('.')
-        gcl.addClasspath(pluginDir.canonicalPath)
+        gcl.addClasspath(new File('.').canonicalPath)
         def pluginClass = gcl.loadClass('QuartzGrailsPlugin')
-        def plugin = pluginClass.newInstance()
-        def beans = plugin.doWithSpring
+        pluginClass.newInstance()
+    }
+
+    protected void doWithSpring() {
+        def beans = newPluginInstance().doWithSpring
         beans.delegate = spring
         beans.resolveStrategy = Closure.DELEGATE_FIRST
-        beans.call()
-        assertTrue beans.delegate.quartzProperties.'org.quartz.threadPool.threadCount' == '5'
+        beans()
     }
 }

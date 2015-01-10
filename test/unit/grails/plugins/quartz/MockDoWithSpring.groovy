@@ -19,24 +19,16 @@ package grails.plugins.quartz
 class MockDoWithSpring {
 
     def quartzProperties
-    def application = [jobClasses: null, config: new ConfigObject()]
+    def application = [config: new ConfigObject()]
     def manager
 
-    def ref(whatever) {
-        null
-    }
+    def ref(whatever) {}
 
-    def quartzJobFactory(whatever) {
-        null
-    }
+    def quartzJobFactory(whatever) {}
 
-    def exceptionPrinterListener(whatever) {
-        null
-    }
+    def exceptionPrinterListener(whatever) {}
 
-    def sessionBinderListener(something, whatever) {
-        null
-    }
+    def sessionBinderListener(something, whatever) {}
 
     void quartzScheduler(whatever, Closure props) {
         def data = [:]
@@ -44,6 +36,6 @@ class MockDoWithSpring {
         props.resolveStrategy = Closure.DELEGATE_FIRST
         props.call([:])
         println "xxxxxxxx=$data"
-        this.quartzProperties = data.quartzProperties
+        quartzProperties = data.quartzProperties
     }
 }

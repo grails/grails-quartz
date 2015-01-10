@@ -25,30 +25,31 @@ import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import org.quartz.impl.triggers.CronTriggerImpl
 import org.quartz.impl.triggers.SimpleTriggerImpl
+import org.springframework.util.Assert
 
 /**
- * Groovy Builder for parsing triggers configuration info.
+ * Parses trigger configuration info.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  *
  * @since 0.3
  */
 class TriggersConfigBuilder extends BuilderSupport {
-    private triggerNumber = 0
-    private jobName
+    private int triggerNumber = 0
+    private String jobName
 
-    def triggers = [:]
+    Map triggers = [:]
 
-    TriggersConfigBuilder(String jobName) {
-        this.jobName = jobName
+    TriggersConfigBuilder(String name) {
+        jobName = name
     }
 
     /**
-     * Evaluate triggers closure
+     * Evaluate triggers closure.
      */
-    def build(closure) {
+    Map build(Closure closure) {
         closure.delegate = this
-        closure.call()
+        closure()
         return triggers
     }
 
@@ -59,16 +60,14 @@ class TriggersConfigBuilder extends BuilderSupport {
      * @param attributes trigger attributes
      * @return trigger definitions
      */
-    Expando createTrigger(name, Map attributes) {
-        def triggerClass
+    Expando createTrigger(String name, Map attributes) {
 
-        def triggerAttributes = attributes ? new HashMap(attributes) : [:]
+        Map triggerAttributes = attributes ? new HashMap(attributes) : [:]
 
         prepareCommonTriggerAttributes(triggerAttributes)
 
-        String triggerType = normalizeTriggerType(name)
-
-        switch (triggerType) {
+        Class<?> triggerClass
+        switch (normalizeTriggerType(name)) {
             case 'simple':
                 triggerClass = SimpleTriggerImpl
                 prepareSimpleTriggerAttributes(triggerAttributes)
@@ -78,13 +77,9 @@ class TriggersConfigBuilder extends BuilderSupport {
                 prepareCronTriggerAttributes(triggerAttributes)
                 break
             case 'custom':
-                if (!triggerAttributes?.triggerClass) {
-                    throw new Exception("Custom trigger must have 'triggerClass' attribute")
-                }
-                triggerClass = (Class) triggerAttributes.remove('triggerClass')
-                if (!Trigger.isAssignableFrom(triggerClass)){
-                    throw new Exception("Custom trigger class must implement org.quartz.Trigger class.")
-                }
+                triggerClass = triggerAttributes.remove('triggerClass')
+                Assert.notNull triggerClass, "Custom trigger must have 'triggerClass' attribute"
+                     Assert.isAssignable Trigger, triggerClass, "Custom trigger class must implement org.quartz.Trigger class."
                 break
             default:
                 throw new Exception("Invalid format")
@@ -100,117 +95,68 @@ class TriggersConfigBuilder extends BuilderSupport {
      * @return new trigger type
      */
     private String normalizeTriggerType(name) {
-        def triggerType = name
 
-        if (triggerType == 'simpleTrigger') {
-            GrailsUtil.deprecated("You're using deprecated 'simpleTrigger' construction in the ${jobName}, use 'simple' instead.")
-            triggerType = 'simple'
-        } else if (triggerType == 'cronTrigger') {
-            GrailsUtil.deprecated("You're using deprecated 'cronTrigger' construction in the ${jobName}, use 'cron' instead.")
-            triggerType = 'cron'
-        } else if (triggerType == 'customTrigger') {
-            GrailsUtil.deprecated("You're using deprecated 'customTrigger' construction in the ${jobName}, use 'custom' instead.")
-            triggerType = 'custom'
+        def warn = { String oldName, String newName ->
+            GrailsUtil.deprecated("You're using deprecated '$oldName' construction in the $jobName, use '$newName' instead.")
+            return newName
         }
-        triggerType
+
+        switch (name) {
+            case 'simpleTrigger': return warn('simpleTrigger', 'simple')
+            case 'cronTrigger':   return warn('cronTrigger',   'cron')
+            case 'customTrigger': return warn('customTrigger', 'custom')
+            default:              return name
+        }
     }
 
     private prepareCommonTriggerAttributes(Map triggerAttributes) {
         def prepare = prepareTriggerAttribute.curry(triggerAttributes)
 
-        if(triggerAttributes[Constants.NAME] == null) {
-            triggerAttributes[Constants.NAME] = "${jobName}${triggerNumber++}".toString()
+        if (triggerAttributes[Constants.NAME] == null) {
+            triggerAttributes[Constants.NAME] = "$jobName${triggerNumber++}".toString()
         }
 
-        prepare(Constants.GROUP, Constants.DEFAULT_TRIGGERS_GROUP.toString())
-        prepare(
-                Constants.START_DELAY,
-                Constants.DEFAULT_START_DELAY,
-                {
-                    if (!(it instanceof Integer || it instanceof Long)) {
-                        throw new IllegalArgumentException(
-                                "startDelay trigger property in the job class ${jobName} must be Integer or Long"
-                        )
-                    }
-                    if (((Number) it).longValue() < 0) {
-                        throw new IllegalArgumentException(
-                                "startDelay trigger property in the job class ${jobName} is negative (possibly integer overflow error)"
-                        )
-                    }
-                }
-        )
+        prepare Constants.GROUP, Constants.DEFAULT_TRIGGERS_GROUP.toString()
+        prepare Constants.START_DELAY, Constants.DEFAULT_START_DELAY, {
+            assertNotNegativeAndIntegerOrLong it, 'startDelay'
+        }
     }
 
     private prepareSimpleTriggerAttributes(Map triggerAttributes) {
         def prepare = prepareTriggerAttribute.curry(triggerAttributes)
 
         // Process the old deprecated property "timeout"
-        if (triggerAttributes[Constants.TIMEOUT] != null) {
-            GrailsUtil.deprecated("You're using deprecated 'timeout' property in the ${jobName}, use 'repeatInterval' instead")
+        def timeout = triggerAttributes.remove(Constants.TIMEOUT)
+        if (timeout != null) {
+            GrailsUtil.deprecated("You're using deprecated 'timeout' property in the $jobName, use 'repeatInterval' instead")
 
-            if (!(triggerAttributes[Constants.TIMEOUT] instanceof Integer || triggerAttributes[Constants.TIMEOUT] instanceof Long)) {
-                throw new IllegalArgumentException(
-                        "timeout trigger property in the job class ${jobName} must be Integer or Long"
-                )
-            }
-            if (((Number) triggerAttributes[Constants.TIMEOUT]).longValue() < 0) {
-                throw new IllegalArgumentException(
-                        "timeout trigger property for job class ${jobName} is negative (possibly integer overflow error)"
-                )
-            }
-            triggerAttributes[Constants.REPEAT_INTERVAL] = triggerAttributes.remove(Constants.TIMEOUT)
+            assertNotNegativeAndIntegerOrLong timeout, 'timeout'
+
+            triggerAttributes[Constants.REPEAT_INTERVAL] = timeout
         }
 
         // Validate repeat interval
-        prepare(
-                Constants.REPEAT_INTERVAL,
-                Constants.DEFAULT_REPEAT_INTERVAL,
-                {
-                    if (!(it instanceof Integer || it instanceof Long)) {
-                        throw new IllegalArgumentException("repeatInterval trigger property in the job class ${jobName} must be Integer or Long")
-                    }
-                    if (((Number) it).longValue() < 0) {
-                        throw new IllegalArgumentException("repeatInterval trigger property for job class ${jobName} is negative (possibly integer overflow error)")
-                    }
-                }
-        )
+        prepare Constants.REPEAT_INTERVAL, Constants.DEFAULT_REPEAT_INTERVAL, {
+            assertNotNegativeAndIntegerOrLong it, 'repeatInterval'
+        }
 
         // Validate repeat count
-        prepare(
-                Constants.REPEAT_COUNT,
-                Constants.DEFAULT_REPEAT_COUNT,
-                {
-                    if (!(it instanceof Integer || it instanceof Long)) {
-                        throw new IllegalArgumentException(
-                                "repeatCount trigger property in the job class ${jobName} must be Integer or Long"
-                        )
-                    }
-                    if (((Number) it).longValue() < 0 && ((Number) it).longValue() != SimpleTrigger.REPEAT_INDEFINITELY) {
-                        throw new IllegalArgumentException(
-                                "repeatCount trigger property for job class ${jobName} is negative (possibly integer overflow error)"
-                        )
-                    }
-                }
-        )
+        prepare Constants.REPEAT_COUNT, Constants.DEFAULT_REPEAT_COUNT, {
+            assertIntegerOrLong it, 'repeatCount'
+            Assert.isTrue it.longValue() >= 0 || it.longValue() == SimpleTrigger.REPEAT_INDEFINITELY,
+                    "repeatCount trigger property for job class $jobName is negative (possibly integer overflow error)"
+        }
     }
 
     private prepareCronTriggerAttributes(Map triggerAttributes) {
-        prepareTriggerAttribute(
-                triggerAttributes,
-                Constants.CRON_EXPRESSION,
-                Constants.DEFAULT_CRON_EXPRESSION,
-                {
-                    if (!CronExpression.isValidExpression(it.toString())) {
-                        throw new IllegalArgumentException(
-                                "Cron expression '${it}' in the job class ${jobName} is not a valid cron expression"
-                        )
-                    }
-                }
-        )
+        prepareTriggerAttribute triggerAttributes, Constants.CRON_EXPRESSION, Constants.DEFAULT_CRON_EXPRESSION, {
+            Assert.isTrue CronExpression.isValidExpression(it.toString()),
+                    "Cron expression '$it' in the job class $jobName is not a valid cron expression"
+        }
     }
 
-    private prepareTriggerAttribute = {Map attributes, String name, defaultValue, validate = {} ->
-        if(attributes[name] == null){
+    private prepareTriggerAttribute = { Map attributes, String name, defaultValue, validate = {} ->
+        if (attributes[name] == null) {
             attributes[name] = defaultValue
         }
         validate(attributes[name])
@@ -247,9 +193,26 @@ class TriggersConfigBuilder extends BuilderSupport {
     /**
      * Create a trigger. Implements the BuilderSupport method.
      */
-    protected Object createNode(name, Map attributes, Object value) {
+    protected createNode(name, Map attributes, value) {
         def trigger = createTrigger(name, attributes)
         triggers[trigger.triggerAttributes.name.toString()] = trigger
         trigger
+    }
+
+    protected void assertIntegerOrLong(value, String propertyName) {
+        Assert.isTrue(
+              (value instanceof Integer || value instanceof Long),
+              "$propertyName trigger property in the job class $jobName must be Integer or Long")
+    }
+
+    protected void assertNotNegative(Number value, String propertyName) {
+         Assert.isTrue(
+             value.longValue() >= 0,
+             "$propertyName trigger property for job class $jobName is negative (possibly integer overflow error)")
+    }
+
+    protected void assertNotNegativeAndIntegerOrLong(value, String propertyName) {
+        assertIntegerOrLong value, propertyName
+        assertNotNegative value, propertyName
     }
 }

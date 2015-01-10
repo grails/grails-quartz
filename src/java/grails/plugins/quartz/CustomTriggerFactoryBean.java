@@ -31,7 +31,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * The factory bean to create and register trigger beans in Spring context.
+ * Creates and registers trigger beans in the Spring context.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  */
@@ -40,22 +40,20 @@ public class CustomTriggerFactoryBean implements FactoryBean<Trigger>, Initializ
     private Trigger customTrigger;
     private JobDetail jobDetail;
 
-    private Map triggerAttributes;
+    private Map<?, ?> triggerAttributes;
 
     public void afterPropertiesSet() throws ParseException {
         // Create a trigger by the class name
         customTrigger = BeanUtils.instantiateClass(triggerClass);
 
         // If trigger is a standard trigger, set standard properties
-        if(customTrigger instanceof AbstractTrigger){
-            AbstractTrigger at =(AbstractTrigger) customTrigger;
+        if (customTrigger instanceof AbstractTrigger) {
+            AbstractTrigger<?> at = (AbstractTrigger<?>) customTrigger;
 
-            // Set job details
-            if(jobDetail!=null){
+            if (jobDetail != null) {
                 at.setJobKey(jobDetail.getKey());
             }
 
-            // Set start delay
             if (triggerAttributes.containsKey(GrailsJobClassConstants.START_DELAY)) {
                 Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassConstants.START_DELAY);
                 at.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
@@ -68,29 +66,14 @@ public class CustomTriggerFactoryBean implements FactoryBean<Trigger>, Initializ
         customTriggerWrapper.setPropertyValues(triggerAttributes);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
     public Trigger getObject() throws Exception {
         return customTrigger;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-     */
     public Class<? extends Trigger> getObjectType() {
         return triggerClass;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-     */
     public boolean isSingleton() {
         return true;
     }
@@ -103,7 +86,7 @@ public class CustomTriggerFactoryBean implements FactoryBean<Trigger>, Initializ
         this.triggerClass = triggerClass;
     }
 
-    public void setTriggerAttributes(Map triggerAttributes) {
+    public void setTriggerAttributes(Map<?, ?> triggerAttributes) {
         this.triggerAttributes = triggerAttributes;
     }
 }

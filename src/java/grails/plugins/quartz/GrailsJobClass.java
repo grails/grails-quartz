@@ -21,7 +21,7 @@ import org.codehaus.groovy.grails.commons.InjectableGrailsClass;
 import java.util.Map;
 
 /**
- * Represents a job class in Grails.
+ * Represents a job class.
  *
  * @author Micha?? K??ujszo
  * @author Graeme Rocher
@@ -32,51 +32,51 @@ import java.util.Map;
 public interface GrailsJobClass extends InjectableGrailsClass {
 
     /**
-     * Method which is executed by the job scheduler.
+     * Executed by the job scheduler.
      */
-    public void execute();
+    void execute();
 
     /**
-     * Get group name used for configuring scheduler.
+     * Group name used for configuring scheduler.
      *
      * @return jobs group name for this job
      */
-    public String getGroup();
+    String getGroup();
 
     /**
-     * If jobs can be executed concurrently returns true.
+     * Determine if jobs can be executed concurrently.
      *
-     * @return true if several instances of this job can run concurrently
+     * @return true if multiple instances of this job can run concurrently
      */
-    public boolean isConcurrent();
+    boolean isConcurrent();
 
     /**
-     * If job requires Hibernate Session bounded to thread returns true.
+     * Determine if job requires Hibernate Session bound to thread.
      *
-     * @return true if this job require a Hibernate Session bounded to thread
+     * @return true if this job requires a Hibernate Session bound to thread
      */
-    public boolean isSessionRequired();
+    boolean isSessionRequired();
 
     /**
-     * If job is durable returns true.
+     * Determine if job is durable.
      *
      * @return true if this job is durable
      */
-    public boolean isDurability();
+    boolean isDurability();
 
     /**
-     * If job should be re-executed if a 'recovery' or 'fail-over' situation is encountered returns true.
+     * Determine if job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
      *
      * @return true if this job requests recovery
      */
-    public boolean isRequestsRecovery();
+    boolean isRequestsRecovery();
 
     /**
-     * Get job's description used for configuring job details.
+     * Job's description for configuring job details.
      *
-     * @return description for this job
+     * @return description
      */
-    public String getDescription();
+    String getDescription();
 
-    public Map getTriggers();
+    Map<String, Object> getTriggers();
 }

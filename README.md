@@ -16,24 +16,26 @@ configured via [Spring](http://projects.spring.io/spring-framework/), but is mad
 ## Installation
 
 To install the latest stable version of the plugin add this to your `BuildConfig.groovy` in the plugins section (be sure to use the latest version):
-```groovy
-compile ':quartz:1.0-RC11'
-```
+
+    compile ':quartz:1.0.2'
 
 ## Using
 ### Scheduling Jobs
 To create a new job run the `grails create-job` command and enter the name of the job. Grails will create a new job and place it in the `grails-app/jobs` directory:
-```groovy
-class MyJob {
-    static triggers = {
-        simple repeatInterval: 1000
+
+    package com.mycompany.myapp
+
+    class MyJob {
+
+        static triggers = {
+            simple repeatInterval: 1000
+        }
+
+        void execute() {
+            print "Job run!"
+        }
     }
 
-    def execute(){
-        print "Job run!"
-    }
-}
-```
 The above example will call the 'execute' method every second.
 
 ### Scheduling configuration syntax
@@ -43,19 +45,19 @@ Currently plugin supports three types of [triggers](http://quartz-scheduler.org/
 * **custom trigger** — your implementation of [Trigger](http://www.quartz-scheduler.org/api/2.2.0/org/quartz/Trigger.html) interface.
 
 Multiple triggers per job are allowed.
-```groovy
-class MyJob {
-    static triggers = {
-        simple name:'simpleTrigger', startDelay:10000, repeatInterval: 30000, repeatCount: 10
-        cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 * 15 * * ?'
-        custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
-    }
 
-    def execute() {
-        println "Job run!"
+    class MyJob {
+
+        static triggers = {
+            simple name: 'simpleTrigger', startDelay: 10000, repeatInterval: 30000, repeatCount: 10
+            cron name:   'cronTrigger',   startDelay: 10000, cronExpression: '0/6 * 15 * * ?'
+            custom name: 'customTrigger', triggerClass: MyTriggerClass, myParam: myValue, myAnotherParam: myAnotherValue
+        }
+
+        void execute() {
+            println "Job run!"
+        }
     }
-  }
-```
 
 With this configuration job will be executed 11 times with 30 seconds interval with first run in 10 seconds after
 scheduler startup (simple trigger), also it'll be executed each 6 second during 15th hour

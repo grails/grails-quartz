@@ -17,6 +17,7 @@
 package grails.plugins.quartz
 
 class DefaultGrailsJobClassTests extends GroovyTestCase {
+
     protected GroovyClassLoader gcl = new GroovyClassLoader()
 
     protected void tearDown() {
@@ -25,61 +26,60 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
     }
 
     void testDefaultProperties() {
-        def jobClass = gcl.parseClass('class TestJob { def execute(){} }')
+        def jobClass = gcl.parseClass('class TestJob { void execute() {} }')
         def grailsJobClass = new DefaultGrailsJobClass(jobClass)
 
-        assertEquals "Wrong default group", 'GRAILS_JOBS', grailsJobClass.group
-        assertTrue "Job should require Hibernate session by default", grailsJobClass.sessionRequired
-        assertTrue "Job should be concurrent by default", grailsJobClass.concurrent
+        assert 'GRAILS_JOBS' == grailsJobClass.group, 'Wrong default group'
+        assert grailsJobClass.sessionRequired, 'Job should require Hibernate session by default'
+        assert grailsJobClass.concurrent, 'Job should be concurrent by default'
     }
 
     void testJobClassExecute() {
         boolean wasExecuted = false
         def testClosure = { wasExecuted = true }
         Class jobClass = gcl.parseClass("""
-                class TestJob {
-                    def testClosure
-                    def execute() {
-                        testClosure.call()
-                    }
+            class TestJob {
+                def testClosure
+                void execute() {
+                    testClosure.call()
                 }
-                """.stripIndent())
+            }""")
         GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
         grailsJobClass.referenceInstance.testClosure = testClosure
         grailsJobClass.execute()
-        assertTrue "Job wasn't executed", wasExecuted
+        assert wasExecuted, "Job wasn't executed"
     }
 
     void testSessionRequiredParameter() {
         Class jobClass = gcl.parseClass("""
-                class TestJob {
-                    def sessionRequired = false
-                    def execute() {}
-                }
-                """.stripIndent())
+            class TestJob {
+                boolean sessionRequired = false
+                void execute() {}
+            }
+            """)
         GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
-        assertFalse "Hibernate Session shouldn't be required", grailsJobClass.sessionRequired
+        assert !grailsJobClass.sessionRequired, "Hibernate Session shouldn't be required"
     }
 
     void testConcurrentParameter() {
         Class jobClass = gcl.parseClass("""
-                class TestJob {
-                    def concurrent = false
-                    def execute() {}
-                }
-                """.stripIndent())
+            class TestJob {
+                boolean concurrent = false
+                void execute() {}
+            }
+            """)
         GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
-        assertFalse "Job class shouldn't be marked as concurrent", grailsJobClass.concurrent
+        assert !grailsJobClass.concurrent, "Job class shouldn't be marked as concurrent"
     }
 
     void testGroupParameter() {
         Class jobClass = gcl.parseClass("""
-                class TestJob {
-                    def group = 'myGroup'
-                    def execute() {}
-                }
-                """.stripIndent())
+            class TestJob {
+                String group = 'myGroup'
+                void execute() {}
+            }
+            """)
         GrailsJobClass grailsJobClass = new DefaultGrailsJobClass(jobClass)
-        assertEquals 'myGroup', grailsJobClass.group
+        assert 'myGroup' == grailsJobClass.group
     }
 }

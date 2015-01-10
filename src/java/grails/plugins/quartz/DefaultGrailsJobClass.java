@@ -16,20 +16,31 @@
 
 package grails.plugins.quartz;
 
+import static grails.plugins.quartz.GrailsJobClassConstants.CONCURRENT;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_CONCURRENT;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_DESCRIPTION;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_DURABILITY;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_GROUP;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_REQUESTS_RECOVERY;
+import static grails.plugins.quartz.GrailsJobClassConstants.DEFAULT_SESSION_REQUIRED;
+import static grails.plugins.quartz.GrailsJobClassConstants.DESCRIPTION;
+import static grails.plugins.quartz.GrailsJobClassConstants.DURABILITY;
+import static grails.plugins.quartz.GrailsJobClassConstants.EXECUTE;
+import static grails.plugins.quartz.GrailsJobClassConstants.GROUP;
+import static grails.plugins.quartz.GrailsJobClassConstants.REQUESTS_RECOVERY;
+import static grails.plugins.quartz.GrailsJobClassConstants.SESSION_REQUIRED;
 import grails.plugins.quartz.config.TriggersConfigBuilder;
 import groovy.lang.Closure;
-import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
-import org.codehaus.groovy.grails.commons.GrailsClassUtils;
-import org.quartz.JobExecutionContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static grails.plugins.quartz.GrailsJobClassConstants.*;
-
+import org.codehaus.groovy.grails.commons.AbstractInjectableGrailsClass;
+import org.codehaus.groovy.grails.commons.GrailsClassUtils;
+import org.quartz.JobExecutionContext;
 
 /**
- * Grails artifact class which represents a Quartz job.
+ * Represents a Quartz job.
  *
  * @author Micha?? K??ujszo
  * @author Marcel Overdijk
@@ -39,28 +50,24 @@ import static grails.plugins.quartz.GrailsJobClassConstants.*;
 public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass implements GrailsJobClass {
 
     public static final String JOB = "Job";
-    private Map triggers = new HashMap();
 
+    private static final Object[] NO_ARGS = {};
 
-    public DefaultGrailsJobClass(Class clazz) {
+    private Map<String, Object> triggers = new HashMap<String, Object>();
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public DefaultGrailsJobClass(Class<?> clazz) {
         super(clazz, JOB);
-        evaluateTriggers();
-    }
 
-    private void evaluateTriggers() {
         // registering additional triggersClosure from 'triggersClosure' closure if present
         Closure triggersClosure = (Closure) GrailsClassUtils.getStaticPropertyValue(getClazz(), "triggers");
-
-        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName());
-
         if (triggersClosure != null) {
-            builder.build(triggersClosure);
-            triggers = (Map) builder.getTriggers();
+            triggers = new TriggersConfigBuilder(getFullName()).build(triggersClosure);
         }
     }
 
     public void execute() {
-        getMetaClass().invokeMethod(getReferenceInstance(), EXECUTE, new Object[]{});
+        getMetaClass().invokeMethod(getReferenceInstance(), EXECUTE, NO_ARGS);
     }
 
     public void execute(JobExecutionContext context) {
@@ -68,38 +75,40 @@ public class DefaultGrailsJobClass extends AbstractInjectableGrailsClass impleme
     }
 
     public String getGroup() {
-        String group = (String) getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
-        if (group == null || "".equals(group)) return DEFAULT_GROUP;
-        return group;
+        return getStringValue(GROUP, DEFAULT_GROUP);
     }
 
     public boolean isConcurrent() {
-        Boolean concurrent = getPropertyValue(CONCURRENT, Boolean.class);
-        return concurrent == null ? DEFAULT_CONCURRENT : concurrent;
+        return getBooleanValue(CONCURRENT, DEFAULT_CONCURRENT);
     }
 
     public boolean isSessionRequired() {
-        Boolean sessionRequired = getPropertyValue(SESSION_REQUIRED, Boolean.class);
-        return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired;
+        return getBooleanValue(SESSION_REQUIRED, DEFAULT_SESSION_REQUIRED);
     }
 
     public boolean isDurability() {
-        Boolean durability = getPropertyValue(DURABILITY, Boolean.class);
-        return durability == null ? DEFAULT_DURABILITY : durability;
+        return getBooleanValue(DURABILITY, DEFAULT_DURABILITY);
     }
 
     public boolean isRequestsRecovery() {
-        Boolean requestsRecovery = getPropertyValue(REQUESTS_RECOVERY, Boolean.class);
-        return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
+        return getBooleanValue(REQUESTS_RECOVERY, DEFAULT_REQUESTS_RECOVERY);
     }
 
     public String getDescription() {
-        String description = (String) getPropertyOrStaticPropertyOrFieldValue(DESCRIPTION, String.class);
-        if (description == null || "".equals(description)) return DEFAULT_DESCRIPTION;
-        return description;
+        return getStringValue(DESCRIPTION, DEFAULT_DESCRIPTION);
     }
 
-    public Map getTriggers() {
+    public Map<String, Object> getTriggers() {
         return triggers;
     }
+
+    protected String getStringValue(String propName, String defaultIfMissing) {
+        String value = getPropertyOrStaticPropertyOrFieldValue(propName, String.class);
+        return (value == null || "".equals(value)) ? defaultIfMissing : value;
+    }
+
+    protected boolean getBooleanValue(String propName, boolean defaultIfMissing) {
+        Boolean value = getPropertyValue(propName, Boolean.class);
+        return value == null ? defaultIfMissing : value;
+   }
 }

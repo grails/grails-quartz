@@ -18,22 +18,20 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.quartz.Scheduler
 
 /**
- * Bootstrap class which turns on scheduler if autoStartup config parameter is set to true.
+ * Starts the scheduler if autoStartup config parameter is set to true.
  *
  * @author Sergey Nebolsin
  *
  * @since 0.3
  */
 class QuartzBootStrap {
+
     GrailsApplication grailsApplication
     Scheduler quartzScheduler
 
-    def init = { servletContext ->
+    def init = {
         if (grailsApplication.config?.quartz?.autoStartup) {
             quartzScheduler.start()
         }
-    }
-
-    def destroy = {
     }
 }

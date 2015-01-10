@@ -8,9 +8,8 @@ h2. Examples
 
 {code}
 class MyJob {
-  static triggers = {
-    simple name:'simpleTrigger', startDelay:10000, repeatInterval: 30000, repeatCount: 10
-  }
+   static triggers = {
+      simple name:'simpleTrigger', startDelay:10000, repeatInterval: 30000, repeatCount: 10
+   }
 }
 {code}
-

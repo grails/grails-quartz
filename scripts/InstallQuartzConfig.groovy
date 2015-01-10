@@ -15,31 +15,27 @@
  */
 
 /**
- * Gant script that installs Quartz config file into /grails-app/conf/ directory.
+ * Installs Quartz config file into /grails-app/conf directory.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  *
  * @since 0.3
  */
 
-includeTargets << grailsScript("_GrailsInit")
 includeTargets << grailsScript("_GrailsCreateArtifacts")
 
 target(installQuartzConfig: "Installs Quartz config in the /grails-app/conf/ directory") {
     depends(checkVersion)
-    def configFile = "${basedir}/grails-app/conf/QuartzConfig.groovy"
-    if(!(configFile as File).exists() || confirmInput("Quartz config file already exists in your project. Overwrite it?")) {
-        ant.copy(
-                file:"${quartzPluginDir}/grails-app/conf/DefaultQuartzConfig.groovy",
-                tofile:configFile,
-                overwrite: true
-        )
-        event("CreatedFile", [configFile])
+    File configFile = new File(basedir, 'grails-app/conf/QuartzConfig.groovy')
+    if (!configFile.exists() || confirmInput("Quartz config file already exists in your project. Overwrite it?")) {
+        ant.copy(file:"$quartzPluginDir/grails-app/conf/DefaultQuartzConfig.groovy",
+                 tofile: configFile, overwrite: true)
+        event("CreatedFile", [configFile.path])
         event("StatusFinal", ["Quartz configuration file was installed into /grails-app/conf/QuartzConfig.groovy"])
     }
 }
 
-confirmInput = {String message ->
+confirmInput = { String message ->
     ant.input(message: message, addproperty: "confirm.message", validargs: "y,n")
     ant.antProject.properties."confirm.message" == "y"
 }

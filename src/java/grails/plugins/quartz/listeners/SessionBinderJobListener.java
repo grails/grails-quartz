@@ -16,22 +16,23 @@
 
 package grails.plugins.quartz.listeners;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.support.PersistenceContextInterceptor;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.listeners.JobListenerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * JobListener implementation which wraps the execution of a Quartz Job in a
- * persistence context, via the persistenceInterceptor.
+ * Wraps the execution of a Quartz Job in a persistence context, via the
+ * persistenceInterceptor.
  *
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.2
  */
 public class SessionBinderJobListener extends JobListenerSupport {
-    private static final transient Log LOG = LogFactory.getLog(SessionBinderJobListener.class);
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public static final String NAME = "sessionBinderListener";
 
@@ -41,49 +42,50 @@ public class SessionBinderJobListener extends JobListenerSupport {
         return NAME;
     }
 
-    /**
-     * It is used by the Spring to inject a persistence interceptor.
-     */
-    @SuppressWarnings("UnusedDeclaration")
     public PersistenceContextInterceptor getPersistenceInterceptor() {
         return persistenceInterceptor;
     }
 
-    /**
-     * It is used by the Spring to inject a persistence interceptor.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public void setPersistenceInterceptor(PersistenceContextInterceptor persistenceInterceptor) {
-        this.persistenceInterceptor = persistenceInterceptor;
+    public void setPersistenceInterceptor(PersistenceContextInterceptor interceptor) {
+        persistenceInterceptor = interceptor;
     }
 
     /**
      * Before job executing. Init persistence context.
      */
+    @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        if (persistenceInterceptor != null) {
-            persistenceInterceptor.init();
-            LOG.debug("Persistence session is opened.");
+        if (persistenceInterceptor == null) {
+            return;
         }
+
+        persistenceInterceptor.init();
+        log.debug("Persistence session is opened.");
     }
 
     /**
      * After job executing. Flush and destroy persistence context.
      */
+    @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-        if (persistenceInterceptor != null) {
+        if (persistenceInterceptor == null) {
+            return;
+        }
+
+        try {
+            persistenceInterceptor.flush();
+            persistenceInterceptor.clear();
+            log.debug("Persistence session is flushed.");
+        }
+        catch (Exception e) {
+            log.error("Failed to flush session after job: " + context.getJobDetail().getDescription(), e);
+        }
+        finally {
             try {
-                persistenceInterceptor.flush();
-                persistenceInterceptor.clear();
-                LOG.debug("Persistence session is flushed.");
-            } catch (Exception e) {
-                LOG.error("Failed to flush session after job: " + context.getJobDetail().getDescription(), e);
-            } finally {
-                try {
-                    persistenceInterceptor.destroy();
-                } catch (Exception e) {
-                    LOG.error("Failed to finalize session after job: " + context.getJobDetail().getDescription(), e);
-                }
+                persistenceInterceptor.destroy();
+            }
+            catch (Exception e) {
+                log.error("Failed to finalize session after job: " + context.getJobDetail().getDescription(), e);
             }
         }
     }

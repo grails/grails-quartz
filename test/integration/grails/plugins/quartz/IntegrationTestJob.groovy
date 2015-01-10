@@ -5,5 +5,5 @@ package grails.plugins.quartz
  * @author Vitalii Samolovskikh aka Kefir
  */
 class IntegrationTestJob {
-    def execute() {}
+    void execute() {}
 }

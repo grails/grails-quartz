@@ -22,37 +22,44 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 
 class QuartzPluginTests extends GroovyTestCase implements ApplicationContextAware {
-    boolean transactional = false
+
+    static transactional = false
+
     def grailsApplication
     def pluginManager
     ApplicationContext applicationContext
 
     void testLoading() {
-        assertNotNull 'Plugin manager is null', pluginManager
-        assertTrue 'Core plugin is not loaded', pluginManager.hasGrailsPlugin('core')
-        //assertTrue 'Hibernate plugin is not loaded', pluginManager.hasGrailsPlugin('hibernate')
-        assertTrue 'Quartz plugin is not loaded', pluginManager.hasGrailsPlugin('quartz')
+        assert pluginManager, 'Plugin manager is null'
+        assert pluginManager.hasGrailsPlugin('core'), 'Core plugin is not loaded'
+//        assert pluginManager.hasGrailsPlugin('hibernate'), 'Hibernate plugin is not loaded'
+        assert pluginManager.hasGrailsPlugin('quartz'), 'Quartz plugin is not loaded'
 
-        assertTrue "Bean 'quartzScheduler' is not registered in application context", applicationContext.containsBean('quartzScheduler')
-//        assertTrue "Bean '${SessionBinderJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${SessionBinderJobListener.NAME}")
-        assertTrue "Bean '${ExceptionPrinterJobListener.NAME}' is not registered in application context", applicationContext.containsBean("${ExceptionPrinterJobListener.NAME}")
+        assert applicationContext.containsBean('quartzScheduler'), "Bean 'quartzScheduler' is not registered in application context"
+//        assert applicationContext.containsBean(SessionBinderJobListener.NAME), "Bean '$SessionBinderJobListener.NAME' is not registered in application context"
+        assert applicationContext.containsBean(ExceptionPrinterJobListener.NAME), "Bean '$ExceptionPrinterJobListener.NAME' is not registered in application context"
     }
 
     void testArtefactHandlerRegistering() {
         def handler = grailsApplication.artefactHandlers.find { it.type == 'Job' }
-        assertNotNull "Job artefact handler was not registered", handler
-        assertTrue "Job artefact handler should be of type JobArtefactHandler", handler instanceof JobArtefactHandler
+        assert handler, 'Job artefact handler was not registered'
+        assert handler instanceof JobArtefactHandler, 'Job artefact handler should be of type JobArtefactHandler'
     }
 
     void testJobRegistering() {
-        Class jobClass = grailsApplication.classLoader.parseClass("class TestJob { def timeout = 1000; def startDelay = 5000; def execute() {}}\n")
-        assertTrue grailsApplication.isArtefactOfType( JobArtefactHandler.TYPE, jobClass )
-        grailsApplication.addArtefact( JobArtefactHandler.TYPE, jobClass )
+        Class jobClass = grailsApplication.classLoader.parseClass("""
+            class TestJob {
+                def timeout = 1000
+                def startDelay = 5000
+                void execute() {}
+            }""")
+        assert grailsApplication.isArtefactOfType(JobArtefactHandler.TYPE, jobClass)
+
+        grailsApplication.addArtefact( JobArtefactHandler.TYPE, jobClass)
         def plugin = pluginManager.getGrailsPlugin("quartz")
         def springConfig = new DefaultRuntimeSpringConfiguration(grailsApplication.parentContext)
         plugin.doWithRuntimeConfiguration(springConfig)
 
-        def ctx = springConfig.applicationContext
-        assertTrue "Bean 'TestJob' is not registered in application context", ctx.containsBean('TestJob')
+        assert springConfig.applicationContext.containsBean('TestJob'), "Bean 'TestJob' is not registered in application context"
     }
 }

@@ -16,12 +16,13 @@
 
 package grails.plugins.quartz;
 
+import static org.quartz.JobBuilder.newJob;
+
 import org.quartz.JobDetail;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-
-import static org.quartz.JobBuilder.newJob;
+import org.springframework.util.Assert;
 
 /**
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
@@ -34,10 +35,7 @@ import static org.quartz.JobBuilder.newJob;
 public class JobDetailFactoryBean implements FactoryBean<JobDetail>, InitializingBean {
     public static final transient String JOB_NAME_PARAMETER = "org.grails.plugins.quartz.grailsJobName";
 
-    // Properties
     private GrailsJobClass jobClass;
-
-    // Returned object
     private JobDetail jobDetail;
 
     @Required
@@ -45,21 +43,12 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
         this.jobClass = jobClass;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() {
         String name = jobClass.getFullName();
-        if (name == null) {
-            throw new IllegalStateException("name is required");
-        }
+        Assert.state(name != null, "name is required");
 
         String group = jobClass.getGroup();
-        if (group == null) {
-            throw new IllegalStateException("group is required");
-        }
+        Assert.state(group != null, "group is required");
 
         // Consider the concurrent flag to choose between stateful and stateless job.
         Class<? extends GrailsJobFactory.GrailsJob> clazz =
@@ -68,40 +57,22 @@ public class JobDetailFactoryBean implements FactoryBean<JobDetail>, Initializin
         // Build JobDetail instance.
         jobDetail =
                 newJob(clazz)
-                        .withIdentity(name, group)
-                        .storeDurably(jobClass.isDurability())
-                        .requestRecovery(jobClass.isRequestsRecovery())
-                        .usingJobData(JOB_NAME_PARAMETER, name)
-                        .withDescription(jobClass.getDescription())
-                        .build();
+                .withIdentity(name, group)
+                .storeDurably(jobClass.isDurability())
+                .requestRecovery(jobClass.isRequestsRecovery())
+                .usingJobData(JOB_NAME_PARAMETER, name)
+                .withDescription(jobClass.getDescription())
+                .build();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
-    @Override
     public JobDetail getObject() {
         return jobDetail;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-     */
-    @Override
     public Class<JobDetail> getObjectType() {
         return JobDetail.class;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-     */
-    @Override
     public boolean isSingleton() {
         return true;
     }

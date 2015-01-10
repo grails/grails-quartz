@@ -23,7 +23,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Method;
 
 /**
- * Grails artifact handler for job classes.
+ * Artifact handler for job classes.
  *
  * @author Marc Palmer (marc@anyware.co.uk)
  * @author Sergey Nebolsin (nebolsin@gmail.com)
@@ -37,10 +37,12 @@ public class JobArtefactHandler extends ArtefactHandlerAdapter {
         super(TYPE, GrailsJobClass.class, DefaultGrailsJobClass.class, null);
     }
 
-    public boolean isArtefactClass(Class clazz) {
-        // class shouldn't be null and should ends with Job suffix
+    @Override
+    public boolean isArtefactClass(@SuppressWarnings("rawtypes") Class clazz) {
+        // class can't be null and must end with "Job" suffix
         if (clazz == null || !clazz.getName().endsWith(DefaultGrailsJobClass.JOB)) return false;
-        // and should have one of execute() or execute(JobExecutionContext) methods defined
+
+        // and must have one of execute() or execute(JobExecutionContext) methods
         Method method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE);
         if (method == null) {
             // we're using Object as a param here to allow groovy-style 'def execute(param)' method

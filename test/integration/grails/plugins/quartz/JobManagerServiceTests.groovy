@@ -2,6 +2,8 @@ package grails.plugins.quartz
 
 import static org.quartz.Trigger.TriggerState.NORMAL
 import static org.quartz.Trigger.TriggerState.PAUSED
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
 
 import org.junit.After
 import org.junit.Before
@@ -15,10 +17,6 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
-import grails.test.mixin.integration.IntegrationTestMixin
-import grails.test.mixin.*
-import org.junit.*
-import static org.junit.Assert.*
 
 /**
  * Tests for the JobManagerService.
@@ -36,7 +34,7 @@ class JobManagerServiceTests  {
     Scheduler quartzScheduler
 
     @Before
-    void setUp(){
+    void setUp() {
         JobDetail job1 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_11).build()
         JobDetail job2 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_21).build()
         JobDetail job3 = JobBuilder.newJob(SimpleTestJob).withIdentity(JOB_KEY_12).build()
@@ -74,7 +72,7 @@ class JobManagerServiceTests  {
     }
 
     @After
-    void tearDown(){
+    void tearDown() {
         quartzScheduler.deleteJob(JOB_KEY_11)
         quartzScheduler.deleteJob(JOB_KEY_12)
         quartzScheduler.deleteJob(JOB_KEY_21)
@@ -83,14 +81,12 @@ class JobManagerServiceTests  {
 
     @Test
     void testInstantiate() {
-        assertNotNull(jobManagerService)
+        assert jobManagerService
     }
 
     @Test
     void testGetAllJobs() {
         Map<String, ? extends List<? extends JobDescriptor>> jobs = jobManagerService.getAllJobs()
-
-        assertNotNull(jobs)
 
         assert jobs instanceof Map
         assert jobs.size() == 2
@@ -175,27 +171,27 @@ class JobManagerServiceTests  {
 
     @Test
     void testRemoveJob() {
-        assertTrue(jobManagerService.getJobs('group1')*.name.contains('job2'))
+        assert jobManagerService.getJobs('group1')*.name.contains('job2')
         jobManagerService.removeJob('group1', 'job2')
-        assertFalse(jobManagerService.getJobs('group1')*.name.contains('job2'))
+        assert !jobManagerService.getJobs('group1')*.name.contains('job2')
     }
 
     @Test
     void testUnscheduleJob() {
         def key = new JobKey('job2', 'group1')
-        assert quartzScheduler.getTriggersOfJob(key)?.size() > 0
+        assert quartzScheduler.getTriggersOfJob(key)
+
         jobManagerService.unscheduleJob('group1', 'job2')
-        List<? extends Trigger> triggers = quartzScheduler.getTriggersOfJob(key)
-        assert !triggers
+        assert !quartzScheduler.getTriggersOfJob(key)
     }
 
     @Test
-    void testInterruptJob(){
+    void testInterruptJob() {
         jobManagerService.interruptJob('group1', 'job2')
     }
 
     @Test
-    void testPauseAndResumeAll(){
+    void testPauseAndResumeAll() {
         def keys = quartzScheduler.getTriggerKeys(GroupMatcher.groupEquals('tgroup2'))
 
         assertTriggersState(keys, NORMAL)

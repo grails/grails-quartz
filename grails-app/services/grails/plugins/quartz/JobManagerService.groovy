@@ -16,14 +16,13 @@
 
 package grails.plugins.quartz
 
-import org.quartz.JobExecutionContext
 import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.TriggerKey
 import org.quartz.impl.matchers.GroupMatcher
 
 /**
- * Simplifies interaction with the Quartz Scheduler.
+ * JobManagerService simplifies interaction with the Quartz Scheduler from Grails application.
  *
  * @author Marco Mornati (mmornati@byte-code.com)
  * @author Sergey Nebolsin (nebolsin@gmail.com)
@@ -32,30 +31,30 @@ import org.quartz.impl.matchers.GroupMatcher
  */
 class JobManagerService {
 
-    static transactional = false
+    boolean transactional = false
 
     Scheduler quartzScheduler
 
     /**
-     * All jobs registered in the Quartz Scheduler, grouped by their corresponding job groups.
+     * Returns all the jobs, registered in the Quartz Scheduler, grouped bu their corresponding job groups.
      *
-     * @return the descriptors
+     * @return Map <String , List<JobDescriptor>> with job group names as keys
      */
-    Map<String, List<JobDescriptor>> getAllJobs() {
+    Map <String , List<JobDescriptor>> getAllJobs() {
         quartzScheduler.jobGroupNames.collectEntries([:]) { group -> [(group):getJobs(group)]}
     }
 
     /**
-     * All jobs registered in the Quartz Scheduler which belong to the specified group.
+     * Returns all the jobs, registered in the Quartz Scheduler, which belong to the specified group.
      *
-     * @param group the jobs group name
-     * @return the descriptors
+     * @param group — the jobs group name
+     * @return a list of corresponding JobDescriptor objects
      */
     List<JobDescriptor> getJobs(String group) {
-        List<JobDescriptor> list = []
+        List<JobDescriptor> list = new ArrayList<JobDescriptor>()
         quartzScheduler.getJobKeys(GroupMatcher.groupEquals(group)).each { jobKey ->
             def jobDetail = quartzScheduler.getJobDetail(jobKey)
-            if (jobDetail != null) {
+            if(jobDetail!=null){
                 list.add(JobDescriptor.build(jobDetail, quartzScheduler))
             }
         }
@@ -63,63 +62,63 @@ class JobManagerService {
     }
 
     /**
-     * All currently executing jobs.
+     * Returns a list of all currently executing jobs.
      *
-     * @return the contexts
+     * @return a List<JobExecutionContext>, containing all currently executing jobs.
      */
-    List<JobExecutionContext> getRunningJobs() {
+    def getRunningJobs() {
         quartzScheduler.getCurrentlyExecutingJobs()
     }
 
-    void pauseJob(String group, String name) {
+    def pauseJob(String group, String name) {
         quartzScheduler.pauseJob(new JobKey(name, group))
     }
 
-    void resumeJob(String group, String name) {
+    def resumeJob(String group, String name) {
         quartzScheduler.resumeJob(new JobKey(name, group))
     }
 
-    void pauseTrigger(String group, String name) {
+    def pauseTrigger(String group, String name) {
         quartzScheduler.pauseTrigger(new TriggerKey(name, group))
     }
 
-    void resumeTrigger(String group, String name) {
+    def resumeTrigger(String group, String name) {
         quartzScheduler.resumeTrigger(new TriggerKey(name, group))
     }
 
-    void pauseTriggerGroup(String group) {
+    def pauseTriggerGroup(String group) {
         quartzScheduler.pauseTriggers(GroupMatcher.groupEquals(group))
     }
 
-    void resumeTriggerGroup(String group) {
+    def resumeTriggerGroup(String group) {
         quartzScheduler.resumeTriggers(GroupMatcher.groupEquals(group))
     }
 
-    void pauseJobGroup(String group) {
+    def pauseJobGroup(String group) {
         quartzScheduler.pauseJobs(GroupMatcher.groupEquals(group))
     }
 
-    void resumeJobGroup(String group) {
+    def resumeJobGroup(String group) {
         quartzScheduler.resumeJobs(GroupMatcher.groupEquals(group))
     }
 
-    void pauseAll() {
+    def pauseAll(){
         quartzScheduler.pauseAll()
     }
 
-    void resumeAll() {
+    def resumeAll(){
         quartzScheduler.resumeAll()
     }
 
-    boolean removeJob(String group, String name) {
+    def removeJob(String group, String name) {
         quartzScheduler.deleteJob(new JobKey(name, group))
     }
 
-    boolean unscheduleJob(String group, String name) {
+    def unscheduleJob(String group, String name) {
         quartzScheduler.unscheduleJobs(quartzScheduler.getTriggersOfJob(new JobKey(name, group))*.key)
     }
 
-    boolean interruptJob(String group, String name) {
+    def interruptJob(String group, String name) {
         quartzScheduler.interrupt(new JobKey(name, group))
     }
 }

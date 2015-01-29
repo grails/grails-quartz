@@ -1,20 +1,7 @@
-# IDE files
-.idea
-*.iml
-.classpath
+/bin/
+/build/
+/.gradle/
 .project
-
-*.log
-
-/grails-quartz-*.zip
-/grails-quartz-*.zip.sha1
-/plugin.xml
-
-#unused directories
-/.settings
-/target
-/target-eclipse
-/web-app
-
-# Unused grails files
-/grails-app/i18n
+.settings
+.classpath
+*.iml

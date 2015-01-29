@@ -1,23 +1,6 @@
-# Grails Quartz Plugin 
-![](http://stillmaintained.com/nebolsin/grails-quartz.png)[![Build Status](https://travis-ci.org/grails-plugins/grails-quartz.svg)](https://travis-ci.org/grails-plugins/grails-quartz)
+# Grails 3 Quartz Plugin 
 
-**Full documentation can be found [here](http://grails-plugins.github.io/grails-quartz/)**
-
-This plugin has been updated to run on Quartz 2.2.x and no longer runs on Quartz 1.8.x. The newer
-version of Quartz will also allow it to be used With Terrcotta 3.6 or later (I tested on 3.7) - Ryan
-
-This is different than the quartz2 plugin others maintain, because it does not use JobDetailsImpl, that one will
-not work with Terracotta due to [bug](https://jira.terracotta.org/jira/browse/QTZ-310). This plugin was the last holdback to allow a full Terracotta 3.7, Tomcat 7, Quartz 2.1.x, and Ehcache and Hibernate Cache solution all working at once!
-
-Quartz plugin allows your Grails application to schedule jobs to be executed using a specified interval or cron
-expression. The underlying system uses the [Quartz Enterprise Job Scheduler](http://www.quartz-scheduler.org/)
-configured via [Spring](http://projects.spring.io/spring-framework/), but is made simpler by the coding by convention paradigm.
-
-## Installation
-
-To install the latest stable version of the plugin add this to your `BuildConfig.groovy` in the plugins section (be sure to use the latest version):
-
-    compile ':quartz:1.0.2'
+**Full documentation can be found (TBD)
 
 ## Using
 ### Scheduling Jobs

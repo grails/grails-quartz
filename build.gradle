@@ -1,6 +1,6 @@
 buildscript {
     ext {
-      grailsVersion = project.properties['grailsVersion']
+      grailsVersion = project.grailsVersion
     }
     repositories {
         mavenLocal()
@@ -27,8 +27,8 @@ apply plugin: 'idea'
 apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
 
 ext {
-  grailsVersion = project.properties['grailsVersion']
-  gradleWrapperVersion = project.properties['gradleWrapperVersion']
+  grailsVersion = project.grailsVersion
+  gradleWrapperVersion = project.gradleWrapperVersion
 }
 
 version "2.0.0.BUILD-SNAPSHOT"
@@ -84,4 +84,3 @@ idea {
 task wrapper(type: Wrapper) {
   gradleVersion = gradleWrapperVersion
 }
-

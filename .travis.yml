@@ -1,16 +1,15 @@
 language: groovy
 jdk:
-- oraclejdk7
+- openjdk7
 before_script:
 - rm -rf target
 script: ./travis-build.sh
 env:
   global:
-  - GIT_NAME="Graeme Rocher"
-  - GIT_EMAIL="graeme.rocher@gmail.com"  
-  - secure: LrVonKDVyNsS3GrErpKeqicnRlwiXQi/LylPL0now266SM1E3clBGyZxA89g7ItqFpqQivwANysTpRL0nO8gd+EkyVG5B19P9Fq0eELLglhinU4T/T5MmWl0a2GFQSyewZDjJDrQQl1zMG3ejbl9QrFauwM4NfPcVMpyON3wjOY=
-  - secure: eqMOkrSZOS44IZj6cK5i8/JCneWyMRCuhq7Gq+AMSIJFiw6c9ZMkooco/LLL2OV7D9f6yYmZXSDXWLv1scy9/YqrQftYrI7VyVA4Zwb4+MGag2kJ/T7jRtQ/FkYmSBex6VRuzGPN+ZyTdjuaJm3TJoCZwWfGE3Sw9OPYRRLEZAA=
-  - secure: Ieprqq+UrMPivvu4cZXK4h+Vwl6QTTv/RYKFJddoN7FxHYoSqxXNNz3MBB0OS3DDM3jyHPLapvolWh8/4zis9hKl8R3C2Al00hiNBRtH0urx+IamvUcki6VEl/NSd99QQGCxqZn+zCH//N4nO5bS/u4fVnP5LfC+KBshdbPFrkU=
-  - secure: B5CT9Kr4SX7uwQo6C5Cbl9dmP+jBoSCwM5nsHQZ2oWEt6J/ukbcDSlZ4Y5NzAWkzHEPHnaObC4eqkx09TWndae4pWLW3zZZr9OV+ODHOYHJpuGzOvGdbd6KPSnvYFJVjtoslniblpbnO+F6I4cx7BOeH6273X9TZkq9/RYptuY0=
-  - secure: CpNA64l9DTxTHEXpRx58x/5+qznC4whgiqpFMxia/QTDJ/ioX/zht52L/sW7GPxykA792HN4p1VmIlrcahCMuskWFrDy593YCnk5H/H1UvI+I8xB0I7z4oifmv4CO+5uX7NWdTNo0bvDDfuN3wQxJsduyq+dGJYv9NAtSKn73oc=
-  - secure: j3WvCjZ2yiSjxfUvQNYDRFZZdHiKFc4K4MI0hzvXph/5sWxaWSRjroSj/fgI8fhuy7Nu/IYjegMOmD1off8m/Zu9R7W+K5NF75jwZcAsOiz2cewpeaql9lI/P8AqknP25kI/HiMv78iahqgtD3YDKOKA745N0OLDux4SOg82WBk=
+  - GIT_NAME="Jeff Scott Brown"
+  - GIT_EMAIL="jeff@jeffandbetsy.net"
+  - secure: Ui7pUuik5uyXf14bX09wjZI2WU7E4+MKdPHSthDxQQqa0QBF2KcMtiMdO/FQFTDuND9AquHq7DEfrASskddFEgS/tKvPwmNHfpQ91JyfKqVk48E+Ere+EVvQMKLb6gfD4s7qPh2wn6bs8u54p1rSlGaGyomvNSSWZ7WPDY152dQ=
+  - secure: afsD3gOvJOQm0XtKcP06dOJj3ZCjIIhrBIdZsOHfi9/V+Q3LUlzKljo/hGzrwYy+wxCkZfILTMlpEbkh/VRvcHsw6No5y8cgfKodOBBdaKsf9820pmRoMHeoQrWxQNO1pgj3O+vlUCIrg4Gg4mtRE0VI2XtAG3WZIbkGuPk55Qw=
+  - secure: fMwf6c+wS7t4ENrWj/SivBmss9VOZLsGg9ITTODocUWJIplHBMX7baKLc9k/5bypnl4wcEMIFSdteMpZ3GQUajwKaadWAsAiQDInQ03LzH/XTtNKD0d41y/1tHC6CwR6n4pY9BKY0R5hgBzZi/goJWy/gg4/F26oJ/yUPnlkH14=
+  - secure: URD8MoS4LAZElOCpv9lA+1otjDNaBoWn3d1wapmmSeUXDscEuid8x2q2McK9aLZsumMBm0aZ09sblc8wfQ9GOuv+k5dpAiCvswmjkJU73jg7zBBKNfGHlylprZdIzhODSPiI5ZLZeVKPfE/lCd1mTvyOOX7PZvCDhdS6uv7QcTk=
+  - secure: Q2TI0Hr28opAJ82kTDOFt9TA1dYTuGHyYB6yl0og7SJj8TC/gelAYljprqaInGmJEhQpQIACFfSZkw5T5xTBnKgECPGJFlqeZSA/swUlZynR/f8JzA7iYK1vTkEM2dhMUh7kllYl+oGrAptwawWNWEelBjd+77cKn0appPaV7n0=

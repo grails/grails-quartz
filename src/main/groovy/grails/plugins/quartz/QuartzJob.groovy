@@ -15,18 +15,22 @@
  */
 package grails.plugins.quartz
 
+import grails.core.GrailsApplication
 import grails.util.Holders
 import grails.web.api.WebAttributes
+import groovy.transform.CompileStatic
 import org.quartz.JobDataMap
 import org.quartz.JobKey
+import org.quartz.Scheduler
 
+@CompileStatic
 trait QuartzJob implements WebAttributes {
 
     static triggerNow(Map params = null) {
         def applicationContext = Holders.applicationContext
-        def quartzScheduler = applicationContext.quartzScheduler
-        def grailsApplication = applicationContext.grailsApplication
-        def jobArtefact = grailsApplication.getArtefact(DefaultGrailsJobClass.JOB, this.getName())
+        def quartzScheduler = applicationContext.getBean('quartzScheduler', Scheduler)
+        def grailsApplication = applicationContext.getBean('grailsApplication', GrailsApplication)
+        GrailsJobClass jobArtefact = (GrailsJobClass)grailsApplication.getArtefact(DefaultGrailsJobClass.JOB, this.getName())
         quartzScheduler.triggerJob(new JobKey(this.getName(), jobArtefact.group), params ? new JobDataMap(params) : null)
     }
 }

@@ -24,6 +24,7 @@ import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
+import org.quartz.TriggerKey
 import org.quartz.spi.MutableTrigger
 import org.springframework.util.Assert
 
@@ -47,6 +48,11 @@ trait QuartzJob implements WebAttributes {
         internalScheduleTrigger(TriggerUtils.buildDateTrigger(this.getName(), jobArtefact.group, scheduleDate), params)
     }
 
+    static schedule(String cronExpression, Map params = null) {
+        def jobArtefact = internalGetJobArtefact()
+        internalScheduleTrigger(TriggerUtils.buildCronTrigger(this.getName(), jobArtefact.group, cronExpression), params)
+    }
+
     static schedule(Trigger trigger, Map params = null) {
         def jobArtefact = internalGetJobArtefact()
         def jobKey = new JobKey(this.getName(), jobArtefact.group)
@@ -60,6 +66,23 @@ trait QuartzJob implements WebAttributes {
         }
         def scheduler = internalGetScheduler()
         scheduler.scheduleJob(trigger)
+    }
+
+    static removeJob() {
+        def jobArtefact = internalGetJobArtefact()
+        def scheduler = internalGetScheduler()
+        scheduler.deleteJob(new JobKey(this.getName(), jobArtefact.group))
+    }
+
+    static reschedule(Trigger trigger, Map params = null) {
+        def scheduler = internalGetScheduler()
+        if (params) trigger.jobDataMap.putAll(params)
+        scheduler.rescheduleJob(trigger.key, trigger)
+    }
+
+    static unschedule(String triggerName, String triggerGroup = GrailsJobClassConstants.DEFAULT_TRIGGERS_GROUP) {
+        def scheduler = internalGetScheduler()
+        scheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
     }
 
     private static internalScheduleTrigger(Trigger trigger, Map params = null) {

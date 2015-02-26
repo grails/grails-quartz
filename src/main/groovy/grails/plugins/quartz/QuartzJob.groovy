@@ -15,9 +15,8 @@
  */
 package grails.plugins.quartz
 
-import grails.core.GrailsApplication
-import grails.util.Holders
 import grails.web.api.WebAttributes
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.quartz.JobDataMap
 import org.quartz.JobKey
@@ -28,87 +27,68 @@ import org.quartz.TriggerKey
 import org.quartz.spi.MutableTrigger
 import org.springframework.util.Assert
 
+@CompileStatic
 trait QuartzJob implements WebAttributes {
     private static Scheduler internalScheduler
     private static GrailsJobClass internalJobArtefact
 
     static triggerNow(Map params = null) {
-        def jobArtefact = internalGetJobArtefact()
-        def scheduler = internalGetScheduler()
-        scheduler.triggerJob(new JobKey(this.getName(), jobArtefact.group), params ? new JobDataMap(params) : null)
+        internalScheduler.triggerJob(new JobKey(this.getName(), internalJobArtefact.group), params ? new JobDataMap(params) : null)
     }
 
+    @CompileDynamic
     static schedule(Long repeatInterval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null) {
-        def jobArtefact = internalGetJobArtefact()
-        internalScheduleTrigger(TriggerUtils.buildSimpleTrigger(this.getName(), jobArtefact.group, repeatInterval, repeatCount), params)
+        internalScheduleTrigger(TriggerUtils.buildSimpleTrigger(this.getName(), internalJobArtefact.group, repeatInterval, repeatCount), params)
     }
 
+    @CompileDynamic
     static schedule(Date scheduleDate, Map params = null) {
-        def jobArtefact = internalGetJobArtefact()
-        internalScheduleTrigger(TriggerUtils.buildDateTrigger(this.getName(), jobArtefact.group, scheduleDate), params)
+        internalScheduleTrigger(TriggerUtils.buildDateTrigger(this.getName(), internalJobArtefact.group, scheduleDate), params)
     }
 
+    @CompileDynamic
     static schedule(String cronExpression, Map params = null) {
-        def jobArtefact = internalGetJobArtefact()
-        internalScheduleTrigger(TriggerUtils.buildCronTrigger(this.getName(), jobArtefact.group, cronExpression), params)
+        internalScheduleTrigger(TriggerUtils.buildCronTrigger(this.getName(), internalJobArtefact.group, cronExpression), params)
     }
 
     static schedule(Trigger trigger, Map params = null) {
-        def jobArtefact = internalGetJobArtefact()
-        def jobKey = new JobKey(this.getName(), jobArtefact.group)
+        def jobKey = new JobKey(this.getName(), internalJobArtefact.group)
         Assert.isTrue trigger.jobKey == jobKey || (trigger instanceof MutableTrigger),
                 "The trigger job key is not equal to the job key or the trigger is immutable"
 
-        trigger.jobKey = jobKey
+        ((MutableTrigger)trigger).jobKey = jobKey
 
         if (params) {
             trigger.jobDataMap.putAll(params)
         }
-        def scheduler = internalGetScheduler()
-        scheduler.scheduleJob(trigger)
+        internalScheduler.scheduleJob(trigger)
     }
 
     static removeJob() {
-        def jobArtefact = internalGetJobArtefact()
-        def scheduler = internalGetScheduler()
-        scheduler.deleteJob(new JobKey(this.getName(), jobArtefact.group))
+        internalScheduler.deleteJob(new JobKey(this.getName(), internalJobArtefact.group))
     }
 
     static reschedule(Trigger trigger, Map params = null) {
-        def scheduler = internalGetScheduler()
         if (params) trigger.jobDataMap.putAll(params)
-        scheduler.rescheduleJob(trigger.key, trigger)
+        internalScheduler.rescheduleJob(trigger.key, trigger)
     }
 
     static unschedule(String triggerName, String triggerGroup = GrailsJobClassConstants.DEFAULT_TRIGGERS_GROUP) {
-        def scheduler = internalGetScheduler()
-        scheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
+        internalScheduler.unscheduleJob(TriggerKey.triggerKey(triggerName, triggerGroup))
     }
 
     private static internalScheduleTrigger(Trigger trigger, Map params = null) {
         if (params) {
             trigger.jobDataMap.putAll(params)
         }
-        Scheduler scheduler = internalGetScheduler()
-        scheduler.scheduleJob(trigger)
+        internalScheduler.scheduleJob(trigger)
     }
 
-    @CompileStatic
-    private static Scheduler internalGetScheduler() {
-        if(!internalScheduler) {
-            def applicationContext = Holders.applicationContext
-            internalScheduler = applicationContext.getBean('quartzScheduler', Scheduler)
-        }
-        internalScheduler
+    public static setScheduler(Scheduler scheduler) {
+        internalScheduler = scheduler
     }
 
-    @CompileStatic
-    private static GrailsJobClass internalGetJobArtefact() {
-        if(!internalJobArtefact) {
-            def applicationContext = Holders.applicationContext
-            def grailsApplication = applicationContext.getBean('grailsApplication', GrailsApplication)
-            internalJobArtefact = (GrailsJobClass)grailsApplication.getArtefact(DefaultGrailsJobClass.JOB, this.getName())
-        }
-        internalJobArtefact
+    public static setGrailsJobClass(GrailsJobClass gjc) {
+        internalJobArtefact = gjc
     }
 }

@@ -202,6 +202,9 @@ Adds Quartz job scheduling features
     void doWithApplicationContext() {
         grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
             scheduleJob(jobClass, applicationContext, hasHibernate(manager))
+            def clz = jobClass.clazz
+            clz.getMethod('setScheduler', [Scheduler] as Class[]).invoke(clz, applicationContext.quartzScheduler)
+            clz.getMethod('setGrailsJobClass', [GrailsJobClass] as Class[]).invoke(clz, jobClass)
         }
         log.debug("Scheduled Job Classes count: " + grailsApplication.jobClasses.size())
     }

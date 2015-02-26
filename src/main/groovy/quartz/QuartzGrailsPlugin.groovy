@@ -116,12 +116,6 @@ Adds Quartz job scheduling features
 
     def configureScheduler = {  ->
         quartzScheduler(SchedulerFactoryBean) { bean ->
-//            quartzProperties = config._properties
-
-            // Use the instanceName property to set the name of the scheduler
-//            if (quartzProperties['org.quartz.scheduler.instanceName']) {
-//                schedulerName = quartzProperties['org.quartz.scheduler.instanceName']
-//            }
 
             // delay scheduler startup to after-bootstrap stage
             autoStartup = config.quartz.autoStartup

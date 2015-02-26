@@ -22,15 +22,48 @@ import groovy.transform.CompileStatic
 import org.quartz.JobDataMap
 import org.quartz.JobKey
 import org.quartz.Scheduler
+import org.quartz.SimpleTrigger
+import org.quartz.Trigger
 
-@CompileStatic
 trait QuartzJob implements WebAttributes {
+    private static Scheduler internalScheduler
+    private static GrailsJobClass internalJobArtefact
 
     static triggerNow(Map params = null) {
-        def applicationContext = Holders.applicationContext
-        def quartzScheduler = applicationContext.getBean('quartzScheduler', Scheduler)
-        def grailsApplication = applicationContext.getBean('grailsApplication', GrailsApplication)
-        GrailsJobClass jobArtefact = (GrailsJobClass)grailsApplication.getArtefact(DefaultGrailsJobClass.JOB, this.getName())
-        quartzScheduler.triggerJob(new JobKey(this.getName(), jobArtefact.group), params ? new JobDataMap(params) : null)
+        GrailsJobClass jobArtefact = internalGetJobArtefact()
+        def scheduler = internalGetScheduler()
+        scheduler.triggerJob(new JobKey(this.getName(), jobArtefact.group), params ? new JobDataMap(params) : null)
+    }
+
+    static schedule(Long repeatInterval, Integer repeatCount = SimpleTrigger.REPEAT_INDEFINITELY, Map params = null) {
+        GrailsJobClass jobArtefact = internalGetJobArtefact()
+        internalScheduleTrigger(TriggerUtils.buildSimpleTrigger(this.getName(), jobArtefact.group, repeatInterval, repeatCount), params)
+    }
+
+    private static internalScheduleTrigger(Trigger trigger, Map params = null) {
+        if (params) {
+            trigger.jobDataMap.putAll(params)
+        }
+        Scheduler scheduler = internalGetScheduler()
+        scheduler.scheduleJob(trigger)
+    }
+
+    @CompileStatic
+    private static Scheduler internalGetScheduler() {
+        if(!internalScheduler) {
+            def applicationContext = Holders.applicationContext
+            internalScheduler = applicationContext.getBean('quartzScheduler', Scheduler)
+        }
+        internalScheduler
+    }
+
+    @CompileStatic
+    private static GrailsJobClass internalGetJobArtefact() {
+        if(!internalJobArtefact) {
+            def applicationContext = Holders.applicationContext
+            def grailsApplication = applicationContext.getBean('grailsApplication', GrailsApplication)
+            internalJobArtefact = (GrailsJobClass)grailsApplication.getArtefact(DefaultGrailsJobClass.JOB, this.getName())
+        }
+        internalJobArtefact
     }
 }

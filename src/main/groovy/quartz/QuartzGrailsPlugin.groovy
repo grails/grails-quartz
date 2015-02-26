@@ -57,8 +57,6 @@ Adds Quartz job scheduling features
     // URL to the plugin's documentation
     def documentation = "http://grails.org/plugin/quartz"
 
-    def version = '2.0.0.BUILD-SNAPSHOT'
-
     // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
 

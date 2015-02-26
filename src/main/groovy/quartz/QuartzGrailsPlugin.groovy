@@ -124,7 +124,7 @@ Adds Quartz job scheduling features
 //            }
 
             // delay scheduler startup to after-bootstrap stage
-            autoStartup = true
+            autoStartup = config.quartz.autoStartup
 
             // Store
             if (config.jdbcStore) {

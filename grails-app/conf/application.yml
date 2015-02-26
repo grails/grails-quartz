@@ -14,6 +14,10 @@ spring:
       check-template-location: false
 
 ---
+quartz:
+    autoStartup: true
+
+---
 grails:
     mime:
         disable:

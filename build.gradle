@@ -33,7 +33,7 @@ ext {
   gradleWrapperVersion = project.gradleWrapperVersion
 }
 
-version "2.0.0.M1"
+version "2.0.0.BUILD-SNAPSHOT"
 group "org.grails.plugins"
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

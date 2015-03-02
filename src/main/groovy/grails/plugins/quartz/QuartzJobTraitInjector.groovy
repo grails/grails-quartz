@@ -17,14 +17,9 @@ package grails.plugins.quartz
 
 import grails.compiler.traits.TraitInjector
 import groovy.transform.CompileStatic
-import org.grails.io.support.GrailsResourceUtils
-
-import java.util.regex.Pattern
 
 @CompileStatic
 class QuartzJobTraitInjector implements TraitInjector {
-
-    static Pattern JOB_PATTERN = Pattern.compile(".+/${GrailsResourceUtils.GRAILS_APP_DIR}/jobs/(.+)Job\\.groovy")
 
     @Override
     Class getTrait() {
@@ -34,10 +29,5 @@ class QuartzJobTraitInjector implements TraitInjector {
     @Override
     String[] getArtefactTypes() {
         [DefaultGrailsJobClass.JOB] as String[]
-    }
-
-    @Override
-    boolean shouldInject(URL url) {
-        url != null && JOB_PATTERN.matcher(url.file).find()
     }
 }

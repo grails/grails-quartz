@@ -1,24 +1,7 @@
----
 grails:
   profile: web-plugin
   codegen:
     defaultPackage: quartz
-info:
-    app:
-        name: '@info.app.name@'
-        version: '@info.app.version@'
-        grailsVersion: '@info.app.grailsVersion@'
-spring:
-  groovy:
-    template:
-      check-template-location: false
-
----
-quartz:
-    autoStartup: true
-
----
-grails:
     mime:
         disable:
             accept:
@@ -34,7 +17,7 @@ grails:
             css: text/css
             csv: text/csv
             form: application/x-www-form-urlencoded
-            html: 
+            html:
               - text/html
               - application/xhtml+xml
             js: text/javascript
@@ -44,7 +27,7 @@ grails:
             multipartForm: multipart/form-data
             rss: application/rss+xml
             text: text/plain
-            hal: 
+            hal:
               - application/hal+json
               - application/hal+xml
             xml:
@@ -72,7 +55,19 @@ grails:
                 taglib: none
                 staticparts: none
 
----
+info:
+    app:
+        name: '@info.app.name@'
+        version: '@info.app.version@'
+        grailsVersion: '@info.app.grailsVersion@'
+spring:
+  groovy:
+    template:
+      check-template-location: false
+
+quartz:
+    autoStartup: true
+
 dataSource:
     pooled: true
     jmxExport: true
@@ -110,6 +105,4 @@ environments:
                testWhileIdle: true
                testOnReturn: false
                jdbcInterceptors: ConnectionState
-               defaultTransactionIsolation: TRANSACTION_READ_COMMITTED            
-
-
+               defaultTransactionIsolation: TRANSACTION_READ_COMMITTED

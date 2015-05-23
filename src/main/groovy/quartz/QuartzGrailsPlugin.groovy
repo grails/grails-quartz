@@ -16,20 +16,11 @@
 package quartz
 
 import grails.plugins.Plugin
-import grails.plugins.quartz.CustomTriggerFactoryBean
-import grails.plugins.quartz.GrailsJobClass
-import grails.plugins.quartz.GrailsJobFactory
-import grails.plugins.quartz.JobArtefactHandler
-import grails.plugins.quartz.JobDetailFactoryBean
+import grails.plugins.quartz.*
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import groovy.util.logging.Commons
-import org.quartz.JobDetail
-import org.quartz.JobKey
-import org.quartz.ListenerManager
-import org.quartz.Scheduler
-import org.quartz.Trigger
-import org.quartz.TriggerKey
+import org.quartz.*
 import org.quartz.impl.matchers.KeyMatcher
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
@@ -127,19 +118,44 @@ Adds Quartz job scheduling features
         }
     }
 
-    def configureScheduler = {  ->
+    /**
+     * Loads the quartz stanza from the grails configuration and turns it into a
+     * flattened Properties object suitable for use by the Quartz SchedulerFactoryBean.
+     * @return Quartz properties as defined in the Grails Configuration object
+     */
+    def loadQuartzProperties() {
+        Properties quartzProperties = new Properties()
+        if (config.containsKey('quartz')) {
+            // Convert to a properties file adding a prefix to each property
+            ConfigObject configObject = new ConfigObject()
+            configObject.putAll(config.quartz)
+            quartzProperties << configObject.toProperties('org.quartz')
+        }
+        quartzProperties
+    }
+
+    def configureScheduler = { ->
+        Properties properties = loadQuartzProperties()
         quartzScheduler(SchedulerFactoryBean) { bean ->
+            quartzProperties = properties
+
+            // The bean name is used by the factory bean as the scheduler name so you must explicitly set it if
+            // you want a name different from the bean name.
+            if (quartzProperties['org.quartz.scheduler.instanceName']) {
+                schedulerName = quartzProperties['org.quartz.scheduler.instanceName']
+            }
 
             // delay scheduler startup to after-bootstrap stage
-            autoStartup = config.quartz.autoStartup
-
-            // Store
-            if (config.jdbcStore) {
-                dataSource = ref(config.jdbcStoreDataSource ?: 'dataSource')
-                transactionManager = ref('transactionManager')
+            if (quartzProperties['org.quartz.autoStartup']) {
+                autoStartup = quartzProperties['autoStartup'] as boolean
             }
-            waitForJobsToCompleteOnShutdown = false //config.waitForJobsToCompleteOnShutdown
-            exposeSchedulerInRepository = true //config.exposeSchedulerInRepository
+            if (quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown']) {
+                waitForJobsToCompleteOnShutdown = quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown'] as boolean
+            }
+            if (quartzProperties['org.quartz.exposeSchedulerInRepository']) {
+                exposeSchedulerInRepository = quartzProperties['org.quartz.exposeSchedulerInRepository'] as boolean
+            }
+
             jobFactory = quartzJobFactory
 
             // Global listeners on each job.

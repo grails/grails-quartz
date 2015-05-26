@@ -147,7 +147,7 @@ Adds Quartz job scheduling features
 
             // delay scheduler startup to after-bootstrap stage
             if (quartzProperties['org.quartz.autoStartup']) {
-                autoStartup = quartzProperties['autoStartup'] as boolean
+                autoStartup = quartzProperties['org.quartz.autoStartup'] as boolean
             }
             if (quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown']) {
                 waitForJobsToCompleteOnShutdown = quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown'] as boolean

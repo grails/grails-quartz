@@ -150,7 +150,8 @@ Adds Quartz job scheduling features
                 autoStartup = quartzProperties['org.quartz.autoStartup'] as boolean
             }
             // Store
-            if (quartzProperties['org.quartz.jdbcStore']) {
+            def hasJdbcStore = quartzProperties['org.quartz.jdbcStore'] as boolean
+            if (hasJdbcStore) {
                 dataSource = ref(quartzProperties['org.quartz.jdbcStoreDataSource'] ?: 'dataSource')
                 transactionManager = ref('transactionManager')
             }

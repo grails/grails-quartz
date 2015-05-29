@@ -138,7 +138,7 @@ Adds Quartz job scheduling features
         Properties properties = loadQuartzProperties()
         quartzScheduler(SchedulerFactoryBean) { bean ->
             quartzProperties = properties
-
+            
             // The bean name is used by the factory bean as the scheduler name so you must explicitly set it if
             // you want a name different from the bean name.
             if (quartzProperties['org.quartz.scheduler.instanceName']) {
@@ -148,6 +148,11 @@ Adds Quartz job scheduling features
             // delay scheduler startup to after-bootstrap stage
             if (quartzProperties['org.quartz.autoStartup']) {
                 autoStartup = quartzProperties['org.quartz.autoStartup'] as boolean
+            }
+            // Store
+            if (quartzProperties['org.quartz.jdbcStore']) {
+                dataSource = ref(quartzProperties['org.quartz.jdbcStoreDataSource'] ?: 'dataSource')
+                transactionManager = ref('transactionManager')
             }
             if (quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown']) {
                 waitForJobsToCompleteOnShutdown = quartzProperties['org.quartz.waitForJobsToCompleteOnShutdown'] as boolean

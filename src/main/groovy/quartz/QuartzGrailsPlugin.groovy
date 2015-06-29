@@ -50,6 +50,10 @@ Adds Quartz job scheduling features
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
+    
+    // Location of the plugin's issue tracker.
+    def issueManagement = [ system: "Github Issues", url: "http://github.com/grails3-plugins/quartz/issues" ]
+
 
     // Any additional developers beyond the author specified above.
     def developers = [

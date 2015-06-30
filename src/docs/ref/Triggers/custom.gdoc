@@ -1,0 +1,19 @@
+h1. custom
+
+h2. Purpose
+
+A custom trigger that executes based on the result of a custom @Trigger@ implementation
+
+h2. Examples
+
+{code}
+class MyJob {
+   static triggers = {
+      custom name:'customTrigger', triggerClass:MyTriggerClass, myParam:myValue, myAnotherParam:myAnotherValue
+   }
+
+   void execute() {
+      println "Job run!"
+   }
+}
+{code}

@@ -1,0 +1,11 @@
+h1. create-job
+
+h2. Purpose
+
+Creates a job class
+
+h2. Examples
+
+{code}
+$ grails create-job MyJob
+{code}

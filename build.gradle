@@ -13,8 +13,8 @@ buildscript {
 }
 
 plugins {
-    id "io.spring.dependency-management" version "0.3.1.RELEASE"
-    id "com.jfrog.bintray" version "1.1"
+    id "io.spring.dependency-management" version "0.5.1.RELEASE"
+    id "com.jfrog.bintray" version "1.2"
 }
 
 version "2.0.0.BUILD-SNAPSHOT"
@@ -27,6 +27,7 @@ apply plugin: "spring-boot"
 apply plugin: "asset-pipeline"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-gsp"
+apply plugin: "org.grails.grails-doc"
 // Used for publishing to central repository, remove if not needed
 apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
 apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'

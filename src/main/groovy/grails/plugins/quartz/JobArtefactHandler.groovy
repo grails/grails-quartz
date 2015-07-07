@@ -31,25 +31,25 @@ import java.lang.reflect.Method;
  */
 public class JobArtefactHandler extends ArtefactHandlerAdapter {
 
-    public static final String TYPE = "Job";
+    static final String TYPE = "Job"
 
     public JobArtefactHandler() {
-        super(TYPE, GrailsJobClass.class, DefaultGrailsJobClass.class, TYPE);
+        super(TYPE, GrailsJobClass.class, DefaultGrailsJobClass.class, TYPE)
     }
 
-    public boolean isArtefactClass(Class clazz) {
+    boolean isArtefactClass(Class clazz) {
         // class shouldn't be null and should ends with Job suffix
-        if (clazz == null || !clazz.getName().endsWith(DefaultGrailsJobClass.JOB)) return false;
+        if (clazz == null || !clazz.getName().endsWith(DefaultGrailsJobClass.JOB)) return false
         // and should have one of execute() or execute(JobExecutionContext) methods defined
-        Method method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE);
+        Method method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE)
         if (method == null) {
             // we're using Object as a param here to allow groovy-style 'def execute(param)' method
-            method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE, new Class[]{Object.class});
+            method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE, [Object] as Class[])
         }
         if (method == null) {
             // also check for the execution context as a variable because that's what's being passed
-            method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE, new Class[]{JobExecutionContext.class});
+            method = ReflectionUtils.findMethod(clazz, GrailsJobClassConstants.EXECUTE, [JobExecutionContext] as Class[])
         }
-        return method != null;
+        method != null
     }
 }

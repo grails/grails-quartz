@@ -1,2 +1,0 @@
-grails.core.ArtefactHandler=grails.plugins.quartz.JobArtefactHandler
-grails.compiler.traits.TraitInjector=grails.plugins.quartz.QuartzJobTraitInjector

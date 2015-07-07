@@ -1,29 +1,17 @@
 h4. Configuring the plugin
 
-Since 0.3 version plugin supports configuration file which is stored in grails-app/conf/QuartzConfig.groovy. The syntax is the same as default Grails configuration file Config.groovy . You could also use per-environment configuration feature (more info).
-
-To have an initial Quartz config file generated for you, type the following in the command line: 'grails install-quartz-config' . This will generate a file that looks like this:
+The plugin supports configuration settings defined in grails-app/conf/application.yml.
 
 {code}
-quartz {
-    autoStartup = true
-    jdbcStore = false
-}
-environments {
-    test {
-        quartz {
-            autoStartup = false
-        }
-    }
-}
+---
+quartz:
+    autoStartup: true
 {code}
 
 Currently supported options:
 
 * @autoStartup@ controls automatic startup of the Quartz scheduler during application bootstrap (default: true )
 * @jdbcStore@ set to true if you want Quartz to persist jobs in your DB (default: false ), you'll also need to provide quartz.properties file and make sure that required tables exist in your db (see Clustering section below for the sample config and automatic tables creation using Hibernate)
-
-You could also create grails-app/conf/quartz.properties file and provide different options to the Quartz scheduler (see Quartz configuration reference for details).
 
 h4. Logging
 

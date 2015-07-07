@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package grails.plugins.quartz;
+package grails.plugins.quartz
 
-import grails.core.ArtefactHandlerAdapter;
-import org.quartz.JobExecutionContext;
-import org.springframework.util.ReflectionUtils;
+import grails.core.ArtefactHandlerAdapter
+import org.codehaus.groovy.ast.ClassNode
+import org.grails.compiler.injection.GrailsASTUtils
+import org.quartz.JobExecutionContext
+import org.springframework.util.ReflectionUtils
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Method
+import java.util.regex.Pattern
+
+import static org.grails.io.support.GrailsResourceUtils.GRAILS_APP_DIR
+import static org.grails.io.support.GrailsResourceUtils.REGEX_FILE_SEPARATOR
 
 /**
  * Grails artifact handler for job classes.
@@ -32,9 +38,23 @@ import java.lang.reflect.Method;
 public class JobArtefactHandler extends ArtefactHandlerAdapter {
 
     static final String TYPE = "Job"
+    public static Pattern JOB_PATH_PATTERN = Pattern.compile(".+" + REGEX_FILE_SEPARATOR + GRAILS_APP_DIR + REGEX_FILE_SEPARATOR + "jobs" + REGEX_FILE_SEPARATOR + "(.+)\\.(groovy)");
 
     public JobArtefactHandler() {
         super(TYPE, GrailsJobClass.class, DefaultGrailsJobClass.class, TYPE)
+    }
+
+    boolean isArtefact(ClassNode classNode) {
+        if(classNode == null ||
+           !isValidArtefactClassNode(classNode, classNode.getModifiers()) ||
+           !classNode.getName().endsWith(DefaultGrailsJobClass.JOB) ||
+           !classNode.getMethods(GrailsJobClassConstants.EXECUTE)) {
+            return false
+        }
+
+        URL url = GrailsASTUtils.getSourceUrl(classNode)
+
+        url &&  JOB_PATH_PATTERN.matcher(url.getFile()).find()
     }
 
     boolean isArtefactClass(Class clazz) {

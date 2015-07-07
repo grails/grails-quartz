@@ -1,6 +1,6 @@
 # Grails 3 Quartz Plugin 
 
-**Full documentation can be found (TBD).
+[Latest documentation](http://grails3-plugins.github.io/quartz/latest/) and [snapshots](http://grails3-plugins.github.io/quartz/snapshot/) are available.
 
 ## Using
 ### Scheduling Jobs

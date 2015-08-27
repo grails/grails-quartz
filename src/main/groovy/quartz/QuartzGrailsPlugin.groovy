@@ -151,7 +151,6 @@ Adds Quartz job scheduling features
 
             // delay scheduler startup to after-bootstrap stage
             if (quartzProperties['org.quartz.autoStartup']) {
-                println "Value of autoStartup = ${quartzProperties['org.quartz.autoStartup']}"
                 autoStartup = quartzProperties['org.quartz.autoStartup'] as boolean
             }
             // Store

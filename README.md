@@ -1,6 +1,10 @@
-# Grails 3 Quartz Plugin 
+# Grails Quartz Plugin
 
-[Latest documentation](http://grails3-plugins.github.io/quartz/latest/) and [snapshots](http://grails3-plugins.github.io/quartz/snapshot/) are available.
+[Latest documentation](http://grails-plugins.github.io/grails-quartz/latest/) and [snapshots](http://grails-plugins.github.io/grails-quartz/snapshot/) are available.
+
+## Branches
+
+The current master branch is for 2.x versions of the plugin compatible with Grails 3. There is a 1.x branch for on-going maintenance of 1.x versions of the plugin compatible with Grails 2. Please submit any pull requests to the appropriate branch. Changes to the 1.x branch will be merged into the master branch if appropriate.
 
 ## Using
 ### Quick start

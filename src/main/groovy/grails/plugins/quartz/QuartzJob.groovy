@@ -28,7 +28,7 @@ import org.quartz.spi.MutableTrigger
 import org.springframework.util.Assert
 
 @CompileStatic
-trait QuartzJob implements WebAttributes {
+trait QuartzJob {
     private static Scheduler internalScheduler
     private static GrailsJobClass internalJobArtefact
 

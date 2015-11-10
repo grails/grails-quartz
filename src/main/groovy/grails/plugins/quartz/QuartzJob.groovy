@@ -15,7 +15,6 @@
  */
 package grails.plugins.quartz
 
-import grails.web.api.WebAttributes
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.quartz.JobDataMap

@@ -7,7 +7,7 @@ script: ./travis-build.sh
 env:
   global:
   - GIT_NAME="Jeff Scott Brown"
-  - GIT_EMAIL="jeff@jeffandbetsy.net"
+  - GIT_EMAIL="brownj@ociweb.com"
   - secure: eky/foiB6CVSrsk/FelPA//+XfiPc4sHSa4W1q2dkpOKj44hwpFxbmoSQVg9Z7f4gpvh6jCrPHeMjkcB9iuKbmPVuZMctt5qBlmcHWathYhbsmyah2cfJFrQIehUD7FNQy41bhcDbjXRDvOGejCwXBJa8jtdmRGEVXaAGNNfTJM=
   - secure: HKKPR42zo/AuGFCo7BkERKWsh0oUMKUleDP1KOR+ePf5jT/aliPM+EjrJJq3kP/kE5Z534SUwoX6ObRuET0bbBiz1CbqZ0dEBgPC6+sHaP0zmSo39DD5ONNN2OvUM4DXq6AR6/9JxjxyikBYtWSzSEGor+9vKZ24v+R/XYocxyc=
   - secure: ZLA3ZB2eSh+dEsByMbymvcBx7UeSmNbWmIx9mHnAp/yULq/1jhIIznnB1H07geboS5pkAjbYj1NdZQ8h5MqxmCwOaGefUkN1N5TTV5ZfmD/rlzNzTKThpT7LfqfgPyfYUVOQfz9gkVFZ4t2NZ6yqf97hzASuEOcAUicR5nCi1Cw=

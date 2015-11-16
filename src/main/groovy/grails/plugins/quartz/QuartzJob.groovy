@@ -15,6 +15,8 @@
  */
 package grails.plugins.quartz
 
+import grails.core.GrailsApplication
+import grails.core.support.GrailsApplicationAware
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.quartz.JobDataMap
@@ -27,9 +29,11 @@ import org.quartz.spi.MutableTrigger
 import org.springframework.util.Assert
 
 @CompileStatic
-trait QuartzJob {
+trait QuartzJob implements GrailsApplicationAware {
     private static Scheduler internalScheduler
     private static GrailsJobClass internalJobArtefact
+
+    GrailsApplication grailsApplication
 
     static triggerNow(Map params = null) {
         internalScheduler.triggerJob(new JobKey(this.getName(), internalJobArtefact.group), params ? new JobDataMap(params) : null)

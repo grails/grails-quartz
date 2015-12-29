@@ -67,3 +67,14 @@ Three kinds of triggers are supported with the following parameters:
 * `custom`:
   * `triggerClass`  — your class which implements [CalendarIntervalTriggerImpl](http://www.quartz-scheduler.org/api/2.2.0/org/quartz/impl/triggers/CalendarIntervalTriggerImpl.html) impl;
   * any params needed by your trigger.
+
+### Configuration plugin syntax
+
+You can add the following properties to control persisteance or not persistence:
+* quartz.pluginEnabled - defaults to true, can disable plugin for test cases etc
+* quartz.jdbcStore - true to enable database store, false to use RamStore
+* quartz.autoStartup - delays jobs until after bootstrap startup phase
+* quartz.jdbcStoreDataSource - jdbc data source alternate name
+* quartz.waitForJobsToCompleteOnShutdown - wait for jobs to complete on shutdown
+* quartz.exposeSchedulerInRepository - expose Schedule in repository
+* quartz.scheduler.instanceName - name of the scheduler to avoid conflicts between apps

@@ -75,8 +75,10 @@ Adds Quartz job scheduling features
             if (hasJdbcStore==null) {
                 hasJdbcStore = true
             }
-            //def pluginEnabled = properties['org.quartz.pluginEnabled']?.toBoolean()?:true
-            boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled ?:true
+
+            boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
+
+
 
             if (pluginEnabled) {
                 // Configure job beans
@@ -160,7 +162,7 @@ Adds Quartz job scheduling features
 
                 // delay scheduler startup to after-bootstrap stage
                 if (quartzProperties['org.quartz.autoStartup']) {
-                    autoStartup = quartzProperties['org.quartz.autoStartup'].toBoolean()?:true
+                    autoStartup = quartzProperties['org.quartz.autoStartup'].toBoolean()
                 }
                 // Store
                 def hasJdbcStore = quartzProperties['org.quartz.jdbcStore']?.toBoolean()
@@ -197,7 +199,7 @@ Adds Quartz job scheduling features
     def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
         //TODO add class level toggle flags to temp disable certain jobs
 
-        //if (quartzProperties['org.quartz.pluginEnabled']?.toBoolean()?:true) {
+
             Scheduler scheduler = ctx.quartzScheduler
             if (scheduler) {
                 def fullName = jobClass.fullName
@@ -256,11 +258,8 @@ Adds Quartz job scheduling features
     }
 
     void doWithApplicationContext() {
-//        Properties properties = loadQuartzProperties()
-//        boolean ispluginEnabled = properties['org.quartz.pluginEnabled']?.toBoolean() ?:true
-//        def autoStartup = properties['org.quartz.autoStartup']?.toBoolean() ?:true
-        boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled ?:true
-        boolean autoStart = grailsApplication?.config?.quartz?.autoStartup ?:true
+        boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
+        boolean autoStart = grailsApplication?.config?.quartz?.autoStartup
         if(autoStart && pluginEnabled) {
             grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
                 scheduleJob(jobClass, applicationContext, hasHibernate(manager))

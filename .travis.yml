@@ -11,10 +11,10 @@ before_script:
 script: ./travis-build.sh
 env:
   global:
-  - GIT_NAME="Graeme Rocher"
-  - GIT_EMAIL="graeme.rocher@gmail.com"
-  - secure: tsNpXxYjlTQgeVMepYNOU4q1TFfNuIyt5RL2jO2K4PMbKlH1V+izJ1YOQSgDP4rfHnO5TvYvTEGartalG1pIriSRFppg6EUr4INI87k3ZNqO2OlbwmPMg0K89ohqP5pK9OpOnK3k7OwcwUmnPgp81un6br41iuBTbi8cMFWA8K8=
-  - secure: C+ALYT6phdsak5KOoNciVdRSKUHFc7ynwl5AfwsIxwr6yuhsMwAwmE4ZmDsYFtP3grWFQ1cjjZ5WZlyW4Vs/3JGtu4CEZzRR+mvLimvPwNvpkVqYzjw7BTravU7bo7r/tpJ+1Er14zdIfyqyWgtJP2AizgRzXN+64shfMNentRA=
-  - secure: g+X+TQ4/T+de/sgx1wvmcE7EIjTx+pGTtCmtcQPQCKvQ045Bgk5X8U9He1EqUpsTMbpIAA6PddSHpu+NaOCUP9daPj2rg1haj2HkV804txu37fXagN/FiWrPQr7sW2G/0ogp4M4Bd5AR6UW2pLWNtsRgoDYdlGxe+nbH4GDzX7Y=
-  - secure: VZhvZHRI5ndZqCHZDdNkApOIRbrRNrfpaV6WLWkwWQPVZ4fKgGogZsFVBhWqNXZA2AmaIhNsq9LERP8DS1/yWSKwbvgmTIR7ISY9fwLNh4gWQMlG7o1+8wrXraXhsvv/x3YeCUaQ/GxXLfb1k2VqNq5Eg1xf6ee9uKzaBOaBssY=
-  - secure: G2XVuFQYwr1vD3gKXLydzUHxrUytKjTw7DlSAtA8YrmTBurN+PeHWlszbmeYzk0+NGYdPoy96SPY0uD8FAROutnF3zSluCt+nuY75ZwaEeZhIIJqHVSpt6iQvtUxXIFnkWhLyxVj2D/Nv1uYMCILWtVRnPhVODjczFU25j4xbso=
+  - GIT_NAME="Jeff Scott Brown"
+  - GIT_EMAIL="brownj@ociweb.com"
+  - secure: eky/foiB6CVSrsk/FelPA//+XfiPc4sHSa4W1q2dkpOKj44hwpFxbmoSQVg9Z7f4gpvh6jCrPHeMjkcB9iuKbmPVuZMctt5qBlmcHWathYhbsmyah2cfJFrQIehUD7FNQy41bhcDbjXRDvOGejCwXBJa8jtdmRGEVXaAGNNfTJM=
+  - secure: HKKPR42zo/AuGFCo7BkERKWsh0oUMKUleDP1KOR+ePf5jT/aliPM+EjrJJq3kP/kE5Z534SUwoX6ObRuET0bbBiz1CbqZ0dEBgPC6+sHaP0zmSo39DD5ONNN2OvUM4DXq6AR6/9JxjxyikBYtWSzSEGor+9vKZ24v+R/XYocxyc=
+  - secure: ZLA3ZB2eSh+dEsByMbymvcBx7UeSmNbWmIx9mHnAp/yULq/1jhIIznnB1H07geboS5pkAjbYj1NdZQ8h5MqxmCwOaGefUkN1N5TTV5ZfmD/rlzNzTKThpT7LfqfgPyfYUVOQfz9gkVFZ4t2NZ6yqf97hzASuEOcAUicR5nCi1Cw=
+  - secure: YjeQFp8EH2cDOF38uDc9Fp82f/i6jFEoNAcxmylhny9Md8p+rVTBFhiwHBJj6aFX1iStPbWaRdPzJ9Tggmb99W/kMCzV/sh1a2e7LIs6ekh7yPVojrZr7otyx/tKzZ8LZfQUKRNfdsuyHwLzHskwgJbcVber5ln9GtFK52Qxf8w=
+  - secure: ZbaeuQ557fSEic31Q4Qbn/cAo/5I/BIExpAfLmH0FYLLw8hPNTZkFZ7AD5ZdHK73a023bKvkwj519pWIXp68AqAgw9mG8NQIaHScJmvdGMNdoBEodaM1r87wT3iJQ33AH7u+yiAO6HyG2eaO37aZaBFVzK2sET8Hf8d8Ftl2cgM=

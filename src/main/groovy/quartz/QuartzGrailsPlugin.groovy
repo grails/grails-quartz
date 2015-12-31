@@ -17,6 +17,7 @@ package quartz
 
 import grails.plugins.Plugin
 import grails.plugins.quartz.*
+import grails.plugins.quartz.cleanup.JdbcCleanup
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import groovy.util.logging.Commons
@@ -70,6 +71,8 @@ Adds Quartz job scheduling features
 
                 { ->
             Properties properties = loadQuartzProperties()
+
+
             boolean hasHibernate = hasHibernate(manager)
             def hasJdbcStore = properties['org.quartz.jdbcStore']?.toBoolean()
             if (hasJdbcStore==null) {
@@ -81,6 +84,17 @@ Adds Quartz job scheduling features
 
 
             if (pluginEnabled) {
+                def purgeTables = false
+
+                if (grailsApplication?.config?.quartz?.purgeQuartzTablesOnStartup?.toBoolean()==true) {
+                    purgeTables = true
+                }
+
+                if (hasJdbcStore && hasHibernate && purgeTables) {
+                    purgeTablesBean(JdbcCleanup) { bean ->
+                        bean.autowire = 'byName'
+                    }
+                }
                 // Configure job beans
                 grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
                     configureJobBeans.delegate = delegate

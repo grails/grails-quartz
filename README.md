@@ -78,3 +78,4 @@ You can add the following properties to control persisteance or not persistence:
 * quartz.waitForJobsToCompleteOnShutdown - wait for jobs to complete on shutdown
 * quartz.exposeSchedulerInRepository - expose Schedule in repository
 * quartz.scheduler.instanceName - name of the scheduler to avoid conflicts between apps
+* quartz.purgeQuartzTablesOnStartup - when jdbcStore set to 'true' and this is true, clears out all quartz tables on startup

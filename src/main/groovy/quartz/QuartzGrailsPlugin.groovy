@@ -21,6 +21,7 @@ import grails.plugins.quartz.cleanup.JdbcCleanup
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import groovy.util.logging.Commons
+import org.grails.config.NavigableMap
 import org.quartz.*
 import org.quartz.impl.matchers.KeyMatcher
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
@@ -79,15 +80,16 @@ Adds Quartz job scheduling features
                 hasJdbcStore = true
             }
 
-            boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
-
-
+            def pluginEnabled = properties['org.quartz.pluginEnabled']?.toBoolean()
+            if (pluginEnabled==null) {
+                pluginEnabled = true
+            }
 
             if (pluginEnabled) {
-                def purgeTables = false
+                def purgeTables = properties['org.quartz.purgeQuartzTablesOnStartup']?.toBoolean()
 
-                if (grailsApplication?.config?.quartz?.purgeQuartzTablesOnStartup?.toBoolean()==true) {
-                    purgeTables = true
+                if (purgeTables==null) {
+                    purgeTables = false
                 }
 
                 if (hasJdbcStore && hasHibernate && purgeTables) {
@@ -272,8 +274,14 @@ Adds Quartz job scheduling features
     }
 
     void doWithApplicationContext() {
-        boolean pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
-        boolean autoStart = grailsApplication?.config?.quartz?.autoStartup
+        def pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
+        if (pluginEnabled instanceof NavigableMap.NullSafeNavigator) {
+            pluginEnabled = true
+        }
+        def autoStart = grailsApplication?.config?.quartz?.autoStartup
+        if (autoStart instanceof NavigableMap.NullSafeNavigator) {
+            autoStart = true
+        }
         if(autoStart && pluginEnabled) {
             grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
                 scheduleJob(jobClass, applicationContext, hasHibernate(manager))

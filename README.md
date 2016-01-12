@@ -54,7 +54,7 @@ scheduler startup (simple trigger), also it'll be executed each 6 second during 
 (15:00:00, 15:00:06, 15:00:12, ... — this configured by cron trigger) and also it'll be executed each time your custom
 trigger will fire.
 
-Three kinds of triggers are supported with the following parameters:
+Three kinds of triggers are supported with the following parameters. The name field must be unique:
 * `simple`:
   * `name` — the name that identifies the trigger;
   * `startDelay` — delay (in milliseconds) between scheduler startup and first job's execution;
@@ -72,10 +72,10 @@ Three kinds of triggers are supported with the following parameters:
 
 You can add the following properties to control persisteance or not persistence:
 * quartz.pluginEnabled - defaults to true, can disable plugin for test cases etc
-* quartz.jdbcStore - true to enable database store, false to use RamStore
-* quartz.autoStartup - delays jobs until after bootstrap startup phase
+* quartz.jdbcStore - true to enable database store, false to use RamStore (default true)
+* quartz.autoStartup - delays jobs until after bootstrap startup phase (default true)
 * quartz.jdbcStoreDataSource - jdbc data source alternate name
-* quartz.waitForJobsToCompleteOnShutdown - wait for jobs to complete on shutdown
+* quartz.waitForJobsToCompleteOnShutdown - wait for jobs to complete on shutdown (default true)
 * quartz.exposeSchedulerInRepository - expose Schedule in repository
 * quartz.scheduler.instanceName - name of the scheduler to avoid conflicts between apps
 * quartz.purgeQuartzTablesOnStartup - when jdbcStore set to 'true' and this is true, clears out all quartz tables on startup

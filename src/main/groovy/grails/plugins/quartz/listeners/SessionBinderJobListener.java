@@ -16,7 +16,10 @@
 
 package grails.plugins.quartz.listeners;
 
+import grails.core.GrailsApplication;
+
 import grails.persistence.support.PersistenceContextInterceptor;
+import grails.util.Holders;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobExecutionContext;
@@ -71,7 +74,12 @@ public class SessionBinderJobListener extends JobListenerSupport {
      * After job executing. Flush and destroy persistence context.
      */
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-        if (persistenceInterceptor != null) {
+        boolean jdbcEnabled = true;
+        if (Holders.getGrailsApplication().getConfig().get("quartz.jdbcStore") instanceof Boolean) {
+            jdbcEnabled = (Boolean)Holders.getGrailsApplication().getConfig().get("quartz.jdbcStore");
+        }
+
+        if (persistenceInterceptor != null &&  jdbcEnabled) {
             try {
                 persistenceInterceptor.flush();
                 persistenceInterceptor.clear();

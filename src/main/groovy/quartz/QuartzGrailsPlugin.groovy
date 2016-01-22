@@ -103,8 +103,8 @@ Adds Quartz job scheduling features
                     configureJobBeans(jobClass, hasHibernate)
                 }
 
-                // Configure the session listener if there is the Hibernate and jdbcStore is configured
-                if (hasHibernate && hasJdbcStore) {
+                // Configure the session listener if there is the Hibernate is configured
+                if (hasHibernate) {
                     log.debug("Registering hibernate SessionBinderJobListener")
 
                     // register SessionBinderJobListener to bind Hibernate Session to each Job's thread
@@ -234,7 +234,7 @@ Adds Quartz job scheduling features
                 }
 
                 // The session listener if is needed
-                if (hasHibernate && jobClass.sessionRequired && hasJdbcStore) {
+                if (hasHibernate && (jobClass.sessionRequired || hasJdbcStore)) {
                     SessionBinderJobListener listener = ctx.getBean(SessionBinderJobListener.NAME)
                     if (listener != null) {
                         ListenerManager listenerManager = scheduler.getListenerManager()

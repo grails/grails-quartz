@@ -41,7 +41,7 @@ class QuartzGrailsPlugin extends Plugin {
 
     def title = "Quartz" // Headline display name of the plugin
     def author = "Jeff Brown"
-    def authorEmail = "jeff@jeffandbetsy.net"
+    def authorEmail = "brownj@ociweb.com"
     def description = '''\
 Adds Quartz job scheduling features
 '''

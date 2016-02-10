@@ -1,7 +1,7 @@
 package grails.plugins.quartz.cleanup
 
 import groovy.sql.Sql
-import groovy.util.logging.Commons;
+import groovy.util.logging.Slf4j;
 
 import javax.annotation.PostConstruct;
 
@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
  * miss missfire recoveries, persisted jobs/triggers, etc.
  */
 
-@Commons
+@Slf4j
 public class JdbcCleanup {
 
     def dataSource

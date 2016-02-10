@@ -20,7 +20,7 @@ import grails.plugins.quartz.*
 import grails.plugins.quartz.cleanup.JdbcCleanup
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
-import groovy.util.logging.Commons
+import groovy.util.logging.Slf4j
 import org.grails.config.NavigableMap
 import org.quartz.*
 import org.quartz.impl.matchers.KeyMatcher
@@ -28,7 +28,7 @@ import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
 import org.springframework.scheduling.quartz.SchedulerFactoryBean
 
-@Commons
+@Slf4j
 class QuartzGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for

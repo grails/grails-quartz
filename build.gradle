@@ -65,7 +65,7 @@ dependencies {
 
   console "org.grails:grails-console"
 
-  compile("org.quartz-scheduler:quartz:2.2.1") {
+  compile("org.quartz-scheduler:quartz:2.2.2") {
     exclude group: 'slf4j-api', module: 'c3p0'
   }
 }

@@ -283,9 +283,11 @@ Adds Quartz job scheduling features
         if (autoStart == null) {
             autoStart = true
         }
-        if(autoStart && pluginEnabled) {
+        if (pluginEnabled) {
             grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
-                scheduleJob(jobClass, applicationContext, hasHibernate(manager))
+                if (autoStart) {
+                    scheduleJob(jobClass, applicationContext, hasHibernate(manager))
+                }
                 def clz = jobClass.clazz
                 clz.scheduler = applicationContext.quartzScheduler
                 clz.grailsJobClass = jobClass

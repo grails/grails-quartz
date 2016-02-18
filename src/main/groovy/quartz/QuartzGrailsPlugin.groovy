@@ -228,7 +228,7 @@ Adds Quartz job scheduling features
 
                 // adds the job to the scheduler, and associates triggers with it
                 scheduler.addJob(jobDetail, true)
-                def hasJdbcStore = grailsApplication?.config?.quartz?.jdbcStore?.toBoolean()
+                def hasJdbcStore = grailsApplication.config.getProperty('quartz.jdbcStore')?.toBoolean()
                 if (hasJdbcStore == null) {
                     hasJdbcStore = true
                 }
@@ -274,12 +274,13 @@ Adds Quartz job scheduling features
     }
 
     void doWithApplicationContext() {
-        def pluginEnabled = grailsApplication?.config?.quartz?.pluginEnabled
-        if (pluginEnabled instanceof NavigableMap.NullSafeNavigator) {
+
+        def pluginEnabled = grailsApplication.config.getProperty('quartz.pluginEnabled')?.toBoolean()
+        if (pluginEnabled == null) {
             pluginEnabled = true
         }
-        def autoStart = grailsApplication?.config?.quartz?.autoStartup
-        if (autoStart instanceof NavigableMap.NullSafeNavigator) {
+        def autoStart = grailsApplication.config.getProperty('quartz.autoStartup')?.toBoolean()
+        if (autoStart == null) {
             autoStart = true
         }
         if(autoStart && pluginEnabled) {

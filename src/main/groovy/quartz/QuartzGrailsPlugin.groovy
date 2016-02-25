@@ -46,13 +46,14 @@ class QuartzGrailsPlugin extends Plugin {
 Adds Quartz job scheduling features
 '''
     def profiles = ['web']
+    List loadAfter = ['hibernate3', 'hibernate4', 'hibernate5', 'services']
 
     // URL to the plugin's documentation
     def documentation = "http://grails.org/plugin/quartz"
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
-    
+
     // Location of the plugin's issue tracker.
     def issueManagement = [ system: "Github Issues", url: "http://github.com/grails3-plugins/quartz/issues" ]
 

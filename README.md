@@ -76,7 +76,7 @@ Three kinds of triggers are supported with the following parameters. The name fi
 You can add the following properties to control persisteance or not persistence:
 * quartz.pluginEnabled - defaults to true, can disable plugin for test cases etc
 * quartz.jdbcStore - true to enable database store, false to use RamStore (default true)
-* quartz.autoStartup - delays jobs until after bootstrap startup phase (default true)
+* quartz.autoStartup - delays jobs until after bootstrap startup phase (default false)
 * quartz.jdbcStoreDataSource - jdbc data source alternate name
 * quartz.waitForJobsToCompleteOnShutdown - wait for jobs to complete on shutdown (default true)
 * quartz.exposeSchedulerInRepository - expose Schedule in repository

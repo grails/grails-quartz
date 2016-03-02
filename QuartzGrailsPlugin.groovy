@@ -22,6 +22,7 @@ import grails.plugins.quartz.JobDetailFactoryBean
 import grails.plugins.quartz.TriggerUtils
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
+import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.spring.BeanBuilder
 import grails.util.Environment
 
@@ -85,6 +86,12 @@ class QuartzGrailsPlugin {
     def doWithSpring = { context ->
         def config = loadQuartzConfig(application.config)
         boolean hasHibernate = hasHibernate(manager)
+            def hasJdbcStore = config.jdbcStore?.toBoolean()
+            if (hasJdbcStore==null) {
+                hasJdbcStore = true
+            }
+            //def pluginEnabled = properties['org.quartz.pluginEnabled']?.toBoolean()?:true
+            //boolean pluginEnabled = Holders.config?.quartz?.pluginEnabled ?:true
 
         // Configure job beans
         application.jobClasses.each { GrailsJobClass jobClass ->
@@ -93,7 +100,7 @@ class QuartzGrailsPlugin {
         }
 
         // Configure the session listener if there is the Hibernate
-        if (hasHibernate) {
+        if (hasHibernate && hasJdbcStore) {
             log.debug("Registering hibernate SessionBinderJobListener")
 
             // register SessionBinderJobListener to bind Hibernate Session to each Job's thread

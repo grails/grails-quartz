@@ -74,12 +74,7 @@ public class SessionBinderJobListener extends JobListenerSupport {
      * After job executing. Flush and destroy persistence context.
      */
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException exception) {
-        boolean jdbcEnabled = true;
-        if (Holders.getGrailsApplication().getConfig().get("quartz.jdbcStore") instanceof Boolean) {
-            jdbcEnabled = (Boolean)Holders.getGrailsApplication().getConfig().get("quartz.jdbcStore");
-        }
-
-        if (persistenceInterceptor != null &&  jdbcEnabled) {
+        if (persistenceInterceptor != null) {
             try {
                 persistenceInterceptor.flush();
                 persistenceInterceptor.clear();

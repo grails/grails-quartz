@@ -27,7 +27,7 @@ import static org.quartz.JobBuilder.newJob;
  * Simplified version of Spring's <a href='http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/scheduling/quartz/MethodInvokingJobDetailFactoryBean.html'>MethodInvokingJobDetailFactoryBean</a>
  * that avoids issues with non-serializable classes (for JDBC storage).
  *
- * @author <a href='mailto:beckwithb@studentsonly.com'>Burt Beckwith</a>
+ * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  * @author Sergey Nebolsin (nebolsin@gmail.com)
  * @since 0.3.2
  */

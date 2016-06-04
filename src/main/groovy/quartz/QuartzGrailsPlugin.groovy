@@ -298,6 +298,9 @@ Adds Quartz job scheduling features
     }
 
     private boolean hasHibernate(manager) {
-        manager?.hasGrailsPlugin("hibernate") || manager?.hasGrailsPlugin("hibernate4")
+        manager?.hasGrailsPlugin("hibernate") ||
+                manager?.hasGrailsPlugin("hibernate3") ||
+                manager?.hasGrailsPlugin("hibernate4") ||
+                manager?.hasGrailsPlugin("hibernate5")
     }
 }

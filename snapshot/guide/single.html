@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>quartz 2.0.10.BUILD-SNAPSHOT</title>
+        <title>quartz 2.0.10</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -17,34 +17,34 @@ function addJsClass(el) {
 
     <body class="body" onload="addJsClass();">
         <div id="navigation">
-            <ul>
-                <li>
-                    <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
-                        <a href="../guide/index.html" class="button">Table of contents</a>
-                        <div id="nav-summary-childs" style="display:none;">
-                            
-                            <div class="toc-item" style="margin-left:0"><a href="#introduction"><strong>1</strong><span>Introduction</span></a></div>
-                            
-                            <div class="toc-item" style="margin-left:0"><a href="#scheduling"><strong>2</strong><span>Scheduling Basics</span></a></div>
-                            
-                            <div class="toc-item" style="margin-left:0"><a href="#triggers"><strong>3</strong><span>Understanding Triggers</span></a></div>
-                            
-                            <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>4</strong><span>Plugin Configuration</span></a></div>
-                            
-                        </div>
-                    </div>
-                </li>
-                <li class="separator selected">
-                    <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
-                </li>
-            </ul>
-        </div>
-        <div id="header">
-            <div class="images clearfix">
+            <div class="navTitle">
                 
-                
+                quartz
             </div>
-            <p></p>
+            <div class="navLinks">
+                <ul>
+                    <li>
+                        <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                            <a href="../guide/index.html" class="button">Table of contents</a>
+                            <div id="nav-summary-childs" style="display:none;">
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#introduction"><strong>1</strong><span>Introduction</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#scheduling"><strong>2</strong><span>Scheduling Basics</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#triggers"><strong>3</strong><span>Understanding Triggers</span></a></div>
+                                
+                                <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>4</strong><span>Plugin Configuration</span></a></div>
+                                
+                            </div>
+                        </div>
+                    </li>
+                    <li class="separator selected">
+                        <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+                    </li>
+                </ul>
+
+            </div>
         </div>
 
 
@@ -56,9 +56,9 @@ function addJsClass(el) {
                         <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                         <div class="project">
-                            <h1>quartz - Reference Documentation</h1>
+                            <h1>quartz</h1>
                             <p><strong>Authors:</strong> </p>
-                            <p><strong>Version:</strong> 2.0.10.BUILD-SNAPSHOT</p>
+                            <p><strong>Version:</strong> 2.0.10</p>
                             
                         </div>
 
@@ -80,12 +80,16 @@ function addJsClass(el) {
                         
 
 <h1 id="introduction">1 Introduction</h1>
+
+
 Quartz plugin allows your Grails application to schedule jobs to be executed using a specified interval or cron expression. The underlying system uses the <a href="http://www.quartz-scheduler.org/" target="blank">Quartz Enterprise Job Scheduler</a> configured via Spring, but is made simpler by the coding by convention paradigm.
 Since 1.0-RC3 this plugin requires Quartz 2.1.x or higher and no longer supports Quartz 1.8.x.
 
 
 
 <h1 id="scheduling">2 Scheduling Basics</h1>
+
+
 <h4>Scheduling Jobs</h4><p class="paragraph"/>To create a new job run the "grails create-job" command and enter the name of the job. Grails will create a new job and place it in the "grails-app/jobs" directory:<p class="paragraph"/><div class="code"><pre>class MyJob &#123;
     <span class="java&#45;keyword">static</span> triggers = &#123;
         simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000
@@ -121,6 +125,8 @@ The triggers name property must be unique across all triggers in the application
 
 
 <h1 id="triggers">3 Understanding Triggers</h1>
+
+
 <h4>Scheduling configuration syntax</h4><p class="paragraph"/>Currently plugin supports three types of triggers:
 <ul class="star">
 <li><strong class="bold">simple</strong> — executes once per defined interval (ex. “every 10 seconds”);</li>
@@ -169,6 +175,8 @@ class MyJob &#123;
 
 
 <h1 id="configuration">4 Plugin Configuration</h1>
+
+
 <h4>Configuring the plugin</h4><p class="paragraph"/>The plugin supports configuration settings defined in grails-app/conf/application.yml.<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
 quartz:
     autoStartup: <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>Currently supported options:

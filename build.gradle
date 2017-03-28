@@ -72,6 +72,10 @@ dependencies {
 
 compileGroovy.groovyOptions.forkOptions.jvmArgs = ['-Xmx512M']
 
+tasks.withType(JavaExec) {
+  maxHeapSize '512m'
+}
+
 eclipse {
     classpath {
         plusConfigurations += [configurations.provided]

@@ -18,7 +18,22 @@ description("Creates a new Quartz scheduled job") {
     argument name:'Job Name', description:"The name of the job"
 }
 
-model = model( args[0] )
+model = model(trimTrailingJobFromJobName(args[0]) )
 render  template:"Job.groovy",
-        destination: file( "grails-app/jobs/$model.packagePath/${model.simpleName}Job.groovy"),
+        destination: file( "grails-app/jobs/$model.packagePath/${trimTrailingJobFromJobName(model.simpleName)}Job.groovy"),
         model: model
+
+/**
+ * //if 'Job' already exists in the end of JobName, then remove it from jobName.
+ * @param name
+ * @return
+ */
+String trimTrailingJobFromJobName(String name){
+    String type = "Job"
+    String processedName = name
+    Integer lastIndexOfJOBInJobName = name.lastIndexOf(type)
+    if(lastIndexOfJOBInJobName == (name.length() - type.length())){
+        processedName = name.substring(0, lastIndexOfJOBInJobName)
+    }
+    return processedName
+}

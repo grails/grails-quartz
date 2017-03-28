@@ -202,10 +202,7 @@ Adds Quartz job scheduling features
 
                 // Global listeners on each job.
                 globalJobListeners = [ref(ExceptionPrinterJobListener.NAME)]
-
-                // Destroys the scheduler before the application will stop.
-//                bean.destroyMethod = 'destroy'
-
+			
 
         }
     }

@@ -179,7 +179,7 @@ Adds Quartz job scheduling features
 
                 // delay scheduler startup to after-bootstrap stage
                 if (quartzProperties['org.quartz.autoStartup']) {
-                    autoStartup = quartzProperties['org.quartz.autoStartup'].toBoolean()
+                    autoStartup = false // we dont want to auto startup this bean as this bean autostartup is not grails aware.
                 }
                 // Store
                 def hasJdbcStore = quartzProperties['org.quartz.jdbcStore']?.toBoolean()
@@ -204,7 +204,7 @@ Adds Quartz job scheduling features
                 globalJobListeners = [ref(ExceptionPrinterJobListener.NAME)]
 
                 // Destroys the scheduler before the application will stop.
-                bean.destroyMethod = 'destroy'
+//                bean.destroyMethod = 'destroy'
 
 
         }
@@ -274,33 +274,41 @@ Adds Quartz job scheduling features
         //}
     }
 
-    void doWithApplicationContext() {
 
-        def pluginEnabled = grailsApplication.config.getProperty('quartz.pluginEnabled')?.toBoolean()
-        if (pluginEnabled == null) {
-            pluginEnabled = true
-        }
-        def autoStart = grailsApplication.config.getProperty('quartz.autoStartup')?.toBoolean()
-        if (autoStart == null) {
-            autoStart = true
-        }
-        if (pluginEnabled) {
-            grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
-                if (autoStart) {
-                    scheduleJob(jobClass, applicationContext, hasHibernate(manager))
-                }
-                def clz = jobClass.clazz
-                clz.scheduler = applicationContext.quartzScheduler
-                clz.grailsJobClass = jobClass
-            }
-        }
-        log.debug("Scheduled Job Classes count: " + grailsApplication.jobClasses.size())
-    }
 
-    private boolean hasHibernate(manager) {
+	private boolean hasHibernate(manager) {
         manager?.hasGrailsPlugin("hibernate") ||
                 manager?.hasGrailsPlugin("hibernate3") ||
                 manager?.hasGrailsPlugin("hibernate4") ||
                 manager?.hasGrailsPlugin("hibernate5")
     }
+
+	void onStartup(Map<String, Object> event) {
+		def autoStart = grailsApplication.config.getProperty('quartz.autoStartup')?.toBoolean()
+		if (autoStart == null) {
+			autoStart = true
+		}
+		def pluginEnabled = grailsApplication.config.getProperty('quartz.pluginEnabled')?.toBoolean()
+		if (pluginEnabled == null) {
+			pluginEnabled = true
+		}
+
+		if (pluginEnabled) {
+			grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
+				scheduleJob(jobClass, applicationContext, hasHibernate(manager))
+				def clz = jobClass.clazz
+				clz.scheduler = applicationContext.quartzScheduler
+				clz.grailsJobClass = jobClass
+			}
+			if(autoStart) {
+				applicationContext.quartzScheduler.start()
+			}
+		}
+		log.debug("Scheduled Job Classes count: " + grailsApplication.jobClasses.size())
+	}
+
+	void onShutdown(Map<String, Object> event) {
+		def waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean()
+		applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
+	}
 }

@@ -16,7 +16,7 @@
 
 package grails.plugins.quartz
 
-import org.codehaus.groovy.grails.commons.ArtefactHandler
+import grails.core.ArtefactHandler
 
 /**
  * Test case for Job artefact handler.

@@ -5,7 +5,7 @@ import static junit.framework.Assert.assertFalse
 import static junit.framework.Assert.assertNull
 import static junit.framework.Assert.assertTrue
 
-import org.codehaus.groovy.grails.commons.GrailsApplication
+import grails.core.GrailsApplication
 import org.junit.Test
 import org.quartz.JobDetail
 import org.quartz.JobKey
@@ -112,9 +112,4 @@ class GrailsJobClassMock implements GrailsJobClass {
     }
 
     void setGrailsApplication(GrailsApplication grailsApplication) {}
-
-    @Override
-    void setGrailsApplication(grails.core.GrailsApplication grailsApplication) {
-
-    }
 }

@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id "io.spring.dependency-management" version "0.5.2.RELEASE"
-    id "com.jfrog.bintray" version "1.2"
+    id "com.jfrog.bintray" version "1.6"
 }
 
 version "2.0.10.BUILD-SNAPSHOT"
@@ -65,7 +65,7 @@ dependencies {
 
   console "org.grails:grails-console"
 
-  compile("org.quartz-scheduler:quartz:2.2.2") {
+  compile("org.quartz-scheduler:quartz:2.2.3") {
     exclude group: 'slf4j-api', module: 'c3p0'
   }
 }

@@ -19,6 +19,7 @@ package grails.plugins.quartz.config
 import grails.plugins.quartz.CustomTriggerFactoryBean
 import grails.plugins.quartz.GrailsJobClassConstants as Constants
 import grails.util.GrailsUtil
+import grails.core.GrailsApplication
 import org.quartz.CronExpression
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
@@ -35,11 +36,12 @@ import org.quartz.impl.triggers.SimpleTriggerImpl
 class TriggersConfigBuilder extends BuilderSupport {
     private triggerNumber = 0
     private jobName
-
+	GrailsApplication grailsApplication
     def triggers = [:]
 
-    TriggersConfigBuilder(String jobName) {
+    TriggersConfigBuilder(String jobName, GrailsApplication grailsApplication) {
         this.jobName = jobName
+		this.grailsApplication = grailsApplication
     }
 
     /**

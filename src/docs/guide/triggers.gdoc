@@ -12,7 +12,7 @@ Multiple triggers per job are allowed.
 class MyJob {
    static triggers = {
       simple name:'simpleTrigger', startDelay: 10000, repeatInterval: 30000, repeatCount: 10
-      cron   name:'cronTrigger',   startDelay: 10000, cronExpression: '0/6 * 15 * * ?'
+      cron   name:'cronTrigger',   startDelay: 10000, cronExpression: '0/6 * 15 * * ?', timeZone: TimeZone.getTimeZone("GMT-8") //timeZone is optional
       custom name:'customTrigger', triggerClass: MyTriggerClass, myParam: myValue, myAnotherParam: myAnotherValue
    }
 
@@ -38,6 +38,8 @@ Three kinds of triggers are supported with the following parameters:
 * @custom@:
 ** @triggerClass@ — your class which implements Trigger interface;
 any params needed by your trigger.
+
+It is also possible to adjust properties in a trigger Closure by the Grails configuration since the triggers block is given access to the grailsApplication object.
 
 h4. Dynamic Jobs Scheduling
 

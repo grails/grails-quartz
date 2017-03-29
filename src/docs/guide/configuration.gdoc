@@ -37,6 +37,14 @@ By default Jobs are executed in concurrent fashion, so new Job execution can sta
 def concurrent = false
 {code}
 
+h4. Configuring Job Enabled
+
+By default all jobs are considered enabled. In some cases it may be desired to temporarily disable a job. This can be done by overriding the jobEnabled property behavior
+
+{code}
+def jobEnabled = false
+{code}
+
 h4. Configuring description
 
 Quartz allows for each job to have a short description. This may be configured by adding a description field to your Job. The description can be accessed at runtime using the JobManagerService and inspecting the JobDetail object.

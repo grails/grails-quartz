@@ -17,6 +17,7 @@ package quartz
 
 import grails.plugins.Plugin
 import grails.plugins.quartz.*
+import org.quartz.impl.matchers.GroupMatcher
 import grails.plugins.quartz.cleanup.JdbcCleanup
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
@@ -39,7 +40,10 @@ class QuartzGrailsPlugin extends Plugin {
             "grails-app/views/error.gsp"
     ]
 
-    def title = "Quartz" // Headline display name of the plugin
+	def watchedResources = "file:./grails-app/jobs/**/*Job.groovy"
+
+
+	def title = "Quartz" // Headline display name of the plugin
     def author = "Jeff Brown"
     def authorEmail = "brownj@ociweb.com"
     def description = '''\
@@ -207,13 +211,30 @@ Adds Quartz job scheduling features
         }
     }
 
+	void onChange( Map<String, Object> event) {
+		def pluginEnabled = properties['org.quartz.pluginEnabled']?.toBoolean()
+		if (pluginEnabled==null) {
+			pluginEnabled = true
+		}
+
+		if (pluginEnabled) {
+			if(event.source) {
+				boolean hasHibernate = hasHibernate(manager)
+				def jobClass = grailsApplication.addArtefact(JobArtefactHandler.TYPE,event.source)
+				def jobName = "${jobClass.propertyName}"
+				beans {
+					configureJobBeans.delegate = delegate
+					configureJobBeans(jobClass, hasHibernate)
+				}
+			}
+			refreshJobs(true)
+		}
+	}
+
     /**
      * Schedules jobs. Creates job details and trigger beans. And schedules them.
      */
     def scheduleJob(GrailsJobClass jobClass, ApplicationContext ctx, boolean hasHibernate) {
-        //TODO add class level toggle flags to temp disable certain jobs
-
-
             Scheduler scheduler = ctx.quartzScheduler
             if (scheduler) {
                 def fullName = jobClass.fullName
@@ -280,6 +301,50 @@ Adds Quartz job scheduling features
                 manager?.hasGrailsPlugin("hibernate5")
     }
 
+	void refreshJobs(ignoreErrors=false) {
+		def pluginEnabled = grailsApplication.config.getProperty('quartz.pluginEnabled')?.toBoolean()
+		if (pluginEnabled == null) {
+			pluginEnabled = true
+		}
+		if(pluginEnabled) {
+			def quartzScheduler = applicationContext.quartzScheduler
+
+			Set<JobKey> jobKeys = applicationContext.quartzScheduler.getJobKeys(GroupMatcher.anyGroup())
+
+			//Remove any recently removed / disabled Jobs
+			jobKeys.each { JobKey key ->
+				def match = grailsApplication.jobClasses.find{ GrailsJobClass jobClass -> jobClass.isEnabled() && jobClass.group == key.group && jobClass.clazz.name == key.name }
+				if(!match) {
+					log.info("Removing No longer Active Job: ${key.name}")
+					def triggersForJob = quartzScheduler.getTriggersOfJob(key)?.collect{it.key}
+					if(triggersForJob) {
+						//clean up triggers before we remove the job
+						quartzScheduler.unscheduleJobs(triggersForJob)
+					}
+					quartzScheduler.deleteJob(key)
+				}
+			}
+
+			//Add new jobs
+			grailsApplication.jobClasses.findAll{GrailsJobClass jobClass -> jobClass.isEnabled()}.each { GrailsJobClass jobClass ->
+				try {
+					scheduleJob(jobClass, applicationContext, hasHibernate(manager))
+					def clz = jobClass.clazz
+					clz.scheduler = applicationContext.quartzScheduler
+					clz.grailsJobClass = jobClass
+				} catch(ex) {
+					if(ignoreErrors) {
+						log.error("Error Scheduling Job Class ${jobClass} - ${ex.message}",ex)
+					} else {
+						throw ex
+					}
+				}
+
+			}
+		}
+
+	}
+
 	void onStartup(Map<String, Object> event) {
 		def autoStart = grailsApplication.config.getProperty('quartz.autoStartup')?.toBoolean()
 		if (autoStart == null) {
@@ -291,14 +356,10 @@ Adds Quartz job scheduling features
 		}
 
 		if (pluginEnabled) {
-			grailsApplication.jobClasses.each { GrailsJobClass jobClass ->
-				scheduleJob(jobClass, applicationContext, hasHibernate(manager))
-				def clz = jobClass.clazz
-				clz.scheduler = applicationContext.quartzScheduler
-				clz.grailsJobClass = jobClass
-			}
+			refreshJobs()
 			if(autoStart) {
 				applicationContext.quartzScheduler.start()
+				log.info("Quartz Scheduler - Started")
 			}
 		}
 		log.debug("Scheduled Job Classes count: " + grailsApplication.jobClasses.size())

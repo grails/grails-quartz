@@ -24,7 +24,6 @@ import org.quartz.JobExecutionContext;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import static grails.plugins.quartz.GrailsJobClassConstants.*;
 
 
@@ -40,23 +39,24 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
 
     public static final String JOB = "Job";
     private Map triggers = new HashMap();
+    private boolean triggersEvaluated = false;
 
 
     public DefaultGrailsJobClass(Class clazz) {
         super(clazz, JOB);
-        evaluateTriggers();
     }
 
     private void evaluateTriggers() {
         // registering additional triggersClosure from 'triggersClosure' closure if present
         Closure triggersClosure = (Closure) GrailsClassUtils.getStaticPropertyValue(getClazz(), "triggers");
 
-        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName());
+        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName(),grailsApplication);
 
         if (triggersClosure != null) {
             builder.build(triggersClosure);
             triggers = (Map) builder.getTriggers();
         }
+		triggersEvaluated = true;
     }
 
     public void execute() {
@@ -93,6 +93,11 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
         return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
     }
 
+	public boolean isEnabled() {
+		Boolean enabled = getPropertyValue(ENABLED, Boolean.class);
+		return enabled == null ? DEFAULT_ENABLED : enabled;
+	}
+
     public String getDescription() {
         String description = (String) getPropertyOrStaticPropertyOrFieldValue(DESCRIPTION, String.class);
         if (description == null || "".equals(description)) return DEFAULT_DESCRIPTION;
@@ -100,6 +105,9 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
     }
 
     public Map getTriggers() {
-        return triggers;
+    	if(triggersEvaluated == false){
+			evaluateTriggers();
+		}
+    	return triggers;
     }
 }

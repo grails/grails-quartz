@@ -9,7 +9,7 @@ h2. Examples
 {code}
 class MyJob {
    static triggers = {
-      cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 * 15 * * ?'
+      cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 * 15 * * ?', timeZone: TimeZone.getTimeZone("GMT-8") //timeZone is optional
    }
 
    void execute() {

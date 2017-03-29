@@ -23,7 +23,7 @@ class CustomTriggerFactoryBeanTests {
 
     @Test
     void testFactory() {
-        def builder = new TriggersConfigBuilder('TestJob')
+        def builder = new TriggersConfigBuilder('TestJob', null)
         def closure = {
             simple name: 'simple', group:'group', startDelay: 500, repeatInterval: 1000, repeatCount: 3
             cron name: 'cron', group: 'group', cronExpression: CRON_EXPRESSION

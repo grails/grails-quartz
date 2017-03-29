@@ -74,6 +74,7 @@ class GrailsJobClassMock implements GrailsJobClass {
     String group
     String fullName
     boolean concurrent
+	boolean jobEnabled
     boolean durability
     boolean sessionRequired
     boolean requestsRecovery
@@ -85,6 +86,7 @@ class GrailsJobClassMock implements GrailsJobClass {
     boolean byType() { false }
     boolean getAvailable() { false }
     boolean isAbstract() { false }
+	boolean isEnabled() { true }
     GrailsApplication getGrailsApplication() {}
 
     @Override

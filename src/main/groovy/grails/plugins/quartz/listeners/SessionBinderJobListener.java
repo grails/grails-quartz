@@ -46,6 +46,7 @@ public class SessionBinderJobListener extends JobListenerSupport {
 
     /**
      * It is used by the Spring to inject a persistence interceptor.
+	 * @return the reference of the currently active bean implementation of persistenceInterceptor
      */
     @SuppressWarnings("UnusedDeclaration")
     public PersistenceContextInterceptor getPersistenceInterceptor() {
@@ -54,6 +55,7 @@ public class SessionBinderJobListener extends JobListenerSupport {
 
     /**
      * It is used by the Spring to inject a persistence interceptor.
+	 * @param persistenceInterceptor - Normally applied by bean injection to set the reference to the persistenceInterceptor
      */
     @SuppressWarnings("UnusedDeclaration")
     public void setPersistenceInterceptor(PersistenceContextInterceptor persistenceInterceptor) {

@@ -59,7 +59,9 @@ public class CustomTriggerFactoryBean implements FactoryBean<Trigger>, Initializ
             if (triggerAttributes.containsKey(GrailsJobClassConstants.START_DELAY)) {
                 Number startDelay = (Number) triggerAttributes.remove(GrailsJobClassConstants.START_DELAY);
                 at.setStartTime(new Date(System.currentTimeMillis() + startDelay.longValue()));
-            }
+            } else {
+            	at.setStartTime(new Date());
+			}
         }
 
         // Set non standard properties.

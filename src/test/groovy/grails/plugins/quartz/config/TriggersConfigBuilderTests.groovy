@@ -26,7 +26,7 @@ import grails.plugins.quartz.GrailsJobClassConstants as Constants
  */
 class TriggersConfigBuilderTests extends GroovyTestCase {
     void testConfigBuilder() {
-        def builder = new TriggersConfigBuilder('TestJob')
+        def builder = new TriggersConfigBuilder('TestJob', null)
         def closure = {
             simple()
             simple timeout:1000

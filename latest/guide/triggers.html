@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Understanding Triggers 2.0.11</title>
+    <title>3 Understanding Triggers 2.0.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -72,7 +72,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>3 Understanding Triggers</h1>
 
-                    <p><strong>Version:</strong> 2.0.11</p>
+                    <p><strong>Version:</strong> 2.0.12</p>
                 </div>
 
                 
@@ -90,7 +90,7 @@ function addJsClass() {
 </ul><p class="paragraph"/>Multiple triggers per job are allowed.<p class="paragraph"/><div class="code"><pre>class MyJob &#123;
    <span class="java&#45;keyword">static</span> triggers = &#123;
       simple name:'simpleTrigger', startDelay: 10000, repeatInterval: 30000, repeatCount: 10
-      cron   name:'cronTrigger',   startDelay: 10000, cronExpression: '0/6 &#42; 15 &#42; &#42; ?'
+      cron   name:'cronTrigger',   startDelay: 10000, cronExpression: '0/6 &#42; 15 &#42; &#42; ?', timeZone: TimeZone.getTimeZone(<span class="java&#45;quote">"GMT&#45;8"</span>) //timeZone is optional
       custom name:'customTrigger', triggerClass: MyTriggerClass, myParam: myValue, myAnotherParam: myAnotherValue
    &#125;<p class="paragraph"/>   void execute() &#123;
       println <span class="java&#45;quote">"Job run!"</span>
@@ -113,7 +113,7 @@ function addJsClass() {
 <li><code>custom</code>:</li>
 <ul class="star">
 <li><code>triggerClass</code> — your class which implements Trigger interface;</li>
-</ul></ul><p class="paragraph"/>any params needed by your trigger.<p class="paragraph"/><h4>Dynamic Jobs Scheduling</h4><p class="paragraph"/>Starting from 0.4.1 version you have the ability to schedule job executions dynamically.<p class="paragraph"/>These methods are available:<p class="paragraph"/><div class="code"><pre>// creates cron trigger;
+</ul></ul><p class="paragraph"/>any params needed by your trigger.<p class="paragraph"/>It is also possible to adjust properties in a trigger Closure by the Grails configuration since the triggers block is given access to the grailsApplication object.<p class="paragraph"/><h4>Dynamic Jobs Scheduling</h4><p class="paragraph"/>Starting from 0.4.1 version you have the ability to schedule job executions dynamically.<p class="paragraph"/>These methods are available:<p class="paragraph"/><div class="code"><pre>// creates cron trigger;
 MyJob.schedule(<span class="java&#45;object">String</span> cronExpression, Map params?)<p class="paragraph"/>//  creates simple trigger: repeats job repeatCount+1 times with delay of repeatInterval milliseconds;
 MyJob.schedule(<span class="java&#45;object">Long</span> repeatInterval, <span class="java&#45;object">Integer</span> repeatCount?, Map params?) )<p class="paragraph"/>// schedules one job execution to the specific date;
 MyJob.schedule(Date scheduleDate, Map params?)<p class="paragraph"/>//schedules job's execution with a custom trigger;

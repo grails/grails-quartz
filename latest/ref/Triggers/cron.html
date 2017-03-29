@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>quartz 2.0.11</title>
+    <title>quartz 2.0.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -69,7 +69,7 @@ function addJsClass(el) {
 
                 <h1>cron</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>A cron trigger that executes based on the defined cron expression<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class MyJob &#123;
    <span class="java&#45;keyword">static</span> triggers = &#123;
-      cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 &#42; 15 &#42; &#42; ?'
+      cron name:'cronTrigger', startDelay:10000, cronExpression: '0/6 &#42; 15 &#42; &#42; ?', timeZone: TimeZone.getTimeZone(<span class="java&#45;quote">"GMT&#45;8"</span>) //timeZone is optional
    &#125;<p class="paragraph"/>   void execute() &#123;
       println <span class="java&#45;quote">"Job run!"</span>
    &#125;

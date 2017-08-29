@@ -7,8 +7,8 @@ class MyJob {
     static triggers = {
         simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 1000
     }
-    def group = "MyGroup"
-    def description = "Example job with Simple Trigger"
+    static group = "MyGroup"
+    static description = "Example job with Simple Trigger"
 
     void execute() {
         println "Job run!"
@@ -30,8 +30,8 @@ class MyJob  {
     static triggers = {
         cron name: 'myTrigger', cronExpression: "0 0 6 * * ?"
     }
-    def group = "MyGroup"
-    def description = "Example job with Cron Trigger"
+    static group = "MyGroup"
+    static description = "Example job with Cron Trigger"
 
     void execute() {
         println "Job run!"

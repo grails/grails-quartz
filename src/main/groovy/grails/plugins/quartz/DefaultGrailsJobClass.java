@@ -50,13 +50,13 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
         // registering additional triggersClosure from 'triggersClosure' closure if present
         Closure triggersClosure = (Closure) GrailsClassUtils.getStaticPropertyValue(getClazz(), "triggers");
 
-        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName(),grailsApplication);
+        TriggersConfigBuilder builder = new TriggersConfigBuilder(getFullName(), grailsApplication);
 
         if (triggersClosure != null) {
             builder.build(triggersClosure);
             triggers = (Map) builder.getTriggers();
         }
-		triggersEvaluated = true;
+        triggersEvaluated = true;
     }
 
     public void execute() {
@@ -68,35 +68,35 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
     }
 
     public String getGroup() {
-        String group = (String) getPropertyOrStaticPropertyOrFieldValue(GROUP, String.class);
+        String group = getStaticPropertyValue(GROUP, String.class);
         if (group == null || "".equals(group)) return DEFAULT_GROUP;
         return group;
     }
 
     public boolean isConcurrent() {
-        Boolean concurrent = getPropertyValue(CONCURRENT, Boolean.class);
+        Boolean concurrent = getStaticPropertyValue(CONCURRENT, Boolean.class);
         return concurrent == null ? DEFAULT_CONCURRENT : concurrent;
     }
 
     public boolean isSessionRequired() {
-        Boolean sessionRequired = getPropertyValue(SESSION_REQUIRED, Boolean.class);
+        Boolean sessionRequired = getStaticPropertyValue(SESSION_REQUIRED, Boolean.class);
         return sessionRequired == null ? DEFAULT_SESSION_REQUIRED : sessionRequired;
     }
 
     public boolean isDurability() {
-        Boolean durability = getPropertyValue(DURABILITY, Boolean.class);
+        Boolean durability = getStaticPropertyValue(DURABILITY, Boolean.class);
         return durability == null ? DEFAULT_DURABILITY : durability;
     }
 
     public boolean isRequestsRecovery() {
-        Boolean requestsRecovery = getPropertyValue(REQUESTS_RECOVERY, Boolean.class);
+        Boolean requestsRecovery = getStaticPropertyValue(REQUESTS_RECOVERY, Boolean.class);
         return requestsRecovery == null ? DEFAULT_REQUESTS_RECOVERY : requestsRecovery;
     }
 
-	public boolean isEnabled() {
-		Boolean enabled = getPropertyValue(ENABLED, Boolean.class);
-		return enabled == null ? DEFAULT_ENABLED : enabled;
-	}
+    public boolean isEnabled() {
+        Boolean enabled = getStaticPropertyValue(ENABLED, Boolean.class);
+        return enabled == null ? DEFAULT_ENABLED : enabled;
+    }
 
     public String getDescription() {
         String description = (String) getPropertyOrStaticPropertyOrFieldValue(DESCRIPTION, String.class);
@@ -105,9 +105,9 @@ public class DefaultGrailsJobClass extends AbstractGrailsClass implements Grails
     }
 
     public Map getTriggers() {
-    	if(triggersEvaluated == false){
-			evaluateTriggers();
-		}
-    	return triggers;
+        if (triggersEvaluated == false) {
+            evaluateTriggers();
+        }
+        return triggers;
     }
 }

@@ -38,7 +38,7 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
         def testClosure = { wasExecuted = true }
         Class jobClass = gcl.parseClass("""
                 class TestJob {
-                    def testClosure
+                    static testClosure
                     def execute() {
                         testClosure.call()
                     }
@@ -53,7 +53,7 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
     void testSessionRequiredParameter() {
         Class jobClass = gcl.parseClass("""
                 class TestJob {
-                    def sessionRequired = false
+                    static sessionRequired = false
                     def execute() {}
                 }
                 """.stripIndent())
@@ -64,7 +64,7 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
     void testConcurrentParameter() {
         Class jobClass = gcl.parseClass("""
                 class TestJob {
-                    def concurrent = false
+                    static concurrent = false
                     def execute() {}
                 }
                 """.stripIndent())
@@ -75,7 +75,7 @@ class DefaultGrailsJobClassTests extends GroovyTestCase {
     void testGroupParameter() {
         Class jobClass = gcl.parseClass("""
                 class TestJob {
-                    def group = 'myGroup'
+                    static group = 'myGroup'
                     def execute() {}
                 }
                 """.stripIndent())

@@ -26,7 +26,7 @@ h4. Hibernate Sessions and Jobs
 Jobs are configured by default to have Hibernate Session bounded to thread each time job is executed. This is required if you are using Hibernate code which requires open session (such as lazy loading of collections) or working with domain objects with unique persistent constraint (it uses Hibernate Session behind the scene). If you want to override this behavior (rarely useful) you can use 'sessionRequired' property:
 
 {code}
-def sessionRequired = false
+static sessionRequired = false
 {code}
 
 h4. Configuring concurrent execution
@@ -34,7 +34,7 @@ h4. Configuring concurrent execution
 By default Jobs are executed in concurrent fashion, so new Job execution can start even if previous execution of the same Job is still running. If you want to override this behavior you can use 'concurrent' property, in this case Quartz's StatefulJob will be used (you can find more info about it here):
 
 {code}
-def concurrent = false
+static concurrent = false
 {code}
 
 h4. Configuring Job Enabled
@@ -42,7 +42,7 @@ h4. Configuring Job Enabled
 By default all jobs are considered enabled. In some cases it may be desired to temporarily disable a job. This can be done by overriding the jobEnabled property behavior
 
 {code}
-def jobEnabled = false
+static jobEnabled = false
 {code}
 
 h4. Configuring description
@@ -50,7 +50,7 @@ h4. Configuring description
 Quartz allows for each job to have a short description. This may be configured by adding a description field to your Job. The description can be accessed at runtime using the JobManagerService and inspecting the JobDetail object.
 
 {code}
-def description = "Example Job Description"
+static description = "Example Job Description"
 {code}
 
 h4. Clustering

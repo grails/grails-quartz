@@ -366,7 +366,7 @@ Adds Quartz job scheduling features
 	}
 
 	void onShutdown(Map<String, Object> event) {
-		def waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean() ?: false
+		def waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean() ?: true
 		applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
 	}
 }

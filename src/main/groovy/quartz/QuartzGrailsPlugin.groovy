@@ -206,7 +206,7 @@ Adds Quartz job scheduling features
 
                 // Global listeners on each job.
                 globalJobListeners = [ref(ExceptionPrinterJobListener.NAME)]
-			
+
 
         }
     }
@@ -365,8 +365,11 @@ Adds Quartz job scheduling features
 		log.debug("Scheduled Job Classes count: " + grailsApplication.jobClasses.size())
 	}
 
-	void onShutdown(Map<String, Object> event) {
-		def waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean() ?: true
-		applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
-	}
+    void onShutdown(Map<String, Object> event) {
+        Boolean waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean()
+        if (waitForJobsToCompleteOnShutdown == null) {
+            waitForJobsToCompleteOnShutdown = true
+        }
+        applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
+    }
 }

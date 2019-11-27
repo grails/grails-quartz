@@ -17,13 +17,12 @@ package quartz
 
 import grails.plugins.Plugin
 import grails.plugins.quartz.*
-import org.quartz.impl.matchers.GroupMatcher
 import grails.plugins.quartz.cleanup.JdbcCleanup
 import grails.plugins.quartz.listeners.ExceptionPrinterJobListener
 import grails.plugins.quartz.listeners.SessionBinderJobListener
 import groovy.util.logging.Slf4j
-import org.grails.config.NavigableMap
 import org.quartz.*
+import org.quartz.impl.matchers.GroupMatcher
 import org.quartz.impl.matchers.KeyMatcher
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean
 import org.springframework.context.ApplicationContext
@@ -366,10 +365,17 @@ Adds Quartz job scheduling features
 	}
 
     void onShutdown(Map<String, Object> event) {
-        Boolean waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean()
-        if (waitForJobsToCompleteOnShutdown == null) {
-            waitForJobsToCompleteOnShutdown = true
+        def pluginEnabled = grailsApplication.config.getProperty('quartz.pluginEnabled')?.toBoolean()
+        if (pluginEnabled == null) {
+            pluginEnabled = true
         }
-        applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
+
+        if (pluginEnabled) {
+            Boolean waitForJobsToCompleteOnShutdown = grailsApplication.config.getProperty('quartz.waitForJobsToCompleteOnShutdown')?.toBoolean()
+            if (waitForJobsToCompleteOnShutdown == null) {
+                waitForJobsToCompleteOnShutdown = true
+            }
+            applicationContext.quartzScheduler.shutdown(waitForJobsToCompleteOnShutdown)
+        }
     }
 }

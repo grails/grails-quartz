@@ -2,7 +2,9 @@ Thumbs.db
 .DS_Store
 .idea
 /bin/
-/build/
+build/
+buildSrc/build
+buildSrc/.gradle
 /.gradle/
 target/
 out/

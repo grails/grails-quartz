@@ -1,10 +1,15 @@
+Thumbs.db
+.DS_Store
 .idea
 /bin/
 /build/
 /.gradle/
+target/
+out/
 .project
 .settings
 .classpath
 *.iml
 *.ipr 
 *.iws
+.factorypath

@@ -2,7 +2,6 @@ package grails.plugins.quartz
 
 import grails.plugins.quartz.config.TriggersConfigBuilder
 
-import org.junit.Test
 import org.quartz.CronTrigger
 import org.quartz.DailyTimeIntervalTrigger
 import org.quartz.DateBuilder

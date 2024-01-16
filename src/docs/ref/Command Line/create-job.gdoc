@@ -7,5 +7,15 @@ Creates a job class
 h2. Examples
 
 {code}
-$ grails create-job MyJob
+$ ./gradlew runCommand -Pargs="create-job MyJob"
+{code}
+
+h2. Devtools
+
+If devtools is enabled, add the following section to the build.gradle file so that the create-job command works
+
+{code}
+runCommand {
+    systemProperty "spring.devtools.restart.enabled", false
+}
 {code}

@@ -1,5 +1,4 @@
 contact_links:
-    about: Ask questions about Grails® framework on Github
   - name: Stack Overflow
     url: https://stackoverflow.com/tags/grails
     about: Ask questions on Stack Overflow

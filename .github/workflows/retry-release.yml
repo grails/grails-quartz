@@ -77,22 +77,3 @@ jobs:
           ref: ${{ steps.extract_branch.outputs.value }}
           token: ${{ secrets.GH_TOKEN }}
           inputs: ${{ steps.grails_docs_release_message.outputs.value }}
-      - name: Invoke grails-static-website release workflow
-        if: steps.assemble.outcome == 'success'
-        id: grails_static_website
-        uses: benc-uk/workflow-dispatch@v1.2
-        with:
-          workflow: Release
-          repo: grails/grails-static-website
-          ref: master
-          token: ${{ secrets.GH_TOKEN }}
-          inputs: ${{ steps.grails_docs_release_message.outputs.value }}
-      - name: Run post-release
-        if: steps.assemble.outcome == 'success'
-        uses: ./.github/actions/post-release
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          SNAPSHOT_SUFFIX: -SNAPSHOT
-          TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
-          RELEASE_VERSION: ${{ github.event.inputs.release }}

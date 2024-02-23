@@ -6,8 +6,7 @@ on:
       - '[3-9]+.[3-9]+.x'
   pull_request:
     branches:
-      - '[4-9]+.[0-9]+.x'
-      - '[3-9]+.[3-9]+.x'
+      - '[1-9]+.[0-9]+.x'
   workflow_dispatch:
 jobs:
   build:
@@ -16,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: ['11', '14']
+        java: ['8']
     env:
       WORKSPACE: ${{ github.workspace }}
     steps:

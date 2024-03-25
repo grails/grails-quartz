@@ -1,0 +1,29 @@
+import org.grails.gradle.plugin.doc.PublishGuideTask
+
+apply plugin: 'org.grails.grails-doc'
+
+configurations.register('groovydocConfiguration')
+configurations.register('guideConfiguration')
+
+dependencies {
+
+    groovydocConfiguration localGroovy(), {
+        because 'groovydoc needs to run with the same version as Gradle'
+    }
+
+    guideConfiguration libs.grails.docs
+    guideConfiguration libs.groovy.templates
+}
+
+tasks.withType(Groovydoc).configureEach {
+    access = GroovydocAccess.PRIVATE
+    processScripts = false
+    includeMainForScripts = false
+    includeAuthor = true
+    classpath = configurations.groovydocConfiguration
+    groovyClasspath = configurations.groovydocConfiguration
+}
+
+tasks.withType(PublishGuideTask).configureEach {
+    classpath = configurations.guideConfiguration
+}

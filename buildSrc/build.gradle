@@ -1,0 +1,9 @@
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.grails.org/grails/core' }
+}
+
+dependencies {
+    implementation buildsrcLibs.nexus.publish.gradle.plugin
+    runtimeOnly buildsrcLibs.grails.gradle.plugin
+}

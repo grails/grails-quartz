@@ -90,9 +90,9 @@ afterEvaluate {
 
 if (isReleaseVersion) {
     nexusPublishing {
-        String sonatypeUsername = findProperty('sonatypeOssUsername') ?: ''
-        String sonatypePassword = findProperty('sonatypeOssPassword') ?: ''
-        String sonatypeStagingProfileId = findProperty('sonatypeOssStagingProfileId') ?: ''
+        String sonatypeUsername = findProperty('sonatypeUsername') ?: ''
+        String sonatypePassword = findProperty('sonatypePassword') ?: ''
+        String sonatypeStagingProfileId = findProperty('sonatypeStagingProfileId') ?: ''
         repositories {
             sonatype {
                 nexusUrl = uri('https://s01.oss.sonatype.org/service/local/')

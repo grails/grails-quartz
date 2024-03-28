@@ -32,15 +32,9 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean
 class QuartzGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "3.0.0.BUILD-SNAPSHOT > *"
-
-    // resources that are excluded from plugin packaging
-    def pluginExcludes = [
-            "grails-app/views/error.gsp"
-    ]
+    def grailsVersion = "6.0.0 > *"
 
 	def watchedResources = "file:./grails-app/jobs/**/*Job.groovy"
-
 
 	def title = "Quartz" // Headline display name of the plugin
     def author = "Jeff Brown"
@@ -52,13 +46,13 @@ Adds Quartz job scheduling features
     List loadAfter = ['hibernate3', 'hibernate4', 'hibernate5', 'services']
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/quartz"
+    def documentation = 'https://grails.github.io/grails-quartz/latest/'
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
 
     // Location of the plugin's issue tracker.
-    def issueManagement = [ system: "Github Issues", url: "http://github.com/grails3-plugins/quartz/issues" ]
+    def issueManagement = [ system: 'Github Issues', url: 'https://github.com/grails/grails-quartz/issues' ]
 
 
     // Any additional developers beyond the author specified above.
@@ -70,7 +64,7 @@ Adds Quartz job scheduling features
     ]
 
     // Online location of the plugin's browseable source code.
-    def scm = [ url: "https://github.com/grails3-plugins/quartz/" ]
+    def scm = [ url: 'https://github.com/grails/grails-quartz' ]
 
     Closure doWithSpring() {
 

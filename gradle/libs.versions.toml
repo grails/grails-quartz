@@ -1,0 +1,28 @@
+[versions]
+grails = '6.1.2'
+groovy = '3.0.21'
+javax-annotation-api = '1.3.2'
+junit4 = '4.13'
+junit-jupiter = '5.10.2'
+quartz = '2.3.2'
+slf4j = '1.7.36'
+spring = '5.3.33'
+spock = '2.3-groovy-3.0'
+
+[libraries]
+grails-bootstrap = { group = 'org.grails', name = 'grails-bootstrap', version.ref = 'grails' }
+grails-core = { group = 'org.grails', name = 'grails-core', version.ref = 'grails' }
+grails-docs = { group = 'org.grails', name = 'grails-docs', version.ref = 'grails' }
+groovy-core = { group = 'org.codehaus.groovy', name = 'groovy', version.ref = 'groovy' }
+groovy-sql = { group = 'org.codehaus.groovy', name = 'groovy-sql', version.ref = 'groovy' }
+groovy-templates = { group = 'org.codehaus.groovy', name = 'groovy-templates', version.ref = 'groovy' }
+groovy-test = { group = 'org.codehaus.groovy', name = 'groovy-test', version.ref = 'groovy' }
+javax-annotation-api = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation-api' }
+junit4 = { group = 'junit', name = 'junit', version.ref = 'junit4' }
+junit-vintage-engine = { group = 'org.junit.vintage', name = 'junit-vintage-engine', version.ref = 'junit-jupiter' }
+quartz = { group = 'org.quartz-scheduler', name = 'quartz', version.ref = 'quartz' }
+slf4j-nop = { group = 'org.slf4j', name = 'slf4j-nop', version.ref = 'slf4j' }
+spring-beans = { group = 'org.springframework', name = 'spring-beans', version.ref = 'spring' }
+spring-context = { group = 'org.springframework', name = 'spring-context', version.ref = 'spring' }
+spring-context-support = { group = 'org.springframework', name = 'spring-context-support', version.ref = 'spring' }
+spock-core = { group = 'org.spockframework', name = 'spock-core', version.ref = 'spock' }

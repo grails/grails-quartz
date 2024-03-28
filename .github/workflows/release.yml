@@ -1,0 +1,68 @@
+name: Release
+on:
+  release:
+    types: [published]
+env:
+  GIT_USER_NAME: puneetbehl
+  GIT_USER_EMAIL: behlp@unityfoundation.io
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/wrapper-validation-action@v2
+      - uses: actions/setup-java@v4
+        with: { java-version: 11, distribution: temurin }
+
+      - name: Get the current release version
+        id: release_version
+        run: echo "release_version=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
+
+      - name: Run pre-release
+        uses: micronaut-projects/github-actions/pre-release@master
+
+      - name: Generate secring file
+        env:
+          SECRING_FILE: ${{ secrets.SECRING_FILE }}
+        run: echo $SECRING_FILE | base64 -d > ${{ github.workspace }}/secring.gpg
+
+      - name: Publish artifacts to Sonatype
+        id: publish_to_sonatype
+        uses: gradle/actions/setup-gradle@v3
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_sonatypeStagingProfileId: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
+        with:
+          arguments: |
+            -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg
+            publishToSonatype
+            closeAndReleaseSonatypeStagingRepository
+
+      - name: Generate Documentation
+        if: success()
+        uses: gradle/actions/setup-gradle@v3
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+        with:
+          arguments: docs
+
+      - name: Publish Documentation to Github Pages
+        if: success()
+        uses: micronaut-projects/github-pages-deploy-action@grails
+        env:
+          BRANCH: gh-pages
+          COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
+          COMMIT_NAME: ${{ env.GIT_USER_NAME }}
+          FOLDER: build/docs/manual
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          VERSION: ${{ steps.release_version.outputs.release_version }}
+
+      - name: Run post-release
+        if: steps.publish_to_sonatype.outcome == 'success'
+        uses: micronaut-projects/github-actions/post-release@master

@@ -1,94 +1,49 @@
-buildscript {
-    ext {
-      grailsVersion = project.grailsVersion
-    }
-    repositories {
-        mavenLocal()
-        maven { url "http://repo.grails.org/grails/core" }
-    }
-    dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-    }
-}
-
 plugins {
-    id "io.spring.dependency-management" version "0.5.2.RELEASE"
-    id "com.jfrog.bintray" version "1.6"
+    id 'groovy'
+    id 'java-library'
+    id 'io.github.gradle-nexus.publish-plugin'
+    id 'maven-publish'
+    id 'signing'
 }
 
-version "2.0.14.BUILD-SNAPSHOT"
-group "org.grails.plugins"
+version =  projectVersion
+group = 'org.grails.plugins'
+ext.set('grailsVersion', libs.versions.grails.get())
+ext.set('isReleaseVersion', !version.toString().endsWith('-SNAPSHOT'))
+ext.set('isSnapshot', !isReleaseVersion)
 
-
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-gsp"
-apply plugin: "org.grails.grails-doc"
-apply plugin: 'maven-publish'
-// Used for publishing to central repository, remove if not needed
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
-
-ext {
-  grailsVersion = project.grailsVersion
-  gradleWrapperVersion = project.gradleWrapperVersion
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+apply plugin: 'org.grails.grails-plugin' // Needs to be applied after grailsVersion has been set
 
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url "http://repo.grails.org/grails/core" }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
+  maven { url = 'https://repo.grails.org/grails/core' }
 }
 
 dependencies {
-  provided 'org.springframework.boot:spring-boot-starter-logging'
-  provided "org.springframework.boot:spring-boot-starter-actuator"
-  provided "org.springframework.boot:spring-boot-autoconfigure"
-  provided "org.springframework.boot:spring-boot-starter-tomcat"
 
-  provided "org.grails:grails-web-boot"
-  provided "org.grails:grails-dependencies"
-  provided 'javax.servlet:javax.servlet-api:3.1.0'
+    api libs.quartz
 
-  testCompile "org.grails:grails-plugin-testing"
+    implementation libs.grails.bootstrap
+    implementation libs.grails.core
+    implementation libs.groovy.sql
+    implementation libs.spring.beans
+    implementation libs.spring.context
+    implementation libs.spring.context.support
 
-  console "org.grails:grails-console"
+    compileOnly libs.groovy.core // CompileStatic and Slf4j
+    compileOnly libs.javax.annotation.api // Provided
 
-  compile("org.quartz-scheduler:quartz:2.2.3") {
-    exclude module: 'slf4j-api'
-    exclude module: 'c3p0'
-  }
+    testImplementation libs.groovy.test
+    testImplementation libs.junit4
+    testImplementation libs.spock.core
+
+    testRuntimeOnly libs.junit.vintage.engine // Needed for JUnit 4 tests to run
+    testRuntimeOnly libs.slf4j.nop // Get rid of warning about missing slf4j implementation during test task
 }
 
-compileGroovy.groovyOptions.forkOptions.jvmArgs = ['-Xmx512M']
-
-tasks.withType(JavaExec) {
-  maxHeapSize '512m'
-}
-
-eclipse {
-    classpath {
-        plusConfigurations += [configurations.provided]
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion = gradleWrapperVersion
-}
+apply from: layout.projectDirectory.file('gradle/java-config.gradle')
+apply from: layout.projectDirectory.file('gradle/grails-plugin-config.gradle')
+apply from: layout.projectDirectory.file('gradle/testing-config.gradle')
+apply from: layout.projectDirectory.file('gradle/documentation-config.gradle')
+apply from: layout.projectDirectory.file('gradle/publishing.gradle')

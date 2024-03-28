@@ -1,0 +1,7 @@
+[versions]
+grails-gradle-plugin = '6.1.2'
+nexus-publish-gradle-plugin = '1.3.0'
+
+[libraries]
+grails-gradle-plugin = { module = 'org.grails:grails-gradle-plugin', version.ref = 'grails-gradle-plugin' }
+nexus-publish-gradle-plugin = { module = 'io.github.gradle-nexus:publish-plugin', version.ref = 'nexus-publish-gradle-plugin' }

@@ -1,8 +1,5 @@
 package grails.plugins.quartz
 
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
 import org.quartz.JobKey
@@ -12,19 +9,20 @@ import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.quartz.impl.StdSchedulerFactory
+import spock.lang.Specification
 
 /**
  * Unit tests for TriggerDescriptor
  *
  * @author Vitalii Samolovskikh aka Kefir
  */
-class TriggerDescriptorTests {
+class TriggerDescriptorSpec extends Specification {
+
     private Scheduler scheduler
     private JobDetail job
     private Trigger trigger
 
-    @Before
-    void prepare(){
+    def setup() {
         scheduler = StdSchedulerFactory.getDefaultScheduler()
 
         scheduler.start()
@@ -39,17 +37,18 @@ class TriggerDescriptorTests {
         scheduler.scheduleJob(job, trigger)
     }
 
-    @After
-    void dispose(){
+    def cleanup() {
         scheduler.shutdown()
     }
 
-    @Test
-    void testBuild(){
-        TriggerDescriptor descriptor =
-            TriggerDescriptor.build(JobDescriptor.build(job, scheduler), trigger, scheduler)
-        assert descriptor.name == 'trigger'
-        assert descriptor.group == 'group'
-        assert descriptor.state == Trigger.TriggerState.NORMAL
+
+    void 'build TriggerDescriptor correctly'() {
+        when:
+            TriggerDescriptor descriptor =
+                    TriggerDescriptor.build(JobDescriptor.build(job, scheduler), trigger, scheduler)
+        then:
+            descriptor.name == 'trigger'
+            descriptor.group == 'group'
+            descriptor.state == Trigger.TriggerState.NORMAL
     }
 }

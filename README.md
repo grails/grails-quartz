@@ -20,7 +20,7 @@
 To start using Quartz plugin just simply add
 `implementation 'org.grails.plugins:quartz:{version}'` in your `build.gradle`.
 
-[!NOTE]
+>[!NOTE]
 > __2.0.13 for Grails 3.3.*__\
 > Properties changed to `static` from `def`.\
 > For example: `def concurrent` will be now `static concurrent`.

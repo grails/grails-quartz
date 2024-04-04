@@ -34,11 +34,8 @@ dependencies {
     compileOnly libs.groovy.core // CompileStatic and Slf4j
     compileOnly libs.javax.annotation.api // Provided
 
-    testImplementation libs.groovy.test
-    testImplementation libs.junit4
     testImplementation libs.spock.core
 
-    testRuntimeOnly libs.junit.vintage.engine // Needed for JUnit 4 tests to run
     testRuntimeOnly libs.slf4j.nop // Get rid of warning about missing slf4j implementation during test task
 }
 

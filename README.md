@@ -9,11 +9,12 @@
 
 ## Branches
 
-| Branch  | Grails Version |
-|---------|----------------|
-| 1.x     | 2              |
-| 2.0.x   | 3-5            |
-| 3.0.x   | 6              |
+| Branch | Grails Version |
+|--------|----------------|
+| 1.x    | 2              |
+| 2.0.x  | 3-5            |
+| 3.0.x  | 6              |
+| 4.0.x  | 7              |
 
 ## Using
 ### Quick start
